@@ -1,0 +1,31 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <value>
+          <list size="18">
+            <item index="0" class="java.lang.String" itemvalue="lazy_loader" />
+            <item index="1" class="java.lang.String" itemvalue="pydantic_core" />
+            <item index="2" class="java.lang.String" itemvalue="gradio_client" />
+            <item index="3" class="java.lang.String" itemvalue="typing_extensions" />
+            <item index="4" class="java.lang.String" itemvalue="google_auth_oauthlib" />
+            <item index="5" class="java.lang.String" itemvalue="google_api_python_client" />
+            <item index="6" class="java.lang.String" itemvalue="Google_Images_Search" />
+            <item index="7" class="java.lang.String" itemvalue="whisper_timestamped" />
+            <item index="8" class="java.lang.String" itemvalue="alembic" />
+            <item index="9" class="java.lang.String" itemvalue="greenlet" />
+            <item index="10" class="java.lang.String" itemvalue="SQLAlchemy" />
+            <item index="11" class="java.lang.String" itemvalue="python-dotenv" />
+            <item index="12" class="java.lang.String" itemvalue="yarl" />
+            <item index="13" class="java.lang.String" itemvalue="MarkupSafe" />
+            <item index="14" class="java.lang.String" itemvalue="Mako" />
+            <item index="15" class="java.lang.String" itemvalue="attrs" />
+            <item index="16" class="java.lang.String" itemvalue="frozenlist" />
+            <item index="17" class="java.lang.String" itemvalue="idna" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
