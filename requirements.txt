@@ -1,2 +1,4 @@
+aiohttp==3.9.3
 py-cord==2.5.0
 python-dotenv==1.0.1
+PyYAML==6.0.1
