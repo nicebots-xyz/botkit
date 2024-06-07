@@ -4,7 +4,6 @@ import discord
 import aiohttp
 
 from discord.ext import commands, tasks
-from typing import Optional, Callable
 
 
 BASE_URL = "https://top.gg/api"

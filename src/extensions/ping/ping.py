@@ -1,8 +1,7 @@
 import logging
 import discord
 
-from discord.ext import commands, tasks
-from typing import Optional, Callable
+from discord.ext import commands
 
 
 BASE_URL = "https://top.gg/api"

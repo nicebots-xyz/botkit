@@ -10,5 +10,6 @@ elif os.path.exists("config.yml"):
 else:
     raise FileNotFoundError("Configuration file not found")
 
+# noinspection PyArgumentEqualDefault
 with open(path, "r", encoding="utf-8") as f:
     config: dict[str, dict[str, Any]] = yaml.safe_load(f)
