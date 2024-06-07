@@ -1,0 +1,7 @@
+.github/
+.gitignore
+config.example.yaml
+poetry.lock
+pyproject.toml
+readme.md
+renovate.json
