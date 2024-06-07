@@ -17,7 +17,9 @@ class Ping(commands.Cog):
 
     @discord.slash_command(name="ping")
     async def ping(self, ctx: discord.ApplicationContext, ephemeral: bool = False):
-        await ctx.respond(f"Pong! {round(self.bot.latency * 1000)}ms", ephemeral=ephemeral)
+        await ctx.respond(
+            f"Pong! {round(self.bot.latency * 1000)}ms", ephemeral=ephemeral
+        )
 
 
 def setup(bot: discord.Bot, _logger: logging.Logger, _config: dict):
