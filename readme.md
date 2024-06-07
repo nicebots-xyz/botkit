@@ -34,7 +34,8 @@ poetry install
 
 ## Setup
 
-1. Set up the `config.yml` file with your bot token and desired extensions. Here's an example configuration:
+### Yaml Configuration
+You can set up the `config.yml` file with your bot token and desired extensions. Here's an example configuration:
 
 ```yaml
 extensions:
@@ -47,6 +48,15 @@ bot:
   token: "your_bot_token"
 logging:
   level: INFO
+```
+
+### Environment Variables
+Alternatively, you can set the bot token and other configuration options using environment variables. You can set any variable as you would in the `config.yml` file, but with the `BOTKIT__` prefix, and `__` to separate nested keys. To set lists, use regular json syntax.
+```env
+BOTKIT__bot__token=your_bot_token
+BOTKIT__extensions__topgg__enabled=false
+BOTKIT__extensions__ping__enabled=true
+BOTKIT__logging__level=INFO
 ```
 
 ## Default Extensions
@@ -78,7 +88,7 @@ def setup(bot: discord.Bot, logger: logging.Logger, config: dict):
 
 - `bot`: The Discord bot instance.
 - `logger`: A logger instance for logging messages.
-- `config`: The configuration dictionary for the extension from the `config.yml` file.
+- `config`: The configuration dictionary for the extension from the `config.yml` file. All config keys will always be lowercased for compatibility with environment variables.
 
 ## Contributing
 
