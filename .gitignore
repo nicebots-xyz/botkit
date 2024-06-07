@@ -162,4 +162,4 @@ cython_debug/
 
 # project specific
 config.yaml
-config.yaml
+config.yml
