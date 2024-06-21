@@ -4,5 +4,31 @@ extensions:
     token: "top.gg token here" # https://docs.top.gg/docs/API/@reference/#authentication
   ping:
     enabled: true
+  branding:
+    enabled: true
+    embed:
+      footer:
+        value: "By nicebots.xyz"
+        time: true # Include the current time in the footer
+        tz: "Europe/Zurich"
+      author: "Cool Bot"
+      author_url: https://picsum.photos/512
+      color: "#ffffff"
+    status:
+      playing:
+        - "with stuff"
+        - "with things"
+      listening:
+        - "to music"
+        - "to the radio"
+      watching:
+        - "a movie"
+        - "a show"
+        - "/help"
+        - "for commands"
+      streaming:
+        - "on Twitch"
+        - "on YouTube"
+      every: 300 # 300 seconds = 5 minutes
 bot:
     token: "bot token here" # Your bot token
