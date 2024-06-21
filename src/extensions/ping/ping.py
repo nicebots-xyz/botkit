@@ -15,7 +15,12 @@ class Ping(commands.Cog):
         self.bot = bot
 
     @discord.slash_command(name="ping")
-    async def ping(self, ctx: discord.ApplicationContext, ephemeral: bool = False, embed: bool = False):
+    async def ping(
+        self,
+        ctx: discord.ApplicationContext,
+        ephemeral: bool = False,
+        embed: bool = False,
+    ):
         await ctx.defer(ephemeral=ephemeral)
         if embed:
             embed = discord.Embed(
