@@ -1,27 +1,34 @@
-[tool.poetry]
+[project]
 name = "botkit"
 version = "0.1.0"
-description = ""
-authors = ["NiceBots.xyz <hello@nicebots.xyz>"]
+description = "Default template for PDM package"
+authors = [
+    {name = "NiceBots.xyz", email = "hello@nicebots.xyz"},
+]
+dependencies = [
+    "py-cord>=2.5.0",
+    "aiohttp>=3.9.5",
+    "pyyaml>=6.0.1",
+    "python-dotenv>=1.0.1",
+    "orjson>=3.10.5",
+    "pytz>=2024.1",
+    "typing-extensions>=4.12.2",
+]
+requires-python = "==3.11.*"
 readme = "README.md"
-license = "MIT"
-package-mode = false
+license = {text = "MIT"}
 
-[tool.poetry.dependencies]
-python = "^3.11"
-py-cord = "^2.5.0"
-aiohttp = "^3.9.5"
-pyyaml = "^6.0.1"
-python-dotenv = "^1.0.1"
-orjson = "^3.10.3"
+[tool.pdm.scripts]
+lint = "black ."
+export = "pdm export -o requirements.txt --without-hashes --prod"
+tests = "pytest tests"
 
 
-[tool.poetry.group.dev.dependencies]
-black = "^24.4.2"
+[tool.pdm]
+distribution = false
 
-[tool.poetry.scripts]
-start = "main:main"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.pdm.dev-dependencies]
+dev = [
+    "black>=24.4.2",
+    "pytest>=8.2.2",
+]
