@@ -103,9 +103,9 @@ We really encourage you to follow these instructions, even if you’re coding pr
 
 ## Provided Extensions
 We provide multiple extensions directly within this project to get you started. These are:
-- [`ping`](src/extensions/readme.md): A simple ping command to test if the bot is online. 
-- [`topgg`](src/extensions/readme.md): An extension to post server count to [top.gg](https://top.gg/).
-- [`branding`](src/extensions/readme.md): An extension to customize the bot's presence and status, and embed aesthetics.
+- [`ping`](src/extensions/ping/readme.md): A simple ping command to test if the bot is online. 
+- [`topgg`](src/extensions/topgg/readme.md): An extension to post server count to [top.gg](https://top.gg/).
+- [`branding`](src/extensions/branding/readme.md): An extension to customize the bot's presence and status, and embed aesthetics.
 Read the provided documentation for each extension to learn more about their features and how to configure them.
 
 ## Contributing

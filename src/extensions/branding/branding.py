@@ -142,6 +142,10 @@ class Branding(commands.Cog):
 
 
 def setup(bot: discord.Bot, config: dict):
+    if not config.get("embed") and not config.get("status"):
+        logger.warning(
+            "Branding extension is enabled but no configuration is provided for embed or status. You can disable this extension or provide a configuration in the config.yaml file."
+        )
     if config.get("embed"):
         embed: EmbedConfig = config["embed"]
         footer: Footer | None = embed.get("footer")
