@@ -1,3 +1,3 @@
-from .branding import setup
+from .branding import *
 
-__all__ = ["setup"]
+__all__ = ["setup", "default", "schema"]

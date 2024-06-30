@@ -13,5 +13,5 @@ def test_ext_schemas():
         del module
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_ext_schemas()

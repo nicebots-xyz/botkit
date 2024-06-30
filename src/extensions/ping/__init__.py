@@ -1,3 +1,3 @@
-from .ping import setup
+from .ping import *
 
-__all__ = ["setup"]
+__all__ = ["setup", "default", "schema"]

@@ -1,5 +1,5 @@
 extensions:
-  topgg: # If your discord bpt is on top.gg, you can enable this extension to post your stats (server count, shard count, etc.) on top.gg automatically.
+  topgg: # If your discord bot is on top.gg, you can enable this extension to post your stats (server count, shard count, etc.) on top.gg automatically.
     enabled: false
     token: "top.gg token here" # https://docs.top.gg/docs/API/@reference/#authentication
   ping:

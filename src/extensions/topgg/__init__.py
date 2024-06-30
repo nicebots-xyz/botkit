@@ -1,3 +1,3 @@
-from .topgg import setup
+from .topgg import *
 
-__all__ = ["setup"]
+__all__ = ["setup", "default", "schema"]

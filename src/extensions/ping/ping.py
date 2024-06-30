@@ -1,13 +1,21 @@
-import logging
 import discord
 
 from discord.ext import commands
+from schema import Schema
+from src.logging import logger
 
 
 BASE_URL = "https://top.gg/api"
 
-logger: logging.Logger
-config: dict
+default = {
+    "enabled": True,
+}
+
+schema = Schema(
+    {
+        "enabled": bool,
+    }
+)
 
 
 class Ping(commands.Cog):
@@ -34,12 +42,7 @@ class Ping(commands.Cog):
         )
 
 
-def setup(bot: discord.Bot, _logger: logging.Logger, _config: dict):
-    global logger
-    global config
-    logger = _logger
-    config = _config
-
+def setup(bot: discord.Bot, config):
     logger.info("Loading Ping extension")
 
     bot.add_cog(Ping(bot))

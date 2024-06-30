@@ -4,23 +4,30 @@ import discord
 import aiohttp
 
 from discord.ext import commands, tasks
-
+from schema import Schema, And, Use, Optional
+from src.logging import logger
 
 BASE_URL = "https://top.gg/api"
 
-logger: logging.Logger
-config: dict
+default = {
+    "token": "",
+    "enabled": False,
+}
+
+schema = Schema(
+    {
+        "token": str,
+        "enabled": bool,
+    }
+)
 
 
 class Topgg(commands.Cog):
-    def __init__(self, bot: discord.Bot):
+    def __init__(self, bot: discord.Bot, config: dict):
         self.bot = bot
-
-    @commands.Cog.listener()
-    async def on_ready(self):
         self.update_count_loop.start()
 
-    def cog_unload(self):
+    def cog_unload(self) -> None:
         self.update_count_loop.cancel()
 
     @tasks.loop(minutes=30)
@@ -31,7 +38,7 @@ class Topgg(commands.Cog):
             print(e)
 
     async def update_count(self):
-        headers = {"Authorization": config["token"]}
+        headers = {"Authorization": self.config["token"]}
         payload = {"server_count": len(self.bot.guilds)}
         url = f"{BASE_URL}/bots/{self.bot.user.id}/stats"
         try:
@@ -47,12 +54,7 @@ class Topgg(commands.Cog):
             logger.error(e)
 
 
-def setup(bot: discord.Bot, _logger: logging.Logger, _config: dict):
-    global logger
-    global config
-    logger = _logger
-    config = _config
-
+def setup(bot: discord.Bot, config: dict):
     logger.info("Loading Top.gg extension")
 
     if not config.get("token"):

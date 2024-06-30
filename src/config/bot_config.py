@@ -15,6 +15,7 @@ def load_from_env() -> dict[str, dict[str, Any]]:
     _config = {}
     values = {k: v for k, v in os.environ.items() if k.startswith(f"BOTKIT{SPLIT}")}
     values = {k[len(f"BOTKIT{SPLIT}") :]: v for k, v in values.items()}
+    current: dict = {}
     for key, value in values.items():
         for i, part in enumerate(key.split(SPLIT)):
             part = part.lower()

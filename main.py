@@ -2,38 +2,34 @@ import discord
 import importlib
 import importlib.util
 
+from glob import iglob
 from src.config import config
-from src.logging import get_logger
-
-
-def check_module(module_name: str) -> bool:
-    spec = importlib.util.find_spec(module_name)
-    return spec is not None
+from src.logging import logger
+from os.path import splitext, basename
+from types import ModuleType
+from src.utils import validate_module, unzip_extensions
 
 
 def main():
     bot = discord.Bot(intents=discord.Intents.default())
-
-    logger = get_logger(name="main")
-    logger.info("Starting bot")
-
-    for extension, its_config in config["extensions"].items():
-        if its_config["enabled"]:
-            _logger = get_logger(name=extension)
-            if check_module(f"src.extensions.{extension}"):
-                logger.info(f"Loading extension {extension}")
-                module = importlib.import_module(f"src.extensions.{extension}")
-                module.setup(bot, _logger, its_config)
-            elif check_module(extension):
-                logger.info(f"Loading extension {extension}")
-                module = importlib.import_module(extension)
-                module.setup(bot, _logger, its_config)
-            else:
-                logger.error(f"Extension {extension} not found")
+    # use iglob tgo iterate over all direct folders in src/extensions (no subfolders)
+    unzip_extensions()
+    for extension in iglob("src/extensions/*"):
+        name = splitext(basename(extension))[0]
+        its_config = config["extensions"].get(name, {})
+        logger.info(f"Loading extension {name}")
+        module: ModuleType = importlib.import_module(f"src.extensions.{name}")
+        if not its_config:
+            # use default config if not present
+            its_config = module.default
+            config["extensions"][name] = its_config
+        if not its_config["enabled"]:
+            del module
+            continue
+        validate_module(module)
+        module.setup(bot=bot, config=its_config)
 
     bot.run(config["bot"]["token"])
-
-    logger.info("Bot stopped")
 
 
 if __name__ == "__main__":

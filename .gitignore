@@ -163,3 +163,4 @@ cython_debug/
 # project specific
 config.yaml
 config.yml
+.pdm-python

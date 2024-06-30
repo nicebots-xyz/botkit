@@ -6,12 +6,69 @@ from datetime import datetime
 
 from typing_extensions import TypedDict
 from discord.ext import commands, tasks
-
+from schema import Schema, And, Optional, Or
+from src.logging import logger
 
 BASE_URL = "https://top.gg/api"
 
 logger: logging.Logger
-config: dict
+default: dict = {
+    "enabled": True,
+    "status": {
+        "watching": ["you", "/help"],
+        "every": 60 * 5,
+    },
+    "embed": {
+        "footer": {
+            "value": ["footer"],
+            "time": True,
+            "tz": "UTC",
+            "separator": "|",
+        },
+        "color": 0x00FF00,
+        "author": "Nice Bot",
+        "author_url": "https://picsum.photos/512",
+    },
+}
+
+status_schema = Schema(
+    {
+        Optional("playing"): Or(str, list[str]),
+        Optional("watching"): Or(str, list[str]),
+        Optional("listening"): Or(str, list[str]),
+        Optional("streaming"): Or(str, list[str]),
+        Optional("every"): And(int, lambda n: n > 0),
+    }
+)
+
+embed_config_schema = Schema(
+    {
+        "footer": Optional(
+            {
+                "value": Or(str, list[str]),
+                Optional("time"): bool,
+                Optional("tz"): And(str, lambda s: s in pytz.all_timezones),
+                Optional("separator"): str,
+            }
+        ),
+        Optional("color"): Or(str, int),
+        Optional("author_url"): str,
+        Optional("author"): str,
+    }
+)
+
+schema = Schema(
+    {
+        "enabled": bool,
+        Optional("embed"): embed_config_schema,
+        Optional("status"): And(
+            status_schema,
+            lambda s: any(
+                k in ["playing", "watching", "listening", "streaming"] for k in s.keys()
+            ),
+        ),
+    }
+)
 
 
 class Footer(TypedDict):
@@ -38,15 +95,18 @@ class StatusConfig(TypedDict):
 
 
 class Config(TypedDict):
+    enabled: bool
     embed: EmbedConfig | None
+    status: StatusConfig | None
 
 
 class Branding(commands.Cog):
-    def __init__(self, bot: discord.Bot):
+    def __init__(self, bot: discord.Bot, config: Config):
         self.bot = bot
+        self.config = config
 
-        if config.get("status"):
-            status: StatusConfig = config["status"]
+        if self.config.get("status"):
+            status: StatusConfig = self.config["status"]
             if not status.get("every"):
                 status["every"] = 60 * 5
             assert isinstance(status["every"], int), "status.every must be an integer"
@@ -62,18 +122,18 @@ class Branding(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        if config.get("status"):
+        if self.config.get("status"):
             self.update_status_loop.start()
 
     def cog_unload(self):
-        if config.get("status"):
+        if self.config.get("status"):
             self.update_status_loop.cancel()
 
     async def update_status(self):
-        status_types = list(config["status"].keys())
+        status_types = list(self.config["status"].keys())
         status_types.remove("every")
         status_type: str = random.choice(status_types)
-        status: str = random.choice(config["status"][status_type])
+        status: str = random.choice(self.config["status"][status_type])
         activity = discord.Activity(
             name=status,
             type=getattr(discord.ActivityType, status_type),
@@ -81,22 +141,7 @@ class Branding(commands.Cog):
         await self.bot.change_presence(activity=activity)
 
 
-#    @tasks.loop(minutes=30)
-#    async def update_count_loop(self):
-#        try:
-#            await self.update_count()
-#        except Exception as e:
-#            print(e)
-
-
-def setup(bot: discord.Bot, logger_: logging.Logger, config_: dict):
-    global logger
-    global config
-    logger = logger_
-    config = config_
-
-    logger.info("Loading Branding extension")
-
+def setup(bot: discord.Bot, config: dict):
     if config.get("embed"):
         embed: EmbedConfig = config["embed"]
         footer: Footer | None = embed.get("footer")
@@ -133,4 +178,4 @@ def setup(bot: discord.Bot, logger_: logging.Logger, config_: dict):
 
         discord.Embed = Embed
 
-    bot.add_cog(Branding(bot))
+    bot.add_cog(Branding(bot, config))
