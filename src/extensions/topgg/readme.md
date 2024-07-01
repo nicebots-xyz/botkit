@@ -17,7 +17,7 @@ The Top.gg extension is a background task and does not provide any commands for 
 
 The Top.gg extension requires the following configuration:
 
-- `token`: Your Top.gg token. This is a string value and it is required for the extension to work.
+- `token`: Your Top.gg token. This is a string, and it is required for the extension to work.
 - `enabled`: A boolean value that determines whether the extension is enabled or not. By default, this is set to `false`.
 
 Here is an example of how to configure the Top.gg extension in your `config.yml` file:

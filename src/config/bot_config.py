@@ -4,7 +4,6 @@ import orjson
 
 from dotenv import load_dotenv
 from typing import Any
-from src.logging import logger
 
 load_dotenv()
 
@@ -70,7 +69,6 @@ else:
 
 def store_config() -> None:
     if path:
+        # noinspection PyShadowingNames
         with open(path, "w", encoding="utf-8") as f:
             yaml.dump(config, f)
-    else:
-        logger.warning("No config file found, not storing config")

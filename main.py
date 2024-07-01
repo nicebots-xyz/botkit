@@ -12,7 +12,7 @@ from src.utils import validate_module, unzip_extensions
 
 def main():
     bot = discord.Bot(intents=discord.Intents.default())
-    # use iglob tgo iterate over all direct folders in src/extensions (no subfolders)
+    assert (config.get("bot", {}) or {}).get("token"), f"No token provided in config"
     unzip_extensions()
     for extension in iglob("src/extensions/*"):
         name = splitext(basename(extension))[0]

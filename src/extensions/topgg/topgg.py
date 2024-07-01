@@ -1,10 +1,8 @@
-import logging
-
 import discord
 import aiohttp
 
 from discord.ext import commands, tasks
-from schema import Schema, And, Use, Optional
+from schema import Schema
 from src.logging import logger
 
 BASE_URL = "https://top.gg/api"
@@ -24,7 +22,8 @@ schema = Schema(
 
 class Topgg(commands.Cog):
     def __init__(self, bot: discord.Bot, config: dict):
-        self.bot = bot
+        self.bot: discord.Bot = bot
+        self.config: dict = config
         self.update_count_loop.start()
 
     def cog_unload(self) -> None:
@@ -61,4 +60,4 @@ def setup(bot: discord.Bot, config: dict):
         logger.error("Top.gg token is not set up")
         return
 
-    bot.add_cog(Topgg(bot))
+    bot.add_cog(Topgg(bot, config))

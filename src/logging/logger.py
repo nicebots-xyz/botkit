@@ -1,5 +1,4 @@
 import logging
-import discord
 import os
 import time
 

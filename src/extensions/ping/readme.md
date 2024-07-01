@@ -1,14 +1,17 @@
 # Ping Extension
 
-The Ping extension is a simple, yet essential part of your Botkit. It doesn't require any configuration and is **enabled** by default.
+The Ping extension is a straightforward, yet essential part of your Botkit.
+It doesn't require any configuration and is **enabled** by default.
 
 ## Features
 
-The Ping extension adds a `ping` command to your bot. When this command is invoked, the bot responds with a message indicating that it is online and operational. This can be useful for quickly checking if your bot is responsive.
+The Ping extension adds a `/ping` command to your bot.
+When this command is invoked, the bot responds with a message indicating that it is online and operational.
+This can be useful for quickly checking if your bot is responsive.
 
 ## Usage
 
-To use the Ping extension, simply type the `ping` command in any channel where the bot has permission to read and send messages. The bot should respond with a message, confirming its online status.
+To use the Ping extension type the `/ping` command. The bot should respond with a message, confirming its online status.
 
 ## Configuration
 

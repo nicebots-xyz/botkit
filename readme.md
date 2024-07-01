@@ -23,7 +23,7 @@ Botkit is not a pre-built Discord bot. Instead, it is a starting point for build
 
 - [pdm](https://pdm-project.org/en/latest/) - A modern Python packaging and dependency management tool.
 - Python 3.11
-- A Discord bot token. You can create a new bot and obtain a token from the [Discord Developer Portal](https://discord.com/developers/applications).
+- A Discord bot token. You can create a new bot and get a token from the [Discord Developer Portal](https://discord.com/developers/applications).
 
 ## Installation
 
@@ -36,7 +36,7 @@ pdm install
 
 ## Getting Started
 When creating your own features, you’re supposed to create a new extension in the `src/extensions` directory for each feature you want to add.
-You can use the provided extensions as a reference to get started, as well as follow the guidelines provided in the [Creating Extensions](#creating-extensions) section.
+You can use the provided extensions as a reference to get started, and follow the guidelines provided in the [Creating Extensions](#creating-extensions) section.
 
 ## Setup
 
@@ -86,7 +86,7 @@ Moreover, each extension is required to export different objects and functions t
   - `bot`: The Discord bot instance.
   - `config`: The configuration dictionary for the extension. All config keys will always be lowercased for compatibility with environment variables.
   - `default`: A dictionary containing the default configuration for the extension. This is used to populate the `config.yml` file with the default values if they aren’t already present. It is required to have AT MINIMAL the `enabled` key set to `False` or `True` (you generally want to prefer `True` for a more intuitive experience to new users, but it is not required, especially if you code just for yourself).
-- `schema`: A dictionary (or a `schema.Schema`, if you want more granular control) containing the schema for the extension's configuration. This is used to validate the configuration in the `config.yml` file. The schema should be a dictionary where the keys are the configuration keys and the values are the types of the values. For example:
+- `schema`: A dictionary (or a `schema.Schema`, if you want more granular control) containing the schema for the extension's configuration. This is used to validate the configuration in the `config.yml` file. The schema should be a dictionary where the keys are the configuration keys, and the values are the types of the values. For example:
 ```python
 schema = {
     "enabled": bool,
