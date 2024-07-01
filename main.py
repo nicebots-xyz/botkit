@@ -3,7 +3,7 @@ import importlib
 import importlib.util
 
 from glob import iglob
-from src.config import config
+from src.config import config, store_config
 from src.logging import logger
 from os.path import splitext, basename
 from types import ModuleType
@@ -28,6 +28,8 @@ def main():
             continue
         validate_module(module)
         module.setup(bot=bot, config=its_config)
+
+    store_config()
 
     bot.run(config["bot"]["token"])
 

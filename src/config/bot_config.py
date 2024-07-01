@@ -4,6 +4,7 @@ import orjson
 
 from dotenv import load_dotenv
 from typing import Any
+from src.logging import logger
 
 load_dotenv()
 
@@ -65,3 +66,11 @@ if path:
         config: dict[str, dict[str, Any]] = yaml.safe_load(f)
 else:
     config: dict[str, dict[str, Any]] = load_from_env()
+
+
+def store_config() -> None:
+    if path:
+        with open(path, "w", encoding="utf-8") as f:
+            yaml.dump(config, f)
+    else:
+        logger.warning("No config file found, not storing config")
