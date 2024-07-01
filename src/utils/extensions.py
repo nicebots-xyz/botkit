@@ -9,7 +9,7 @@ from schema import Schema
 from src.logging import logger
 
 
-def validate_module(module: ModuleType):
+def validate_module(module: ModuleType, config: dict = None):
     assert hasattr(module, "setup") and callable(
         module.setup
     ), f"Extension {module.__name__} does not have a setup function"
@@ -45,7 +45,7 @@ def validate_module(module: ModuleType):
             module.schema = Schema(module.schema)
         except Exception as e:
             raise type(e)(str(e).replace("\n", " ").replace("  ", " "))
-    module.schema.validate(module.default)
+    module.schema.validate(config or module.default)
 
 
 def unzip_extensions():

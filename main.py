@@ -26,7 +26,7 @@ def main():
         if not its_config["enabled"]:
             del module
             continue
-        validate_module(module)
+        validate_module(module, its_config)
         module.setup(bot=bot, config=its_config)
 
     store_config()
