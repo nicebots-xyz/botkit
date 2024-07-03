@@ -8,10 +8,16 @@ It doesn't require any configuration and is **enabled** by default.
 The Ping extension adds a `/ping` command to your bot.
 When this command is invoked, the bot responds with a message indicating that it is online and operational.
 This can be useful for quickly checking if your bot is responsive.
+The Ping extension also serves an http endpoint at `/ping` that responds with a `200 OK` status code and the bot's name.
 
 ## Usage
 
 To use the Ping extension type the `/ping` command. The bot should respond with a message, confirming its online status.
+You can also send a `GET` request to the `/ping` endpoint to check if the bot is online.
+
+```bash
+curl http://localhost:5000/ping
+```
 
 ## Configuration
 

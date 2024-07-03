@@ -18,6 +18,7 @@ Botkit is not a pre-built Discord bot. Instead, it is a starting point for build
 - **Extensible**: The bot is built around the extensions located in the `src/extensions` directory. There you can find useful and example extensions to get you started.
 - **Configurable**: The bot's configuration, including enabled extensions and bot token, is managed through a `config.yml` file.
 - **Easy Setup**: Botkit simplifies the setup process by providing a well-structured project template and configuration management.
+- **Integrated Backend**: Botkit provides an easy way of having a webserver running alongside your bot, with the ability to add routes and endpoints.
 
 ## Requirements
 
@@ -85,7 +86,12 @@ Moreover, each extension is required to export different objects and functions t
 - `setup`: A function that sets up the extension. It should accept the following arguments, in order:
   - `bot`: The Discord bot instance.
   - `config`: The configuration dictionary for the extension. All config keys will always be lowercased for compatibility with environment variables.
-  - `default`: A dictionary containing the default configuration for the extension. This is used to populate the `config.yml` file with the default values if they aren’t already present. It is required to have AT MINIMAL the `enabled` key set to `False` or `True` (you generally want to prefer `True` for a more intuitive experience to new users, but it is not required, especially if you code just for yourself).
+- `setup_webserver`: A function for adding webserver routes. It should accept the following arguments, in order:
+  - `app`: The Flask app instance.
+  - `bot`: The Discord bot instance.
+  - `config`: The configuration dictionary for the extension.
+- Either `setup` or `setup_webserver` is required for the extension to work properly. You can also provide both.
+- `default`: A dictionary containing the default configuration for the extension. This is used to populate the `config.yml` file with the default values if they aren’t already present. It is required to have AT MINIMAL the `enabled` key set to `False` or `True` (you generally want to prefer `True` for a more intuitive experience to new users, but it is not required, especially if you code just for yourself).
 - `schema`: A dictionary (or a `schema.Schema`, if you want more granular control) containing the schema for the extension's configuration. This is used to validate the configuration in the `config.yml` file. The schema should be a dictionary where the keys are the configuration keys, and the values are the types of the values. For example:
 ```python
 schema = {
@@ -103,7 +109,7 @@ We really encourage you to follow these instructions, even if you’re coding pr
 
 ## Provided Extensions
 We provide multiple extensions directly within this project to get you started. These are:
-- [`ping`](src/extensions/ping/readme.md): A simple ping command to test if the bot is online. 
+- [`ping`](src/extensions/ping/readme.md): A simple ping command and an http endpoint to test whether the bot is online.
 - [`topgg`](src/extensions/topgg/readme.md): An extension to post server count to [top.gg](https://top.gg/).
 - [`branding`](src/extensions/branding/readme.md): An extension to customize the bot's presence and status, and embed aesthetics.
 Read the provided documentation for each extension to learn more about their features and how to configure them.
@@ -116,6 +122,7 @@ We welcome contributions to this project! Please follow the [gitmoji.dev](https:
 
 - Love :yellow_heart:
 - [py-cord](https://github.com/Pycord-Development/pycord)
+- [Flask](https://github.com/pallets/flask)
 - [pdm](https://pdm-project.org/en/latest/)
 
 ## Code Style and Linting

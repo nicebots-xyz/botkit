@@ -1,5 +1,6 @@
 import discord
 
+from flask import Flask
 from discord.ext import commands
 from schema import Schema
 from src.logging import logger
@@ -45,5 +46,12 @@ class Ping(commands.Cog):
 # noinspection PyUnusedLocal
 def setup(bot: discord.Bot, config: dict):
     logger.info("Loading Ping extension")
-
     bot.add_cog(Ping(bot))
+
+
+# noinspection PyUnusedLocal
+def setup_webserver(app: Flask, bot: discord.Bot, config: dict):
+    @app.route("/ping")
+    async def ping():
+        bot_name = bot.user.name
+        return {"message": f"{bot_name} is online"}
