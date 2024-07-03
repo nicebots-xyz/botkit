@@ -7,20 +7,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="654472ae-cd5e-4555-aacf-24b06db0830f" name="Changes" comment=":sparkles: Store default config">
-      <change afterPath="$PROJECT_DIR$/discord-sandbox/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/CI-CD.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/CI-CD.yaml" afterDir="false" />
+    <list default="true" id="654472ae-cd5e-4555-aacf-24b06db0830f" name="Changes" comment=":adhesive_bandage: validate config and not other">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.example.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config.example.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdm.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pdm.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/config/bot_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/bot_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/extensions/branding/branding.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/extensions/branding/branding.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/extensions/ping/ping.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/extensions/ping/ping.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/extensions/ping/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/extensions/ping/readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/extensions/topgg/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/extensions/topgg/readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/extensions/topgg/topgg.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/extensions/topgg/topgg.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logging/logger.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/logging/logger.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/extensions.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/extensions.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,8 +28,20 @@
       </list>
     </option>
   </component>
+  <component name="FlaskConsoleOptions" custom-start-script="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))">
+    <envs>
+      <env key="FLASK_APP" value="app" />
+    </envs>
+    <option name="myCustomStartScript" value="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))" />
+    <option name="myEnvs">
+      <map>
+        <entry key="FLASK_APP" value="app" />
+      </map>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -72,7 +78,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "dev",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/Jérémie/Documents/GitHub/botkit/discord-sandbox",
+    "last_opened_file_path": "C:/Users/Jérémie/Documents/GitHub/botkit/src/extensions/webserver",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -85,6 +91,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Jérémie\Documents\GitHub\botkit\src\extensions\webserver" />
       <recent name="C:\Users\Jérémie\Documents\GitHub\botkit" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -162,6 +169,11 @@
       <workItem from="1719758435205" duration="10643000" />
       <workItem from="1719769676981" duration="6883000" />
       <workItem from="1719822277073" duration="7123000" />
+      <workItem from="1719849796766" duration="1560000" />
+      <workItem from="1719927565352" duration="1349000" />
+      <workItem from="1719929272296" duration="1914000" />
+      <workItem from="1720000141735" duration="591000" />
+      <workItem from="1720000753818" duration="3083000" />
     </task>
     <task id="LOCAL-00001" summary=":sparkles: Store default config">
       <option name="closed" value="true" />
@@ -171,7 +183,23 @@
       <option name="project" value="LOCAL" />
       <updated>1719828329603</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary=":sparkles: Lots of features">
+      <option name="closed" value="true" />
+      <created>1719849868106</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1719849868106</updated>
+    </task>
+    <task id="LOCAL-00003" summary=":adhesive_bandage: validate config and not other">
+      <option name="closed" value="true" />
+      <created>1719850238664</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1719850238664</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -181,10 +209,12 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value=":memo: Update readmes" />
     <MESSAGE value=":sparkles: Store default config" />
-    <option name="LAST_COMMIT_MESSAGE" value=":sparkles: Store default config" />
+    <MESSAGE value=":sparkles: Lots of features" />
+    <MESSAGE value=":adhesive_bandage: validate config and not other" />
+    <option name="LAST_COMMIT_MESSAGE" value=":adhesive_bandage: validate config and not other" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/botkit$main.coverage" NAME="main Coverage Results" MODIFIED="1719829160629" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/botkit$main.coverage" NAME="main Coverage Results" MODIFIED="1720003903916" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/botkit$.coverage" NAME=" Coverage Results" MODIFIED="1719767203111" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
   </component>
 </project>
