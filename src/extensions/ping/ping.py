@@ -1,12 +1,11 @@
 import discord
+import aiohttp
 
 from quart import Quart
 from discord.ext import commands
 from schema import Schema
 from src.logging import logger
 
-
-BASE_URL = "https://top.gg/api"
 
 default = {
     "enabled": True,
@@ -43,15 +42,19 @@ class Ping(commands.Cog):
         )
 
 
-# noinspection PyUnusedLocal
-def setup(bot: discord.Bot, config: dict):
+def setup(bot: discord.Bot):
     logger.info("Loading Ping extension")
     bot.add_cog(Ping(bot))
 
-
-# noinspection PyUnusedLocal
-def setup_webserver(app: Quart, bot: discord.Bot, config: dict):
+def setup_webserver(app: Quart, bot: discord.Bot):
     @app.route("/ping")
     async def ping():
         bot_name = bot.user.name
         return {"message": f"{bot_name} is online"}
+
+
+async def on_startup(config: dict):
+    async with aiohttp.ClientSession() as session:
+        async with session.get("https://httpbin.org/user-agent") as resp:
+            logger.info(f"HTTPBin user-agent: {await resp.text()}")
+            logger.info(f"Ping extension config: {config}")

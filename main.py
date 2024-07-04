@@ -3,13 +3,14 @@ import importlib
 import importlib.util
 import asyncio
 
+from inspect import signature
 from quart import Quart
 from glob import iglob
 from src.config import config, store_config
 from src.logging import logger
 from os.path import splitext, basename
 from types import ModuleType
-from typing import Any, Coroutine
+from typing import Any, Coroutine, Callable
 from src.utils import validate_module, unzip_extensions
 
 
@@ -31,11 +32,27 @@ async def start_backend(app: Quart, bot: discord.Bot, token: str):
     await serve(app, app_config)
 
 
+def setup_func(func: callable, **kwargs) -> Any:
+    parameters = signature(func).parameters
+    func_kwargs = {}
+    for name, parameter in parameters.items():
+        if name in kwargs:
+            func_kwargs[name] = kwargs[name]
+        elif parameter.default != parameter.empty:
+            func_kwargs[name] = parameter.default
+        else:
+            raise TypeError(f"Missing required argument {name}")
+    return func(**func_kwargs)
+
+
 async def main():
-    assert (config.get("bot", {}) or {}).get("token"), f"No token provided in config"
+    assert (config.get("bot", {}) or {}).get("token"), f"No bit token provided in config"
     unzip_extensions()
-    bot_modules: list[tuple[ModuleType, dict[Any]]] = []
-    back_modules: list[tuple[ModuleType, dict[Any]]] = []
+
+    bot_functions: list[tuple[Callable, dict[Any]]] = []
+    back_functions: list[tuple[Callable, dict[Any]]] = []
+    startup_functions: list[tuple[Callable, dict[Any]]] = []
+
     for extension in iglob("src/extensions/*"):
         name = splitext(basename(extension))[0]
         its_config = config["extensions"].get(name, {})
@@ -48,28 +65,42 @@ async def main():
         if not its_config["enabled"]:
             del module
             continue
-        validate_module(module, its_config)
-        if hasattr(module, "setup") and callable(module.setup):
-            bot_modules.append((module, its_config))
-        if hasattr(module, "setup_webserver") and callable(module.setup_webserver):
-            back_modules.append((module, its_config))
 
+        validate_module(module, its_config)
+
+        if hasattr(module, "setup") and callable(module.setup):
+            bot_functions.append((module.setup, its_config))
+        if hasattr(module, "setup_webserver") and callable(module.setup_webserver):
+            back_functions.append((module.setup_webserver, its_config))
+        if hasattr(module, "on_startup") and callable(module.on_startup):
+            startup_functions.append((module.on_startup, its_config))
+
+    startup_coros: list[Coroutine] = []
     coros: list[Coroutine] = []
 
-    if bot_modules:
+    bot = None
+    back_bot = None
+    app = None
+
+    if bot_functions:
         bot = discord.Bot(intents=discord.Intents.default())
-        for module, its_config in bot_modules:
-            module.setup(bot=bot, config=its_config)
+        for function, its_config in bot_functions:
+            setup_func(function, bot=bot, config=its_config)
         coros.append(start_bot(bot, config["bot"]["token"]))
 
-    if back_modules:
+    if back_functions:
         back_bot = discord.Bot(intents=discord.Intents.default())
         app = Quart("backend")
-        for module, its_config in back_modules:
-            module.setup_webserver(app=app, bot=back_bot, config=its_config)
-
+        for function, its_config in back_functions:
+            setup_func(function, app=app, bot=back_bot, config=its_config)
         coros.append(start_backend(app, back_bot, config["bot"]["token"]))
-    assert coros, "No modules to run"
+    assert coros, "No extensions to run"
+
+    if startup_functions:
+        for function, its_config in startup_functions:
+            startup_coros.append(setup_func(function, app=app, bot=back_bot, config=its_config))
+
+    await asyncio.gather(*startup_coros)
     await asyncio.gather(*coros)
 
     store_config()

@@ -18,13 +18,13 @@ Botkit is not a pre-built Discord bot. Instead, it is a starting point for build
 - **Extensible**: The bot is built around the extensions located in the `src/extensions` directory. There you can find useful and example extensions to get you started.
 - **Configurable**: The bot's configuration, including enabled extensions and bot token, is managed through a `config.yml` file.
 - **Easy Setup**: Botkit simplifies the setup process by providing a well-structured project template and configuration management.
-- **Integrated Backend**: Botkit provides an easy way of having a webserver running alongside your bot, with the ability to add routes and endpoints.
+- **Integrated Backend**: Botkit provides an easy way of having a Quart (flask-like) webserver running alongside your bot, with the ability to add routes and endpoints.
 
 ## Requirements
 
 - [pdm](https://pdm-project.org/en/latest/) - A modern Python packaging and dependency management tool.
 - Python 3.11
-- A Discord bot token. You can create a new bot and get a token from the [Discord Developer Portal](https://discord.com/developers/applications).
+- A Discord bot. You can create a new bot and get a token from the [Discord Developer Portal](https://discord.com/developers/applications).
 
 ## Installation
 
@@ -69,6 +69,7 @@ Alternatively, you can set the bot token and other configuration options using e
 ```env
 BOTKIT__bot__token=your_bot_token
 BOTKIT__extensions__topgg__enabled=false
+BOTKIT__extensions__topgg__token=your_top.gg_token
 BOTKIT__extensions__ping__enabled=true
 BOTKIT__logging__level=INFO
 ```
@@ -83,14 +84,25 @@ When creating an extension, it is crucial to follow the following guidelines:
   - You have five log levels available: `DEBUG`, `INFO`, `WARNING`, `ERROR`, and `CRITICAL`, use them accordingly.
 
 Moreover, each extension is required to export different objects and functions to work properly. These are:
-- `setup`: A function that sets up the extension. It should accept the following arguments, in order:
+- `setup`: A function that sets up the extension. It CAN accept any of the following arguments, in the order you prefer, and you can safely omit any of them if you don't need them:
   - `bot`: The Discord bot instance.
   - `config`: The configuration dictionary for the extension. All config keys will always be lowercased for compatibility with environment variables.
-- `setup_webserver`: A function for adding webserver routes. It should accept the following arguments, in order:
-  - `app`: The Flask app instance.
+
+
+- `setup_webserver`: A function for adding webserver routes. It CAN accept any of the following arguments, in the order you prefer, and you can safely omit any of them if you don't need them:
+  - `app`: The Quart app instance.
   - `bot`: The Discord bot instance.
   - `config`: The configuration dictionary for the extension.
-- Either `setup` or `setup_webserver` is required for the extension to work properly. You can also provide both.
+
+> [!NOTE]
+> Either `setup` or `setup_webserver` is required for the extension to work properly. You can also provide both.
+
+- `on_startup` (optional): An asynchronous function that is called when the bot starts. It CAN accept any of the following arguments, in the order you prefer, and you can safely omit any of them if you don't need them:
+  - `app`: The Quart app instance.
+  - `bot`: The Discord bot instance. :warning: The bot is not yet logged in, so you won't be able to send messages or interact with the Discord API.
+  - `config`: The configuration dictionary for the extension.
+
+
 - `default`: A dictionary containing the default configuration for the extension. This is used to populate the `config.yml` file with the default values if they aren’t already present. It is required to have AT MINIMAL the `enabled` key set to `False` or `True` (you generally want to prefer `True` for a more intuitive experience to new users, but it is not required, especially if you code just for yourself).
 - `schema`: A dictionary (or a `schema.Schema`, if you want more granular control) containing the schema for the extension's configuration. This is used to validate the configuration in the `config.yml` file. The schema should be a dictionary where the keys are the configuration keys, and the values are the types of the values. For example:
 ```python
@@ -122,7 +134,7 @@ We welcome contributions to this project! Please follow the [gitmoji.dev](https:
 
 - Love :yellow_heart:
 - [py-cord](https://github.com/Pycord-Development/pycord)
-- [Flask](https://github.com/pallets/flask)
+- [Quart](https://github.com/pallets/quart/)
 - [pdm](https://pdm-project.org/en/latest/)
 
 ## Code Style and Linting
