@@ -1,6 +1,6 @@
 import discord
 
-from flask import Flask
+from quart import Quart
 from discord.ext import commands
 from schema import Schema
 from src.logging import logger
@@ -50,7 +50,7 @@ def setup(bot: discord.Bot, config: dict):
 
 
 # noinspection PyUnusedLocal
-def setup_webserver(app: Flask, bot: discord.Bot, config: dict):
+def setup_webserver(app: Quart, bot: discord.Bot, config: dict):
     @app.route("/ping")
     async def ping():
         bot_name = bot.user.name

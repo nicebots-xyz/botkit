@@ -3,7 +3,7 @@ import importlib
 import importlib.util
 import asyncio
 
-from flask import Flask
+from quart import Quart
 from glob import iglob
 from src.config import config, store_config
 from src.logging import logger
@@ -18,7 +18,7 @@ async def start_bot(bot: discord.Bot, token: str):
     await bot.start(config["bot"]["token"])
 
 
-async def start_backend(app: Flask, bot: discord.Bot, token: str):
+async def start_backend(app: Quart, bot: discord.Bot, token: str):
     from hypercorn.config import Config
     from hypercorn.asyncio import serve
 
@@ -64,7 +64,7 @@ async def main():
 
     if back_modules:
         back_bot = discord.Bot(intents=discord.Intents.default())
-        app = Flask("backend")
+        app = Quart("backend")
         for module, its_config in back_modules:
             module.setup_webserver(app=app, bot=back_bot, config=its_config)
 

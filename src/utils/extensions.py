@@ -6,7 +6,7 @@ import discord
 from types import ModuleType
 from glob import iglob
 from schema import Schema
-from flask import Flask
+from quart import Quart
 
 from src.logging import logger
 
@@ -47,7 +47,7 @@ def validate_module(module: ModuleType, config: dict = None):
             "bot",
             "config",
         ], f"Extension {module.__name__} setup_webserver function does not accept app, bot and config as arguments"
-        if not signature.parameters["app"].annotation == Flask:
+        if not signature.parameters["app"].annotation == Quart:
             logger.warning(
                 f"Extension {module.__name__} setup_webserver function does not have app typed as Flask"
             )
