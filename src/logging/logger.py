@@ -46,7 +46,7 @@ file_handler.setLevel("DEBUG")
 
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(
-    ColoredFormatter("%(levelname)-8s:%(module)-10s:%(message)s")
+    ColoredFormatter("%(levelname)-8s %(module)-10s %(message)s")
 )
 console_handler.setLevel(level)
 
