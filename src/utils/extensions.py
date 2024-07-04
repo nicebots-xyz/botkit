@@ -2,8 +2,10 @@ import inspect
 import os
 import zipfile
 import discord
+import warnings
 
 from types import ModuleType
+from typing import Any, Callable
 from glob import iglob
 from schema import Schema
 from quart import Quart
@@ -11,77 +13,78 @@ from quart import Quart
 from src.logging import logger
 
 
-# noinspection DuplicatedCode
-def validate_module(module: ModuleType, config: dict = None):
-    if hasattr(module, "setup"):
-        assert callable(
-            module.setup
-        ), f"Extension {module.__name__}.setup is not callable"
-        signature = inspect.signature(module.setup)
-        assert (
-            len(signature.parameters) == 2
-        ), f"Extension {module.__name__} setup function does not accept two arguments"
-        assert list(signature.parameters.keys()) == [
-            "bot",
-            "config",
-        ], f"Extension {module.__name__} setup function does not accept bot and config as arguments"
-        if not signature.parameters["bot"].annotation == discord.Bot:
-            logger.warning(
-                f"Extension {module.__name__} setup function does not have bot typed as discord.Bot"
-            )
-            print(signature.parameters["bot"].annotation)
-        if not signature.parameters["config"].annotation == dict:
-            logger.warning(
-                f"Extension {module.__name__} setup function does not have config typed as dict"
-            )
-    if hasattr(module, "setup_webserver"):
-        assert callable(
-            module.setup_webserver
-        ), f"Extension {module.__name__}.setup_webserver is not callable"
-        signature = inspect.signature(module.setup_webserver)
-        assert (
-            len(signature.parameters) == 3
-        ), f"Extension {module.__name__} setup_webserver function does not accept three arguments"
-        assert list(signature.parameters.keys()) == [
-            "app",
-            "bot",
-            "config",
-        ], f"Extension {module.__name__} setup_webserver function does not accept app, bot and config as arguments"
-        if not signature.parameters["app"].annotation == Quart:
-            logger.warning(
-                f"Extension {module.__name__} setup_webserver function does not have app typed as Flask"
-            )
-            print(signature.parameters["app"].annotation)
-        if not signature.parameters["bot"].annotation == discord.Bot:
-            logger.warning(
-                f"Extension {module.__name__} setup_webserver function does not have bot typed as discord.Bot"
-            )
-            print(signature.parameters["bot"].annotation)
-        if not signature.parameters["config"].annotation == dict:
-            logger.warning(
-                f"Extension {module.__name__} setup_webserver function does not have config typed as dict"
+def check_typing(module: ModuleType, func: Callable, types: dict[str, Any]):
+    signature = inspect.signature(func)
+    for name, parameter in signature.parameters.items():
+        if name in types and not parameter.annotation == types[name]:
+            warnings.warn(
+                f"Parameter {name} of function {func.__name__} of module {module.__name__} does not have the correct type annotation (is {parameter.annotation} should be {types[name]})"
             )
 
+
+def check_func(
+    module: ModuleType, func: Callable, max_args: int, types: dict[str, Any]
+):
+    assert callable(
+        func
+    ), f"Function {func.__name__} of module {module.__name__} is not callable"
+    signature = inspect.signature(func)
+    assert (
+        len(signature.parameters) <= max_args
+    ), f"Function {func.__name__} of module {module.__name__} has too many arguments"
+    assert all(
+        param in types for param in signature.parameters.keys()
+    ), f"Function {func.__name__} of module {module.__name__} does not accept the correct arguments ({', '.join(types.keys())})"
+    check_typing(module, func, types)
+
+
+# noinspection DuplicatedCode
+def validate_module(module: ModuleType, config: dict = None) -> None:
+    """
+    Validate the module to ensure it has the required functions and attributes to be loaded as an extension
+    :param module: The module to validate
+    :param config: The configuration to validate against
+    """
+
+    if hasattr(module, "setup"):
+        check_func(module, module.setup, 2, {"bot": discord.Bot, "config": dict})
+
+    if hasattr(module, "setup_webserver"):
+        check_func(
+            module,
+            module.setup_webserver,
+            3,
+            {"app": Quart, "bot": discord.Bot, "config": dict},
+        )
     assert hasattr(module, "setup_webserver") or hasattr(
         module, "setup"
     ), f"Extension {module.__name__} does not have a setup or setup_webserver function"
-    assert hasattr(
-        module, "default"
+    if hasattr(module, "on_startup"):
+        check_func(
+            module,
+            module.on_startup,
+            3,
+            {"app": Quart, "bot": discord.Bot, "config": dict},
+        )
+
+    assert hasattr(module, "default") and isinstance(
+        module.default, dict
     ), f"Extension {module.__name__} does not have a default configuration"
     assert (
         "enabled" in module.default
     ), f"Extension {module.__name__} does not have an enabled key in its default configuration"
-    assert hasattr(module, "schema") and (
-        isinstance(module.schema, Schema) or isinstance(module.schema, dict)
-    ), f"Extension {module.__name__} does not have a schema attribute of type Schema or dict"
+    if hasattr(module, "schema"):
+        assert (
+            isinstance(module.schema, Schema) or isinstance(module.schema, dict)
+        ), f"Extension {module.__name__} has a schema of type {type(module.schema)} instead of Schema or dict"
 
-    if isinstance(module.schema, dict):
-        try:
+        if isinstance(module.schema, dict):
             module.schema = Schema(module.schema)
-        except Exception as e:
-            raise type(e)(str(e).replace("\n", " ").replace("  ", " "))
-    module.schema.validate(config or module.default)
-
+        module.schema.validate(config or module.default)
+    else:
+        warnings.warn(
+            f"Extension {module.__name__} does not have a schema"
+        )
 
 def unzip_extensions():
     for file in iglob("src/extensions/*.zip"):
