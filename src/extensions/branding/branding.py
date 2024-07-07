@@ -178,7 +178,7 @@ def setup(bot: discord.Bot, config: dict):
                     self.set_author(
                         name=embed["author"], icon_url=embed.get("author_url")
                     )
-                if embed.get("color"):
+                if embed.get("color") and not kwargs.get("color"):
                     self.color = discord.Color(embed["color"])
 
         discord.Embed = Embed
