@@ -80,7 +80,15 @@ def validate_module(module: ModuleType, config: dict = None) -> None:
 
         if isinstance(module.schema, dict):
             module.schema = Schema(module.schema)
-        module.schema.validate(config or module.default)
+        if config:
+            module.schema.validate(config)
+        else:
+            try:
+                module.schema.validate(module.default)
+            except Exception as e:
+                warnings.warn(
+                    f"Default configuration for extension {module.__name__} does not match schema: {e}"
+                )
     else:
         warnings.warn(f"Extension {module.__name__} does not have a schema")
 
