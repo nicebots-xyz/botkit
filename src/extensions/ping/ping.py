@@ -46,6 +46,7 @@ def setup(bot: discord.Bot):
     logger.info("Loading Ping extension")
     bot.add_cog(Ping(bot))
 
+
 def setup_webserver(app: Quart, bot: discord.Bot):
     @app.route("/ping")
     async def ping():

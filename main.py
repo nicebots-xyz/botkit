@@ -46,7 +46,9 @@ def setup_func(func: callable, **kwargs) -> Any:
 
 
 async def main():
-    assert (config.get("bot", {}) or {}).get("token"), f"No bit token provided in config"
+    assert (config.get("bot", {}) or {}).get(
+        "token"
+    ), f"No bit token provided in config"
     unzip_extensions()
 
     bot_functions: list[tuple[Callable, dict[Any]]] = []
@@ -98,7 +100,9 @@ async def main():
 
     if startup_functions:
         for function, its_config in startup_functions:
-            startup_coros.append(setup_func(function, app=app, bot=back_bot, config=its_config))
+            startup_coros.append(
+                setup_func(function, app=app, bot=back_bot, config=its_config)
+            )
 
     await asyncio.gather(*startup_coros)
     await asyncio.gather(*coros)

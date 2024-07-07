@@ -74,17 +74,16 @@ def validate_module(module: ModuleType, config: dict = None) -> None:
         "enabled" in module.default
     ), f"Extension {module.__name__} does not have an enabled key in its default configuration"
     if hasattr(module, "schema"):
-        assert (
-            isinstance(module.schema, Schema) or isinstance(module.schema, dict)
+        assert isinstance(module.schema, Schema) or isinstance(
+            module.schema, dict
         ), f"Extension {module.__name__} has a schema of type {type(module.schema)} instead of Schema or dict"
 
         if isinstance(module.schema, dict):
             module.schema = Schema(module.schema)
         module.schema.validate(config or module.default)
     else:
-        warnings.warn(
-            f"Extension {module.__name__} does not have a schema"
-        )
+        warnings.warn(f"Extension {module.__name__} does not have a schema")
+
 
 def unzip_extensions():
     for file in iglob("src/extensions/*.zip"):
