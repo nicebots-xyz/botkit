@@ -121,9 +121,13 @@ We really encourage you to follow these instructions, even if you’re coding pr
 
 ## Provided Extensions
 We provide multiple extensions directly within this project to get you started. These are:
+
 - [`ping`](src/extensions/ping/readme.md): A simple ping command and an http endpoint to test whether the bot is online.
 - [`topgg`](src/extensions/topgg/readme.md): An extension to post server count to [top.gg](https://top.gg/).
 - [`branding`](src/extensions/branding/readme.md): An extension to customize the bot's presence and status, and embed aesthetics.
+- [`add-dm`](src/extensions/add-dm/readme.md): An extension to send a direct message to the user who adds the bot to a guild.
+- [`nice-errors`](src/extensions/nice-errors/readme.md): An extension to provide user-friendly error messages during command execution.
+
 Read the provided documentation for each extension to learn more about their features and how to configure them.
 
 ## Contributing

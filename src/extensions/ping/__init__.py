@@ -1,3 +1,1 @@
-from .ping import *
-
-__all__ = ["setup", "default", "schema"]
+from .ping import setup, setup_webserver, on_startup, default, schema
