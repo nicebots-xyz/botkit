@@ -30,6 +30,7 @@ jobs:
       - name: Export requirements
         run: pdm run export
       - name: Check for changes
+        if: contains(github.actor, 'renovate[bot]') == false
         run: git diff --exit-code HEAD requirements.txt
   docker:
     needs: tests
