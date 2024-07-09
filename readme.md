@@ -19,6 +19,7 @@ Botkit is not a pre-built Discord bot. Instead, it is a starting point for build
 - **Configurable**: The bot's configuration, including enabled extensions and bot token, is managed through a `config.yml` file.
 - **Easy Setup**: Botkit simplifies the setup process by providing a well-structured project template and configuration management.
 - **Integrated Backend**: Botkit provides an easy way of having a Quart (flask-like) webserver running alongside your bot, with the ability to add routes and endpoints.
+- **Useful Scripts**: Botkit includes useful scripts for managing your bot's listing on top.gg and other bot lists, such as discord's app directory. 
 
 ## Requirements
 
@@ -118,6 +119,29 @@ schema = {
 ```
 We really encourage you to follow these instructions, even if you’re coding privately, as it will make your code more readable and maintainable in the long run.
 
+## Using scripts
+
+### `check-listings`
+This script checks the publishing status of your bot on various bot listing websites, as well as if its description is up to date with one provided.
+To use it:
+
+0. Have Google Chrome installed. This is required web scraping.
+1. Install the development dependencies using `pdm install -d`.
+2. Create a file called `description.md` in the root directory of the project, containing your bot's description.
+3. Create a file called `listings.yml` in the root directory of the project, containing your bot's application id and url for *some* listing websites, if you want to check them. Here's an example:
+```yaml
+application_id: 1234567891011121314
+
+DiscordBotListCom: # add this section if you want to check discordbotlist.com
+  url: https://discordbotlist.com/bots/my-bot
+
+DisforgeCom: # add this section if you want to check disforge.com
+  url: https://disforge.com/bot/1234-my-bot
+
+DiscordMe: # add this section if you want to check discord.me
+  url: https://discord.me/my-bot`
+```
+4. Run the script using `pdm run check-listings`.
 
 ## Provided Extensions
 We provide multiple extensions directly within this project to get you started. These are:

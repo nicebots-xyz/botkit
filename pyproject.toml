@@ -26,6 +26,7 @@ lint = "black ."
 export = "pdm export -o requirements.txt --without-hashes --prod"
 tests = "pytest tests"
 start = "python main.py"
+check-listings = {call = "scripts:check_listings.main"}
 
 [tool.pdm]
 distribution = false
@@ -34,4 +35,8 @@ distribution = false
 dev = [
     "black>=24.4.2",
     "pytest>=8.2.2",
+    "beautifulsoup4>=4.12.3",
+    "nodriver>=0.32",
+    "markdown>=3.6",
+    "termcolor>=2.4.0",
 ]

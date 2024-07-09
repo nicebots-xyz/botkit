@@ -243,3 +243,5 @@ fabric.properties
 config.yaml
 config.yml
 .pdm-python
+listings.yaml
+description.md
