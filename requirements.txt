@@ -22,7 +22,7 @@ markupsafe==2.1.5
 multidict==6.0.5
 orjson==3.10.6
 priority==2.0.0
-py-cord==2.5.0
+py-cord==2.6.0
 python-dotenv==1.0.1
 pytz==2024.1
 pyyaml==6.0.1
