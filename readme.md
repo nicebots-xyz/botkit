@@ -38,8 +38,7 @@ pdm install
 
 ## Getting Started
 When creating your own features, you’re supposed to create a new extension in the `src/extensions` directory for each feature you want to add.
-You can use the provided extensions as a reference to get started, and follow the guidelines provided in the [Creating Extensions](#creating-extensions) section.
-
+To get started, you can follow the guide available [here](guides/getting-started.md).
 ## Setup
 
 ### Automatic Extensions Configuration
