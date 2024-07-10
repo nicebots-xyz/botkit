@@ -2,20 +2,20 @@ import discord
 import aiohttp
 
 from discord.ext import commands, tasks
-from schema import Schema
+from schema import Schema, Optional
 from src.logging import logger
 
 TOPGG_BASE_URL = "https://top.gg/api"
 DISCORDSCOM_BASE_URL = "https://discords.com/bots/api/bot"
 
 default = {
-    "token": "",
     "enabled": False,
 }
 
 schema = Schema(
     {
-        "token": str,
+        Optional("topgg_token"): str,
+        Optional("discordscom_token"): str,
         "enabled": bool,
     }
 )
