@@ -13,6 +13,13 @@ class NotFoundError(BaseError):
     pass
 
 
+def normalize_soup(soup: BeautifulSoup) -> str:
+    """
+    Normalize the text from a BeautifulSoup object
+    """
+    return soup.get_text().strip().replace("’", "'").replace("\n", "")
+
+
 class Listing(ABC):
     """
     Represents a Discord Bot listing website
@@ -25,9 +32,7 @@ class Listing(ABC):
         """
         Normalize the text from a BeautifulSoup object
         """
-        return re.sub(
-            r"\n{2,}", "\n", soup.get_text(separator="\n", strip=True).strip()
-        ).strip()
+        return normalize_soup(soup)
 
     @abstractmethod
     async def fetch_raw_description(self) -> str:

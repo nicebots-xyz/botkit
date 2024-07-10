@@ -23,5 +23,6 @@ class DiscordBotListCom(Listing):
         description = await page.select("article > .markdown")
         html = await description.get_html()
         soup = BeautifulSoup(html, "html.parser")
-        soup.select_one("div").select_one("div").decompose()
+        for a in soup.find_all("a", {"rel": "nofollow ugc"}):
+            a.unwrap()
         return self.normalize_soup(soup)

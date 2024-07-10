@@ -8,6 +8,8 @@ from termcolor import cprint
 from bs4 import BeautifulSoup
 
 from .listings import (
+    Listing,
+    normalize_soup,
     TopGg,
     DiscordsCom,
     WumpusStore,
@@ -32,12 +34,8 @@ async def async_main(args):
     )
 
     description = markdown.markdown(description)
-    description = (
-        BeautifulSoup(description, "html.parser")
-        .get_text(separator="\n", strip=True)
-        .replace("\n\n", "\n")
-        .strip()
-    )
+    description = normalize_soup(BeautifulSoup(description, "html.parser"))
+
     browser = await uc.start()
     listings = [
         DiscordsCom(browser, application_id),
@@ -60,15 +58,15 @@ async def async_main(args):
         try:
             its_description = await listing.fetch_raw_description()
         except NotFoundError:
-            cprint(f"{listing.name} not published", "light_red")
+            cprint(f"{listing.name} not published", "black", "on_light_red")
             continue
         except asyncio.TimeoutError:
             cprint(f"{listing.name} timed out")
             continue
         if description == its_description:
-            cprint(f"{listing.name} matches", "green")
+            cprint(f"{listing.name} matches", "black", "on_green")
         else:
-            cprint(f"{listing.name} does not match", "red")
+            cprint(f"{listing.name} does not match", "black", "on_yellow")
     global COMPLETED
     COMPLETED = True
 
