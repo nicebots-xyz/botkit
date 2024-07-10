@@ -16,16 +16,15 @@ class DiscordBotsGg(Listing):
         url = f"https://discord.bots.gg/bots/{self.application_id}"
         page = await self.browser.get(url)
         if (
-            len(
-                await page.select_all(
-                    ".error__title",
+                len(
+                    await page.query_selector_all(
+                        ".error__title",
+                    )
                 )
-            )
-            != 0
+                != 0
         ):
             raise NotFoundError("Listing not found")
         description = await page.select(".bot__description")
         html = await description.get_html()
         soup = BeautifulSoup(html, "html.parser")
-        soup.select_one("div").select_one("div").decompose()
-        return self.normalize_soup(soup)
+        return self.normalize_soup(soup).replace("’", "'")
