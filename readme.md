@@ -53,9 +53,9 @@ You’re required to at least provide the bot token. Here's an example configura
 
 ```yaml
 extensions:
-  topgg:
+  listings:
     enabled: false
-    token: "your_top.gg_token"
+    topgg_token: "your_top.gg_token"
   ping:
     enabled: true
 bot:
@@ -68,8 +68,8 @@ logging:
 Alternatively, you can set the bot token and other configuration options using environment variables. You can set any variable as you would in the `config.yml` file, but with the `BOTKIT__` prefix, and `__` to separate nested keys. To set lists, use regular json syntax.
 ```env
 BOTKIT__bot__token=your_bot_token
-BOTKIT__extensions__topgg__enabled=false
-BOTKIT__extensions__topgg__token=your_top.gg_token
+BOTKIT__extensions__listings__enabled=false
+BOTKIT__extensions__listings__topgg_token=your_top.gg_token
 BOTKIT__extensions__ping__enabled=true
 BOTKIT__logging__level=INFO
 ```
@@ -146,7 +146,7 @@ DiscordMe: # add this section if you want to check discord.me
 We provide multiple extensions directly within this project to get you started. These are:
 
 - [`ping`](src/extensions/ping/readme.md): A simple ping command and an http endpoint to test whether the bot is online.
-- [`topgg`](src/extensions/topgg/readme.md): An extension to post server count to [top.gg](https://top.gg/).
+- [`listings`](src/extensions/listings/readme.md): An extension to post server count to various bot listing websites.
 - [`branding`](src/extensions/branding/readme.md): An extension to customize the bot's presence and status, and embed aesthetics.
 - [`add-dm`](src/extensions/add-dm/readme.md): An extension to send a direct message to the user who adds the bot to a guild.
 - [`nice-errors`](src/extensions/nice-errors/readme.md): An extension to provide user-friendly error messages during command execution.
