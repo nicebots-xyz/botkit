@@ -72,12 +72,14 @@ class Listings(commands.Cog):
         payload = {"server_count": len(self.bot.guilds)}
         url = f"{DISCORDSCOM_BASE_URL}/{self.bot.user.id}/setservers"
         await try_post_request(url, headers, payload)
+        logger.info("Updated discords.com count")
 
     async def update_count_topgg(self):
         headers = {"Authorization": self.config["topgg_token"]}
         payload = {"server_count": len(self.bot.guilds)}
         url = f"{TOPGG_BASE_URL}/bots/{self.bot.user.id}/stats"
         await try_post_request(url, headers, payload)
+        logger.info("Updated top.gg count")
 
 
 def setup(bot: discord.Bot, config: dict):
