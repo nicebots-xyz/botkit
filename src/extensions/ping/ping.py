@@ -43,7 +43,6 @@ class Ping(commands.Cog):
 
 
 def setup(bot: discord.Bot):
-    logger.info("Loading Ping extension")
     bot.add_cog(Ping(bot))
 
 

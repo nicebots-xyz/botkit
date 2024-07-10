@@ -83,8 +83,6 @@ class Listings(commands.Cog):
 
 
 def setup(bot: discord.Bot, config: dict):
-    logger.info("Loading Listings extension")
-
     if not config.get("topgg_token") and not config.get("discordscom_token"):
         logger.error("Top.gg or Discords.com token not found")
         return

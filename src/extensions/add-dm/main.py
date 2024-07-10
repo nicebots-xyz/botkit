@@ -41,5 +41,4 @@ class AddDM(commands.Cog):
 
 
 def setup(bot: discord.Bot, config: dict) -> None:
-    logger.info("Loading AddDM extension")
     bot.add_cog(AddDM(bot, config))
