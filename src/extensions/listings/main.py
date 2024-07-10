@@ -44,9 +44,12 @@ class Listings(commands.Cog):
     def __init__(self, bot: discord.Bot, config: dict):
         self.bot: discord.Bot = bot
         self.config: dict = config
-        self.update_count_loop.start()
         self.topgg = bool(config.get("topgg_token"))
         self.discordscom = bool(config.get("discordscom_token"))
+
+    @commands.Cog.listener("on_ready")
+    async def on_ready(self):
+        self.update_count_loop.start()
 
     def cog_unload(self) -> None:
         self.update_count_loop.cancel()
