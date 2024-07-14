@@ -50,15 +50,21 @@ console_handler.setFormatter(
 )
 console_handler.setLevel(level)
 
-# Configure discord logger
-discord_logger = logging.getLogger("discord")
-discord_logger.setLevel(level)
-discord_logger.handlers = []  # Clear any existing handlers
-discord_logger.addHandler(file_handler)
-discord_logger.addHandler(console_handler)
 
-# Prevent discord logger from propagating to root logger
-discord_logger.propagate = False
+def patch(logger_: str | logging.Logger):
+    if isinstance(logger_, str):
+        logger_ = logging.getLogger(logger_)
+    logger_.debug("")
+    logger_.handlers = []  # Clear any existing handlers
+    logger_.addHandler(file_handler)
+    logger_.addHandler(console_handler)
+    logger_.propagate = False
+    logger_.setLevel(level)
+    return logger_
+
+
+# Configure discord logger
+patch("discord")
 
 # Configure application logger
 logger = logging.getLogger("myapp")

@@ -7,7 +7,7 @@ from inspect import signature
 from quart import Quart
 from glob import iglob
 from src.config import config, store_config
-from src.logging import logger
+from src.logging import logger, patch
 from os.path import splitext, basename
 from types import ModuleType
 from typing import Any, Coroutine, Callable
@@ -21,15 +21,24 @@ async def start_bot(bot: discord.Bot, token: str):
 
 async def start_backend(app: Quart, bot: discord.Bot, token: str):
     from hypercorn.config import Config
+    from hypercorn.logging import Logger as HypercornLogger
     from hypercorn.asyncio import serve
 
-    app.logger.handlers = logger.handlers
+    class CustomLogger(HypercornLogger):
+        def __init__(self, *args, **kwargs) -> None:
+            super().__init__(*args, **kwargs)
+            if self.error_logger:
+                patch(self.error_logger)
+            if self.access_logger:
+                patch(self.access_logger)
 
-    await bot.login(token)
     app_config = Config()
+    app_config.logger_class = CustomLogger
     app_config.include_server_header = False  # security
     app_config.bind = ["0.0.0.0:5000"]
+    await bot.login(token)
     await serve(app, app_config)
+    patch("hypercorn.error")
 
 
 def setup_func(func: callable, **kwargs) -> Any:
