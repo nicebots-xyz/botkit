@@ -25,7 +25,7 @@ priority==2.0.0
 py-cord==2.6.0
 python-dotenv==1.0.1
 pytz==2024.1
-pyyaml==6.0.1
+pyyaml==6.0.2
 quart==0.19.6
 schema==0.7.7
 typing-extensions==4.12.2
