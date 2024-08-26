@@ -1,16 +1,4 @@
 name: Build and Push Docker Image
-
-on:
-  push:
-    branches: [ "main", "dev" ]
-    tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: ["dev"]
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 jobs:
   docker:
     runs-on: ubuntu-latest

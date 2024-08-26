@@ -1,17 +1,75 @@
-name: CI/CD
-
+#file: noinspection SpellCheckingInspection
 on:
   push:
     branches: [ "main", "dev" ]
+    # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
-    branches: [ "dev" ]
+    branches: ["dev"]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   tests:
-    uses: ./.github/workflows/tests.yaml
-
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PDM
+        uses: pdm-project/setup-pdm@v4
+        with:
+          cache: true
+      - name: Install dependencies
+        run: pdm install -d
+      - name: Run linting check
+        run: pdm run lint --check
+      - name: Run tests
+        run: pdm run tests
+      - name: Export requirements
+        run: pdm run export
+      - name: Check for changes
+        if: contains(github.actor, 'renovate[bot]') == false
+        run: git diff --exit-code HEAD requirements.txt
   docker:
     needs: tests
-    uses: ./.github/workflows/docker.yaml
-    secrets: inherit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.4.0
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@v3.2.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata for
+        id: meta
+        uses: docker/metadata-action@v5.5.1
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=ref,event=tag
+            type=sha
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6.3.0
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
