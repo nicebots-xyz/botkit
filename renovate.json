@@ -9,6 +9,9 @@
   "labels": [
     "deps"
   ],
+  "ignorePaths": [
+    "requirements.txt"
+  ],
   "commitMessagePrefix": "⬆️",
   "commitMessageAction": "Upgrade",
   "packageRules": [
@@ -25,6 +28,10 @@
       ],
       "commitMessagePrefix": "⬇️",
       "commitMessageAction": "Downgrade"
+    },
+    {
+      "matchDatasources": ["pypi"],
+      "addLabels": ["pypi"]
     }
   ]
 }
