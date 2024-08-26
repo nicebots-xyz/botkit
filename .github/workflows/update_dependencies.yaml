@@ -17,10 +17,10 @@ jobs:
         uses: pdm-project/setup-pdm@v4
         with:
           cache: true
-      - name: Update dependencies
-        run: pdm update
+      - name: Install dependencies
+        run: pdm lock
       - name: Export requirements
-        run: pdm export -o requirements.txt
+        run: pdm run export
       - name: Check for changes
         id: git-check
         run: |
