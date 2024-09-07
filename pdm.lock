@@ -384,13 +384,13 @@ files = [
 
 [[package]]
 name = "mss"
-version = "9.0.1"
+version = "9.0.2"
 requires_python = ">=3.8"
 summary = "An ultra fast cross-platform multiple screenshots module in pure python using ctypes."
 groups = ["dev"]
 files = [
-    {file = "mss-9.0.1-py3-none-any.whl", hash = "sha256:7ee44db7ab14cbea6a3eb63813c57d677a109ca5979d3b76046e4bddd3ca1a0b"},
-    {file = "mss-9.0.1.tar.gz", hash = "sha256:6eb7b9008cf27428811fa33aeb35f3334db81e3f7cc2dd49ec7c6e5a94b39f12"},
+    {file = "mss-9.0.2-py3-none-any.whl", hash = "sha256:685fa442cc96d8d88b4eb7aadbcccca7b858e789c9259b603e1ef0e435b60425"},
+    {file = "mss-9.0.2.tar.gz", hash = "sha256:c96a4ec73224da7db22bc07ef3cfaa18f8b86900d1872e29113bbcef0093a21e"},
 ]
 
 [[package]]
@@ -738,7 +738,7 @@ files = [
 
 [[package]]
 name = "yarl"
-version = "1.9.6"
+version = "1.10.0"
 requires_python = ">=3.8"
 summary = "Yet another URL library"
 groups = ["default"]
@@ -747,21 +747,21 @@ dependencies = [
     "multidict>=4.0",
 ]
 files = [
-    {file = "yarl-1.9.6-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:fee93d050e834fe12ec65e3fa762a24be622f19d7d4dd1d16ea99daab5568a3a"},
-    {file = "yarl-1.9.6-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:ad189fe2c7e0b38cd42d9053c90ab5edc85c9169b6c495c2415b9c74e88cca9e"},
-    {file = "yarl-1.9.6-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:cbf3bb663138621aad571446bab804cbd4f69bdebcb952d555d0ba4bd19e4bb6"},
-    {file = "yarl-1.9.6-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:fb9ed9849918bf4b1262a2b323844c0751dab5151481a9f2a1d1a7794506b692"},
-    {file = "yarl-1.9.6-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:5805cf7060eee1c928731eae8d2999b1dbcc158a1fdd53bc88819258b8cdf4d9"},
-    {file = "yarl-1.9.6-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:19fd2614cc11ca01460e9198ffb80da58ada3404e92c23dd352bd7b1a93a6400"},
-    {file = "yarl-1.9.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9f22fd081fa74590f2de817fb0f8bd3329baa96f2f3baad53210c8864bbbe6d7"},
-    {file = "yarl-1.9.6-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:9da6010b1f7f1a6a0804190ed895f3425c03230ff9bbb0edde961221e33e2447"},
-    {file = "yarl-1.9.6-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:9c5a5425ea221ed548bc0b7db089b6e69f0abcb9b318d2f81e252ce1a87cb432"},
-    {file = "yarl-1.9.6-cp311-cp311-musllinux_1_2_i686.whl", hash = "sha256:c79acad3d6805b0701ffd4789dc14020cdb1977c436e3b81ba7a507e497f7146"},
-    {file = "yarl-1.9.6-cp311-cp311-musllinux_1_2_ppc64le.whl", hash = "sha256:61f9e9c51717651319ea1f3bfd838979ad13e0a086abae1055b72e21a35c86ee"},
-    {file = "yarl-1.9.6-cp311-cp311-musllinux_1_2_s390x.whl", hash = "sha256:6caebfbade5e4f19d6c2caf0f3cb56c788ff22aaf6c93d8e4c57d6e6457c5002"},
-    {file = "yarl-1.9.6-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:e1df9ce83a30e3580cba87a050e2a4635a806d96633ecd99d1e6f3b329a855be"},
-    {file = "yarl-1.9.6-cp311-cp311-win32.whl", hash = "sha256:72556c7273b3c1f9e2eaf3f4caa2de597ab2aaec06d87c7a5840522838660316"},
-    {file = "yarl-1.9.6-cp311-cp311-win_amd64.whl", hash = "sha256:ef6563bfa47b8f51e37ec4cd867690c4da5be075daa63e7348a72c486f71b056"},
-    {file = "yarl-1.9.6-py3-none-any.whl", hash = "sha256:d34a4c6fde4d49aab493214228d0e03f7e5a717f6da4fe65b879a3af3c22ad7b"},
-    {file = "yarl-1.9.6.tar.gz", hash = "sha256:0bdc6a7b59efa0c34c90ef3da864f0c53e81a4640fbc461bfde9f1b0c64c3c81"},
+    {file = "yarl-1.10.0-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:308d1cce071b5b500e3d95636bbf15dfdb8e87ed081b893555658a7f9869a156"},
+    {file = "yarl-1.10.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:bc66927f6362ed613a483c22618f88f014994ccbd0b7a25ec1ebc8c472d4b40a"},
+    {file = "yarl-1.10.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:c4d13071c5b99974cfe2f94c749ecc4baf882f7c4b6e4c40ca3d15d1b7e81f24"},
+    {file = "yarl-1.10.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:348ad53acd41caa489df7db352d620c982ab069855d9635dda73d685bbbc3636"},
+    {file = "yarl-1.10.0-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:293f7c2b30d015de3f1441c4ee764963b86636fde881b4d6093498d1e8711f69"},
+    {file = "yarl-1.10.0-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:315e8853d0ea46aabdce01f1f248fff7b9743de89b555c5f0487f54ac84beae8"},
+    {file = "yarl-1.10.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:012c506b2c23be4500fb97509aa7e6a575996fb317b80667fa26899d456e2aaf"},
+    {file = "yarl-1.10.0-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:5f769c2708c31227c5349c3e4c668c8b4b2e25af3e7263723f2ef33e8e3906a0"},
+    {file = "yarl-1.10.0-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:4f6ac063a4e9bbd4f6cc88cc621516a44d6aec66862ea8399ba063374e4b12c7"},
+    {file = "yarl-1.10.0-cp311-cp311-musllinux_1_2_i686.whl", hash = "sha256:18b7ce6d8c35da8e16dcc8de124a80e250fc8c73f8c02663acf2485c874f1972"},
+    {file = "yarl-1.10.0-cp311-cp311-musllinux_1_2_ppc64le.whl", hash = "sha256:b80246bdee036381636e73ef0f19b032912064622b0e5ee44f6960fd11df12aa"},
+    {file = "yarl-1.10.0-cp311-cp311-musllinux_1_2_s390x.whl", hash = "sha256:183dd37bb5471e8017ab8a998c1ea070b4a0b08a97a7c4e20e0c7ccbe8ebb999"},
+    {file = "yarl-1.10.0-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:9b6d0d7522b514f054b359409817af4c5ed76fa4fe42d8bd1ed12956804cf595"},
+    {file = "yarl-1.10.0-cp311-cp311-win32.whl", hash = "sha256:6026a6ef14d038a38ca9d81422db4b6bb7d5da94f9d08f21e0ad9ebd9c4bc3bb"},
+    {file = "yarl-1.10.0-cp311-cp311-win_amd64.whl", hash = "sha256:190e70d2f9f16f1c9d666c103d635c9ed4bf8de7803e9fa0495eec405a3e96a8"},
+    {file = "yarl-1.10.0-py3-none-any.whl", hash = "sha256:99eaa7d53f509ba1c2fea8fdfec15ba3cd36caca31d57ec6665073b148b5f260"},
+    {file = "yarl-1.10.0.tar.gz", hash = "sha256:3bf10a395adac62177ba8ea738617e8de6cbb1cea6aa5d5dd2accde704fc8195"},
 ]
