@@ -33,6 +33,7 @@ async def start_backend(app: Quart, bot: discord.Bot, token: str):
                 patch(self.access_logger)
 
     app_config = Config()
+    app_config.accesslog = "-"
     app_config.logger_class = CustomLogger
     app_config.include_server_header = False  # security
     app_config.bind = ["0.0.0.0:5000"]
