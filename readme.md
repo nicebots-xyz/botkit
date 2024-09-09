@@ -150,6 +150,7 @@ We provide multiple extensions directly within this project to get you started. 
 - [`branding`](src/extensions/branding/readme.md): An extension to customize the bot's presence and status, and embed aesthetics.
 - [`add-dm`](src/extensions/add-dm/readme.md): An extension to send a direct message to the user who adds the bot to a guild.
 - [`nice-errors`](src/extensions/nice-errors/readme.md): An extension to provide user-friendly error messages during command execution.
+- [`status-post`](src/extensions/status-post/readme.md): An extension to post the bot's status to a specified URL.
 
 Read the provided documentation for each extension to learn more about their features and how to configure them.
 
