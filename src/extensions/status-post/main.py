@@ -45,5 +45,6 @@ class Status(commands.Cog):
             async with session.get(self.config["url"] + ping) as resp:
                 resp.raise_for_status()
 
+
 def setup(bot: discord.Bot, config: dict):
     bot.add_cog(Status(bot, config))

@@ -1,1 +1,3 @@
-from .main import setup, setup_webserver, on_startup, default, schema
+from .main import setup, default, schema
+
+__all__ = ["setup", "default", "schema"]
