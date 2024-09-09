@@ -26,7 +26,7 @@ class Status(commands.Cog):
     def __init__(self, bot: discord.Bot, config: dict):
         self.bot = bot
         self.config = config
-        tasks.loop(seconds=self.config["every"])(self.push_status_loop).start()
+        self.push_status_loop = tasks.loop(seconds=self.config["every"])(self.push_status_loop)
 
     @commands.Cog.listener(once=True)
     async def on_ready(self):
