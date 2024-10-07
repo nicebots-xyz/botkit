@@ -58,13 +58,13 @@ if os.path.exists("config.yaml"):
 elif os.path.exists("config.yml"):
     path = "config.yml"
 
-
+config: dict[str, dict[str, Any]]
 if path:
     # noinspection PyArgumentEqualDefault
     with open(path, "r", encoding="utf-8") as f:
-        config: dict[str, dict[str, Any]] = yaml.safe_load(f)
+        config = yaml.safe_load(f)
 else:
-    config: dict[str, dict[str, Any]] = load_from_env()
+    config = load_from_env()
 
 
 def store_config() -> None:

@@ -39,7 +39,7 @@ def check_func(
 
 
 # noinspection DuplicatedCode
-def validate_module(module: ModuleType, config: dict = None) -> None:
+def validate_module(module: ModuleType, config: dict[str, Any] | None = None) -> None:
     """
     Validate the module to ensure it has the required functions and attributes to be loaded as an extension
     :param module: The module to validate
