@@ -39,4 +39,10 @@ dev = [
     "nodriver>=0.32",
     "markdown>=3.6",
     "termcolor>=2.4.0",
+    "basedpyright>=1.18.3",
 ]
+
+[tool.pyright]
+reportAny = false
+reportUnusedCallResult = false
+pythonVersion = "3.11"
