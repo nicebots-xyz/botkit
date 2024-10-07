@@ -118,6 +118,64 @@ schema = {
 ```
 We really encourage you to follow these instructions, even if you’re coding privately, as it will make your code more readable and maintainable in the long run.
 
+## Using Patch Files
+
+Botkit supports the use of patch files to modify or extend the functionality of the bot or its dependencies before the main extension code runs. This is particularly useful for applying global changes or monkey-patching existing classes.
+
+### How It Works
+
+1. Create a file named `patch.py` in your extension's directory.
+2. Define a `patch()` function in this file. This function will be called before the extension is loaded.
+3. The `patch()` function can modify global state, patch classes, or perform any other setup needed.
+
+### Example: Error Handling Patch
+
+Here's an example from the `nice-errors` extension that demonstrates how to use a patch file to enhance error handling:
+
+```python
+# nice-errors/patch.py
+
+import discord
+from discord import Interaction
+from discord.ui import Item
+from typing_extensions import override
+
+def patch():
+    class PatchedView(discord.ui.View):
+        @override
+        async def on_error(
+            self,
+            error: Exception,
+            item: Item,
+            interaction: Interaction,
+        ) -> None:
+            if not isinstance(error, discord.Forbidden):
+                await interaction.respond(
+                    "Whoops! An error occurred while executing this command",
+                    ephemeral=True,
+                )
+                raise error
+            await interaction.respond(
+                f"Whoops! I don't have permission to do that\n`{error.args[0].split(':')[-1].strip()}`",
+                ephemeral=True,
+            )
+
+    discord.ui.View = PatchedView
+
+```
+
+This patch modifies the `discord.ui.View` class to provide more user-friendly error messages. It catches exceptions and responds to the user with an appropriate message, enhancing the overall user experience.
+
+### When to Use Patch Files
+
+Patch files are powerful but should be used judiciously. They are best suited for:
+
+1. Applying global changes that affect multiple parts of your bot.
+2. Modifying third-party libraries when you can't or don't want to fork them.
+3. Implementing cross-cutting concerns like logging or error handling.
+
+Remember that patches are applied early in the bot's lifecycle, so they can affect all subsequent code. Use them carefully and document their effects clearly.
+
 ## Using scripts
 
 ### `check-listings`
