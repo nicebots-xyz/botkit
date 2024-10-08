@@ -1,11 +1,11 @@
+import sys; import os; sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))  # noqa: E702
+# the above line allows us to import from src without any issues whilst using src/__main__.py
 from src.config import config
-import os
 import importlib.util
 import asyncio
 from glob import iglob
 from src.logging import logger
 from src.utils.setup_func import setup_func
-from src.start import main
 
 
 async def load_and_run_patches():
@@ -28,6 +28,9 @@ async def load_and_run_patches():
 
 async def pre_main():
     await load_and_run_patches()
+    # we import main here to apply patches before importing the most things we can
+    # and allow the patches to be applied to later imported modules
+    from src.start import main
     await main()
 
 

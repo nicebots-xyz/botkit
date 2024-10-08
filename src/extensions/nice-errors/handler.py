@@ -13,15 +13,17 @@ async def handle_error(
     ctx: discord.ApplicationContext | discord.Interaction,
     use_sentry_sdk: bool = False,
 ):
-    if isinstance(error, discord.ApplicationCommandInvokeError):
-        await ctx.respond(  # pyright: ignore[reportUnknownMemberType]
-            f"Whoops! I don't have permission to do that\n`{error.original.args[0].split(':')[-1].strip()}`",
-            ephemeral=True,
-        )
-    else:
-        await ctx.respond(  # pyright: ignore[reportUnknownMemberType]
-            "Whoops! An error occurred while executing this command", ephemeral=True
-        )
+    out = None
+    original_error = error
     if use_sentry_sdk and sentry_sdk:
-        sentry_sdk.capture_exception(error)
-    raise
+        out = sentry_sdk.capture_exception(error)
+    if isinstance(error, discord.ApplicationCommandInvokeError):
+        original_error = error.original
+    if isinstance(error, discord.Forbidden):
+        message = f"Whoops! I don't have the required permission to do that\n`{original_error.args[0].split(':')[-1].strip()}`"
+    else:
+        message = "Whoops! An error occurred while executing this command"
+    if out:
+        message += f"\n\n-# This error has been reported to the developers - `{out}`"
+    await ctx.respond(message, ephemeral=True) # pyright: ignore[reportUnknownMemberType]
+    raise error
