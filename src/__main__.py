@@ -4,7 +4,7 @@ from src.config import config
 import importlib.util
 import asyncio
 from glob import iglob
-from src.logging import logger
+from src.log import logger
 from src.utils.setup_func import setup_func
 
 

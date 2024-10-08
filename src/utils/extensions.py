@@ -10,7 +10,7 @@ from glob import iglob
 from schema import Schema
 from quart import Quart
 
-from src.logging import logger
+from src.log import logger
 
 
 def check_typing(module: ModuleType, func: Callable, types: dict[str, Any]):

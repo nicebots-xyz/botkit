@@ -3,7 +3,7 @@ import aiohttp
 
 from discord.ext import commands
 from schema import Schema
-from src.logging import logger
+from src.log import logger
 from discord.ext import tasks
 
 

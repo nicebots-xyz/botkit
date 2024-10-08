@@ -7,7 +7,7 @@ from datetime import datetime
 from typing_extensions import TypedDict
 from discord.ext import commands, tasks
 from schema import Schema, And, Optional, Or
-from src.logging import logger
+from src.log import logger
 
 BASE_URL = "https://top.gg/api"
 

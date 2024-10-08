@@ -6,7 +6,7 @@ import asyncio
 from quart import Quart
 from glob import iglob
 from src.config import config, store_config
-from src.logging import logger, patch
+from src.log import logger, patch
 from os.path import splitext, basename
 from types import ModuleType
 from typing import Any, Callable, TypedDict, TYPE_CHECKING

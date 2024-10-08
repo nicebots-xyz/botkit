@@ -2,7 +2,7 @@ import logging
 import os
 import time
 
-from ..config import config
+from src.config import config
 
 
 level: int = getattr(

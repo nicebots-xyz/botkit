@@ -4,7 +4,7 @@ import aiohttp
 from quart import Quart
 from discord.ext import commands
 from schema import Schema
-from src.logging import logger
+from src.log import logger
 
 
 default = {
