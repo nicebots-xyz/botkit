@@ -30,5 +30,6 @@ class NiceErrors(commands.Cog):
     ):
         await handle_error(error, ctx, self.sentry_sdk)
 
+
 def setup(bot: discord.Bot, config: dict[str, Any]) -> None:
     bot.add_cog(NiceErrors(bot, bool(config.get("sentry", {}).get("dsn"))))

@@ -1,6 +1,7 @@
 from typing import Any
 from .handler import handle_error
 
+
 async def patch(config: dict[str, Any]):
     sentry_sdk = None
     if config.get("sentry", {}).get("dsn"):

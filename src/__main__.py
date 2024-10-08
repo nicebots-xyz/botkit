@@ -1,4 +1,9 @@
-import sys; import os; sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))  # noqa: E702
+import sys
+import os
+
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+)  # noqa: E702
 # the above line allows us to import from src without any issues whilst using src/__main__.py
 from src.config import config
 import importlib.util
@@ -31,6 +36,7 @@ async def pre_main():
     # we import main here to apply patches before importing the most things we can
     # and allow the patches to be applied to later imported modules
     from src.start import main
+
     await main()
 
 
