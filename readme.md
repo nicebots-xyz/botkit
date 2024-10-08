@@ -179,7 +179,7 @@ Remember that patches are applied early in the bot's lifecycle, so they can affe
 ## Using scripts
 
 ### `check-listings`
-This script checks the publishing status of your bot on various bot listing websites, as well as if its description is up to date with one provided.
+This script checks the publishing status of your bot on various bot listing websites, as well as if its description is up-to-date with one provided.
 To use it:
 
 0. Have Google Chrome installed. This is required web scraping.

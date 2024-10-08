@@ -21,11 +21,15 @@ requires-python = "==3.11.*"
 readme = "README.md"
 license = {text = "MIT"}
 
+[project.optional-dependencies]
+sentry = [
+    "sentry-sdk>=2.15.0",
+]
 [tool.pdm.scripts]
 lint = "black ."
 export = "pdm export -o requirements.txt --without-hashes --prod"
 tests = "pytest tests"
-start = "python main.py"
+start = "python src"
 check-listings = {call = "scripts:check_listings.main"}
 
 [tool.pdm]

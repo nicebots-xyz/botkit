@@ -27,4 +27,4 @@ USER appuser
 COPY ./ /app/
 
 # We run the application
-CMD ["python", "main.py"]
+CMD ["python", "src"]

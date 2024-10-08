@@ -1,13 +1,36 @@
-import discord
-from discord import Interaction
-from discord.ui import Item
-from typing_extensions import override
+from typing import Any
+from .handler import handle_error
 
+async def patch(config: dict[str, Any]):
+    sentry_sdk = None
+    if config.get("sentry", {}).get("dsn"):
+        import sentry_sdk
+        from sentry_sdk.integrations.logging import LoggingIntegration
+        from sentry_sdk.integrations.asyncio import AsyncioIntegration
+        from sentry_sdk.scrubber import (
+            EventScrubber,
+            DEFAULT_DENYLIST,
+            DEFAULT_PII_DENYLIST,
+        )
 
-def patch():
+        sentry_sdk.init(
+            dsn=config["sentry"]["dsn"],
+            integrations=[
+                AsyncioIntegration(),
+                LoggingIntegration(),
+            ],
+            event_scrubber=EventScrubber(
+                denylist=[*DEFAULT_DENYLIST, "headers", "kwargs"],
+                pii_denylist=[*DEFAULT_PII_DENYLIST, "headers", "kwargs"],
+            ),
+        )
+
+    import discord
+    from discord import Interaction
+    from discord.ui import Item
+    from typing_extensions import override
 
     class PatchedView(discord.ui.View):
-
         @override
         async def on_error(
             self,
@@ -15,15 +38,6 @@ def patch():
             item: Item,  # pyright: ignore[reportMissingTypeArgument,reportUnknownParameterType]
             interaction: Interaction,
         ) -> None:
-            if not isinstance(error, discord.Forbidden):
-                await interaction.respond(  # pyright: ignore[reportUnknownMemberType]
-                    "Whoops! An error occurred while executing this command",
-                    ephemeral=True,
-                )
-                raise error
-            await interaction.respond(  # pyright: ignore[reportUnknownMemberType]
-                f"Whoops! I don't have permission to do that\n`{error.args[0].split(':')[-1].strip()}`",
-                ephemeral=True,
-            )
+            await handle_error(error, interaction, use_sentry_sdk=bool(sentry_sdk))
 
     discord.ui.View = PatchedView

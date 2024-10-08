@@ -2,9 +2,7 @@ import discord
 import importlib
 import importlib.util
 import asyncio
-import os
 
-from inspect import signature
 from quart import Quart
 from glob import iglob
 from src.config import config, store_config
@@ -13,7 +11,7 @@ from os.path import splitext, basename
 from types import ModuleType
 from typing import Any, Callable, TypedDict, TYPE_CHECKING
 from collections.abc import Coroutine
-from src.utils import validate_module, unzip_extensions
+from src.utils import validate_module, unzip_extensions, setup_func
 
 if TYPE_CHECKING:
     FunctionConfig = TypedDict("FunctionConfig", {"enabled": bool})
@@ -51,35 +49,6 @@ async def start_backend(app: Quart, bot: discord.Bot, token: str):
     await bot.login(token)
     await serve(app, app_config)
     patch("hypercorn.error")
-
-
-def setup_func(func: Callable[..., Any], **kwargs: Any) -> Any:
-    parameters = signature(func).parameters
-    func_kwargs = {}
-    for name, parameter in parameters.items():
-        if name in kwargs:
-            func_kwargs[name] = kwargs[name]
-        elif parameter.default != parameter.empty:
-            func_kwargs[name] = parameter.default
-        else:
-            raise TypeError(f"Missing required argument {name}")
-    return func(**func_kwargs)
-
-
-async def load_and_run_patches():
-    for patch_file in iglob("src/extensions/*/patch.py"):
-        extension = os.path.basename(os.path.dirname(patch_file))
-        if config["extensions"].get(extension, {}).get("enabled", False):
-            logger.info(f"Loading patch for extension {extension}")
-            spec = importlib.util.spec_from_file_location(
-                f"src.extensions.{extension}.patch", patch_file
-            )
-            if not spec or not spec.loader:
-                continue
-            patch_module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(patch_module)
-            if hasattr(patch_module, "patch") and callable(patch_module.patch):
-                await asyncio.to_thread(patch_module.patch)
 
 
 def load_extensions() -> (
@@ -148,8 +117,6 @@ async def main(run_bot: bool = True, run_backend: bool = True):
     assert config.get("bot", {}).get("token"), "No bot token provided in config"
     unzip_extensions()
 
-    await load_and_run_patches()
-
     bot_functions, back_functions, startup_functions = load_extensions()
 
     coros: list[Coroutine[Any, Any, Any]] = []
@@ -171,7 +138,3 @@ async def main(run_bot: bool = True, run_backend: bool = True):
     await asyncio.gather(*coros)
 
     store_config()
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
