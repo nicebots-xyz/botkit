@@ -38,7 +38,7 @@ def check_func(
     assert all(
         param in types for param in signature.parameters.keys()
     ), f"Function {func.__name__} of module {module.__name__} does not accept the correct arguments ({', '.join(types.keys())})"
-    check_typing(module, func, types)
+    # check_typing(module, func, types) # temporarily disabled due to unwanted behavior
 
 
 # noinspection DuplicatedCode

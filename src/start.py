@@ -73,6 +73,7 @@ def load_extensions() -> (
     startup_functions: "FunctionlistType" = []
     translations: list[ExtensionTranslation] = []
     for extension in iglob("src/extensions/*"):
+        name = splitext(basename(extension))[0]
         translation: ExtensionTranslation | None = None
         if translation_path := next_default(iglob(extension + "/translations.yml")):
             try:
@@ -81,8 +82,7 @@ def load_extensions() -> (
             except yaml.YAMLError as e:
                 logger.error(f"Error loading translation {translation_path}: {e}")
         else:
-            logger.warning(f"No translation found for extension {extension}")
-        name = splitext(basename(extension))[0]
+            logger.warning(f"No translation found for extension {name}")
         its_config = config["extensions"].get(name, {})
         logger.info(f"Loading extension {name}")
         module: ModuleType = importlib.import_module(f"src.extensions.{name}")
