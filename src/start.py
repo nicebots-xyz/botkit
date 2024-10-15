@@ -3,8 +3,10 @@ import importlib
 import importlib.util
 import asyncio
 
+import yaml
 from quart import Quart
 from glob import iglob
+from src.i18n.classes import ExtensionTranslation
 from src.config import config, store_config
 from src.log import logger, patch
 from os.path import splitext, basename
@@ -12,6 +14,9 @@ from types import ModuleType
 from typing import Any, Callable, TypedDict, TYPE_CHECKING
 from collections.abc import Coroutine
 from src.utils import validate_module, unzip_extensions, setup_func
+from src import i18n
+from src.utils.iterator import next_default
+from src import custom
 
 if TYPE_CHECKING:
     FunctionConfig = TypedDict("FunctionConfig", {"enabled": bool})
@@ -34,7 +39,8 @@ async def start_backend(app: Quart, bot: discord.Bot, token: str):
             **kwargs,  # pyright: ignore [reportUnknownParameterType,reportMissingParameterType]
         ) -> None:
             super().__init__(
-                *args, **kwargs  # pyright: ignore [reportUnknownArgumentType]
+                *args,  # pyright: ignore [reportUnknownArgumentType]
+                **kwargs,
             )
             if self.error_logger:
                 patch(self.error_logger)
@@ -52,13 +58,27 @@ async def start_backend(app: Quart, bot: discord.Bot, token: str):
 
 
 def load_extensions() -> (
-    tuple["FunctionlistType", "FunctionlistType", "FunctionlistType"]
+    tuple[
+        "FunctionlistType",
+        "FunctionlistType",
+        "FunctionlistType",
+        "list[ExtensionTranslation]",
+    ]
 ):
     bot_functions: "FunctionlistType" = []
     back_functions: "FunctionlistType" = []
     startup_functions: "FunctionlistType" = []
-
+    translations: list[ExtensionTranslation] = []
     for extension in iglob("src/extensions/*"):
+        translation: ExtensionTranslation | None = None
+        if translation_path := next_default(iglob(extension + "/translations.yml")):
+            try:
+                translation = i18n.load_translation(translation_path)
+                translations.append(translation)
+            except yaml.YAMLError as e:
+                logger.error(f"Error loading translation {translation_path}: {e}")
+        else:
+            logger.warning(f"No translation found for extension {extension}")
         name = splitext(basename(extension))[0]
         its_config = config["extensions"].get(name, {})
         logger.info(f"Loading extension {name}")
@@ -71,7 +91,8 @@ def load_extensions() -> (
             continue
 
         validate_module(module, its_config)
-
+        if translation and translation.strings:
+            its_config["translation"] = translation.strings
         if hasattr(module, "setup") and callable(module.setup):
             bot_functions.append((module.setup, its_config))
         if hasattr(module, "setup_webserver") and callable(module.setup_webserver):
@@ -79,15 +100,17 @@ def load_extensions() -> (
         if hasattr(module, "on_startup") and callable(module.on_startup):
             startup_functions.append((module.on_startup, its_config))
 
-    return bot_functions, back_functions, startup_functions
+    return bot_functions, back_functions, startup_functions, translations
 
 
 async def setup_and_start_bot(
     bot_functions: "FunctionlistType",
+    translations: list[ExtensionTranslation],
 ):
-    bot = discord.Bot(intents=discord.Intents.default())
+    bot = custom.Bot(intents=discord.Intents.default())
     for function, its_config in bot_functions:
         setup_func(function, bot=bot, config=its_config)
+    i18n.apply(bot, translations)
     await start_bot(bot, config["bot"]["token"])
 
 
@@ -117,11 +140,11 @@ async def main(run_bot: bool = True, run_backend: bool = True):
     assert config.get("bot", {}).get("token"), "No bot token provided in config"
     unzip_extensions()
 
-    bot_functions, back_functions, startup_functions = load_extensions()
+    bot_functions, back_functions, startup_functions, translations = load_extensions()
 
     coros: list[Coroutine[Any, Any, Any]] = []
     if bot_functions and run_bot:
-        coros.append(setup_and_start_bot(bot_functions))
+        coros.append(setup_and_start_bot(bot_functions, translations))
     if back_functions and run_backend:
         coros.append(setup_and_start_backend(back_functions))
     assert coros, "No extensions to run"

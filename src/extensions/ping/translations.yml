@@ -1,0 +1,55 @@
+commands:
+  ping:
+    name:
+      en-US: ping
+      fr: ping
+      de: ping
+      es-ES: ping
+      ru: пинг
+      nl: ping
+    description:
+      en-US: Get the bot's latency
+      fr: Obtenir la latence du bot
+      de: Erhalte die Latenz des Bots
+      es-ES: Obtener la latencia del bot
+      ru: Получить задержку бота
+      nl: Krijg de latentie van de bot
+    options:
+      ephemeral:
+        name:
+          en-US: ephemeral
+          fr: éphémère
+          de: flüchtig
+          es-ES: efímero
+          ru: мгновенное
+          nl: tijdelijk
+        description:
+          en-US: Whether the response should be ephemeral
+          fr: Si la réponse doit être éphémère
+          de: Ob die Antwort flüchtig sein soll
+          es-ES: Si la respuesta debe ser efímera
+          ru: Должен ли ответ быть мгновенным
+          nl: Of het antwoord tijdelijk moet zijn
+      use_embed:
+        name:
+          en-US: embed
+          fr: embed
+          de: einbetten
+          es-ES: incrustar
+          ru: встроить
+          nl: inbedden
+        description:
+          en-US: Whether the response should be an embed
+          fr: Si la réponse doit être un embed
+          de: Ob die Antwort eingebettet sein soll
+          es-ES: Si la respuesta debe ser incrustada
+          ru: Должен ли ответ быть встроенным
+          nl: Of het antwoord moet worden ingebed
+    strings:
+      response:
+        en-US: Pong! The bot's latency is {latency}ms.
+        fr: Pong ! La latence du bot est de {latency}ms.
+        de: Pong! Die Latenz des Bots beträgt {latency}ms.
+        es-ES: ¡Pong! La latencia del bot es de {latency}ms.
+        ru: Понг! Задержка бота составляет {latency}мс.
+        nl: Pong! De latentie van de bot is {latency}ms.

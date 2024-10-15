@@ -5,7 +5,7 @@ from quart import Quart
 from discord.ext import commands
 from schema import Schema
 from src.log import logger
-
+from src import custom
 
 default = {
     "enabled": True,
@@ -25,15 +25,17 @@ class Ping(commands.Cog):
     @discord.slash_command(name="ping")
     async def ping(
         self,
-        ctx: discord.ApplicationContext,
+        ctx: custom.ApplicationContext,
         ephemeral: bool = False,
-        embed: bool = False,
+        use_embed: bool = False,
     ):
         await ctx.defer(ephemeral=ephemeral)
-        if embed:
+        if use_embed:
             embed = discord.Embed(
                 title="Pong!",
-                description=f"{round(self.bot.latency * 1000)}ms",
+                description=ctx.translations.response.format(
+                    latency=round(self.bot.latency * 1000)
+                ),
                 color=discord.Colour.blurple(),
             )
             return await ctx.respond(embed=embed, ephemeral=ephemeral)
