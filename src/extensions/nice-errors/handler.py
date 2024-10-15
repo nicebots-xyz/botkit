@@ -25,7 +25,5 @@ async def handle_error(
         message = "Whoops! An error occurred while executing this command"
     if out:
         message += f"\n\n-# This error has been reported to the developers - `{out}`"
-    await ctx.respond(
-        message, ephemeral=True
-    )  # pyright: ignore[reportUnknownMemberType]
+    await ctx.respond(message, ephemeral=True)  # pyright: ignore[reportUnknownMemberType]
     raise error

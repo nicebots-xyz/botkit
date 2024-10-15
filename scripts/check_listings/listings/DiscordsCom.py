@@ -1,7 +1,6 @@
 import nodriver as uc
 
 from bs4 import BeautifulSoup
-from asyncio import TimeoutError
 
 from .Listing import Listing, NotFoundError
 

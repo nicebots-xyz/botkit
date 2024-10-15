@@ -8,7 +8,6 @@ from termcolor import cprint
 from bs4 import BeautifulSoup
 
 from .listings import (
-    Listing,
     normalize_soup,
     TopGg,
     DiscordsCom,

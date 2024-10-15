@@ -1,9 +1,7 @@
 import sys
 import os
 
-sys.path.insert(
-    0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-)  # noqa: E702
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))  # noqa: E702
 # the above line allows us to import from src without any issues whilst using src/__main__.py
 from src.config import config
 import importlib.util
@@ -41,5 +39,4 @@ async def pre_main():
 
 
 if __name__ == "__main__":
-
     asyncio.run(pre_main())

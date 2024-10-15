@@ -1,7 +1,5 @@
 import discord
-import aiohttp
 
-from quart import Quart
 from discord.ext import commands
 from schema import Schema
 from src.log import logger
@@ -37,7 +35,7 @@ class AddDM(commands.Cog):
         try:
             await user.send(self.config["message"].format(user=user))
         except discord.Forbidden:
-            logger.warning(f"Failed to send DM when joining a guild")
+            logger.warning("Failed to send DM when joining a guild")
 
 
 def setup(bot: discord.Bot, config: dict) -> None:
