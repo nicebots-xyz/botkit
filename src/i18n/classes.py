@@ -87,7 +87,7 @@ class TranslationWrapper:
     def __init__(self, model: "Translatable", locale: str, default: str = DEFAULT):
         self._model = model
         self._default: str
-        self.default = default
+        self.default = default.replace("-", "_")
         self._locale: str
         self.locale = locale.replace("-", "_")
 
@@ -100,8 +100,9 @@ class TranslationWrapper:
             applicable = getattr(self._model, key)
         if isinstance(applicable, RawTranslation):
             try:
-                print(id(self._model))
-                return getattr(applicable, self._locale)
+                return getattr(applicable, self._locale) or getattr(
+                    applicable, self._default
+                )
             except AttributeError:
                 return getattr(applicable, self._default)
         return apply_locale(applicable, self._locale)
