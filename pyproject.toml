@@ -1,9 +1,9 @@
 [project]
 name = "botkit"
 version = "0.1.0"
-description = "Default template for PDM package"
+description = "Botkit: An Advanced Framework for Crafting Sophisticated Discord Bots with py-cord"
 authors = [
-    {name = "NiceBots.xyz", email = "hello@nicebots.xyz"},
+    {name = "Paillat-dev", email = "me@paillat.dev"},
 ]
 dependencies = [
     "py-cord>=2.5.0",
@@ -16,6 +16,8 @@ dependencies = [
     "schema>=0.7.7",
     "hypercorn>=0.17.3",
     "quart>=0.19.6",
+    "pydantic>=2.9.2",
+    "coloredlogs>=15.0.1",
 ]
 requires-python = "==3.11.*"
 readme = "README.md"
