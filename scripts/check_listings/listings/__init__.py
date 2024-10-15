@@ -1,3 +1,6 @@
+# Copyright (c) NiceBots
+# SPDX-License-Identifier: MIT
+
 from .TopGg import TopGg
 from .DiscordsCom import DiscordsCom
 from .Listing import BaseError, NotFoundError, normalize_soup

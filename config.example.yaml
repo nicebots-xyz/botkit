@@ -1,3 +1,6 @@
+# Copyright (c) NiceBots.xyz
+# SPDX-License-Identifier: MIT
+
 #file: noinspection SpellCheckingInspection
 extensions:
   topgg: # If your discord bot is on top.gg, you can enable this extension to post your stats (server count, shard count, etc.) on top.gg automatically.

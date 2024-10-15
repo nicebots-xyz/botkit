@@ -1,0 +1,19 @@
+name: Check for LICENSE file header
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+
+jobs:
+    check-license-header:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+        - name: Setup Copywrite
+          uses: hashicorp/setup-copywrite@867a1a2a064a0626db322392806428f7dc59cb3e
+        - name: Check Header Compliance
+          run: copywrite headers --plan --config .copywrite.hcl
