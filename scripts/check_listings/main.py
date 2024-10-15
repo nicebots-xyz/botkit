@@ -1,3 +1,6 @@
+# Copyright (c) NiceBots.xyz
+# SPDX-License-Identifier: MIT
+
 import asyncio
 import nodriver as uc
 import markdown

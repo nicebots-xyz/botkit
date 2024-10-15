@@ -1,3 +1,6 @@
+# Copyright (c) NiceBots.xyz
+# SPDX-License-Identifier: MIT
+
 from typing_extensions import override
 import discord
 from src.i18n import apply_locale

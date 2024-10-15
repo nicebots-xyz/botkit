@@ -1,3 +1,6 @@
+# Copyright (c) NiceBots.xyz
+# SPDX-License-Identifier: MIT
+
 from typing import TypeVar
 import discord
 from .classes import (

@@ -1,3 +1,6 @@
+# Copyright (c) NiceBots.xyz
+# SPDX-License-Identifier: MIT
+
 from glob import iglob
 from os.path import splitext, basename
 import importlib

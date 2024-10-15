@@ -1,3 +1,6 @@
+# Copyright (c) NiceBots.xyz
+# SPDX-License-Identifier: MIT
+
 from typing import Any
 from typing_extensions import override
 from pydantic import BaseModel, Field
