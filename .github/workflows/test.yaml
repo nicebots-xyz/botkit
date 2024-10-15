@@ -13,7 +13,9 @@ jobs:
           cache: true
       - name: Install dependencies
         run: pdm install -d
+      - name: Run formatting check
+        run: pdm run ruff format --check .
       - name: Run linting check
-        run: pdm run lint --check
+        run: pdm run ruff check .
       - name: Run tests
         run: pdm run tests

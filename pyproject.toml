@@ -28,7 +28,8 @@ sentry = [
     "sentry-sdk>=2.15.0",
 ]
 [tool.pdm.scripts]
-lint = "black ."
+format = "ruff format ."
+lint = "ruff check --fix ."
 export = "pdm export -o requirements.txt --without-hashes --prod"
 tests = "pytest tests"
 start = "python src"
@@ -39,13 +40,13 @@ distribution = false
 
 [tool.pdm.dev-dependencies]
 dev = [
-    "black>=24.4.2",
     "pytest>=8.2.2",
     "beautifulsoup4>=4.12.3",
     "nodriver>=0.32",
     "markdown>=3.6",
     "termcolor>=2.4.0",
     "basedpyright>=1.18.3",
+    "ruff>=0.6.9",
 ]
 
 [tool.pyright]
