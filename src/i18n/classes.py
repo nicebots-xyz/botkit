@@ -114,7 +114,7 @@ class TranslationWrapper:
     def locale(self, value: str | None) -> None:  # pyright: ignore[reportPropertyTypeMismatch]
         if value is None:
             value = self.default
-        if value not in LOCALES:
+        if value.replace("_", "-") not in LOCALES:
             raise ValueError(f"Invalid locale {value}")
         self._locale = value
 
@@ -124,7 +124,7 @@ class TranslationWrapper:
 
     @default.setter
     def default(self, value: str) -> None:
-        if value not in LOCALES:
+        if value.replace("_", "-") not in LOCALES:
             raise ValueError(f"Invalid locale {value}")
         self._default = value
 
