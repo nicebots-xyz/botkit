@@ -1,16 +1,22 @@
-# Botkit: A Framework for Building Discord Bots with py-cord
+# Botkit: An Advanced Framework for Crafting Sophisticated Discord Bots with py-cord
 
 ## What is Botkit?
 
-Botkit is a framework for building Discord bots.
-It is designed to simplify the process of creating and managing Discord bots,
-by providing a modular architecture and a set of useful tools and utilities
-so that you can focus on building your bot's functionality.
-We use it ourselves to build our own bots, and we hope you find it useful too!
+Botkit is a comprehensive framework designed for developing feature-rich, production-ready Discord bots. It goes beyond basic bot creation by offering a suite of advanced tools and integrations that empower developers to build sophisticated, scalable, and maintainable bots.
+
+Key features include:
+
+- **Robust Internationalization (i18n)**: Built-in support for multi-language bots, allowing seamless localization across diverse Discord communities.
+- **Bot Listing Integration**: Streamlined processes for managing your bot's presence on popular bot listing websites, enhancing discoverability.
+- **Advanced Error Handling**: Sentry-compatible error tracking, enabling real-time monitoring and debugging of your bot in production environments. (Sentry is an application monitoring platform that helps developers identify and fix crashes in real time.)
+- **Uptime Status Posting**: Automated systems for reporting your bot's operational status, crucial for maintaining user trust and meeting service level agreements.
+- **Modular Architecture**: A flexible, extension-based structure that facilitates easy feature addition and management.
+
+While Botkit provides a rich set of advanced features, it maintains a balance between functionality and efficiency, offering a powerful yet not overly cumbersome development experience.
 
 ## What Botkit is NOT
 
-Botkit is not a pre-built Discord bot. Instead, it is a starting point for building your own custom Discord bot. You’re expected to edit and modify the provided code to suit your specific requirements.
+Botkit is not a pre-built, out-of-the-box Discord bot solution. It's a sophisticated framework and starting point for developers looking to create advanced, custom Discord bots. Botkit is designed for those who need more than basic functionality and are ready to leverage its powerful features to create truly unique and capable bots.
 
 ## Features
 
@@ -117,6 +123,116 @@ schema = {
 }
 ```
 We really encourage you to follow these instructions, even if you’re coding privately, as it will make your code more readable and maintainable in the long run.
+
+## Internationalization (i18n)
+
+Botkit provides robust support for internationalization, allowing you to create multi-language Discord bots with ease. Here's how to implement and use translations in your extensions:
+
+### Translation File Structure
+
+Each extension can have its own `translations.yml` file located at `src/extensions/EXT_NAME/translations.yml`. This file follows a specific structure:
+
+```yaml
+commands:
+  command_name:
+    name:
+      en-US: Command Name
+      fr: Nom de la Commande
+      # ... other languages
+    description:
+      en-US: Command description
+      fr: Description de la commande
+      # ... other languages
+    options:
+      option_name:
+        name:
+          en-US: Option Name
+          fr: Nom de l'Option
+          # ... other languages
+        description:
+          en-US: Option description
+          fr: Description de l'option
+          # ... other languages
+    strings:
+      response_key:
+        en-US: Response text in English
+        fr: Texte de réponse en français
+        # ... other languages
+
+strings:
+  string1:
+    en-US: General string in English
+    fr: Chaîne générale en français
+  # ... other general strings
+```
+
+> [!NOTE]
+> The top-level `strings` section (outside of `commands`) is what gets mapped to `config["translations"]`. This section is for general strings not directly tied to specific commands.
+
+### Nested Commands and Sub-commands
+
+For command groups and sub-commands, you can nest the structure using the `commands` key:
+
+```yaml
+commands:
+  parent_command:
+    name:
+      en-US: Parent Command
+      # ... other languages
+    description:
+      en-US: Parent command description
+      # ... other languages
+    commands:
+      sub_command:
+        name:
+          en-US: Sub Command
+          # ... other languages
+        description:
+          en-US: Sub-command description
+          # ... other languages
+        # ... options, strings, etc.
+```
+
+This structure can be nested further for sub-sub-commands if needed.
+
+### Accessing Translations in Code
+
+1. For slash commands, options, and their descriptions, Botkit automatically applies the correct translations based on the guild's preferred locale.
+
+2. For other strings, you can access translations using the `apply_locale` function:
+
+```python
+from src.i18n import apply_locale
+
+# In your command or event handler:
+translations = apply_locale(config["translations"], message.guild.preferred_locale)
+response = translations.some_key.response_text
+
+# You can also specify a default locale:
+translations = apply_locale(config["translations"], message.guild.preferred_locale, default="en-US")
+```
+
+3. In slash commands, translations are available via the `ctx.translations` object:
+
+```python
+from src import custom
+@discord.slash_command(name="ping")
+
+async def ping(self, ctx: custom.ApplicationContext):
+    response = ctx.translations.response.format(latency=round(self.bot.latency * 1000))
+    await ctx.respond(response)
+```
+> [!NOTE]
+> The translations available under `ctx.translations` are the ones set under `strings` in the command's translation.
+
+### Best Practices
+
+- Provide translations for all supported languages in your `translations.yml` file.
+- Use meaningful keys for your strings to make the code more readable.
+- Consider using placeholders (e.g., `{latency}`) in your translated strings for dynamic content.
+- Always provide at least an English (en-US) translation as a fallback.
+
+By following these guidelines, you can create a bot that seamlessly adapts to different languages, providing a localized experience for users across various Discord servers.
 
 ## Using Patch Files
 
