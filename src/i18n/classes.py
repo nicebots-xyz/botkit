@@ -95,7 +95,7 @@ class TranslationWrapper:
         if isinstance(self._model, dict):
             applicable = self._model.get(key)
             if not applicable:
-                raise AttributeError
+                raise AttributeError(f'Key "{key}" not found in {self._model}')
         else:
             applicable = getattr(self._model, key)
         if isinstance(applicable, RawTranslation):
@@ -173,8 +173,13 @@ class ExtensionTranslation(Translation):
 
 
 def apply_locale(
-    model: "Translatable | TranslationWrapper", locale: str, default: str = DEFAULT
+    model: "Translatable | TranslationWrapper",
+    locale: str | None,
+    default: str | None = DEFAULT,
 ) -> TranslationWrapper:
+    default = default if default is not None else DEFAULT
+    if locale is None:
+        locale = DEFAULT
     if isinstance(model, TranslationWrapper):
         model.locale = locale
         model.default = default

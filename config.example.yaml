@@ -35,4 +35,11 @@ extensions:
         - "on YouTube"
       every: 300 # 300 seconds = 5 minutes
 bot:
-    token: "bot token here" # Your bot token
+  token: "bot token here" # Your bot token
+logging:
+  level: "INFO" # The logging level. Possible values: DEBUG, INFO, WARNING, ERROR, CRITICAL
+use:
+  bot: true # Whether to run the bot
+  backend: false # Whether to run the backend
+
+

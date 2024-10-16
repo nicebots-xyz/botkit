@@ -6,6 +6,7 @@ import importlib
 import importlib.util
 import asyncio
 
+from discord.ext import commands
 import yaml
 from quart import Quart
 from glob import iglob
@@ -26,7 +27,7 @@ if TYPE_CHECKING:
     FunctionlistType = list[tuple[Callable[..., Any], FunctionConfig]]
 
 
-async def start_bot(bot: discord.Bot, token: str):
+async def start_bot(bot: custom.Bot, token: str):
     await bot.start(token)
 
 
@@ -109,12 +110,20 @@ def load_extensions() -> (
 async def setup_and_start_bot(
     bot_functions: "FunctionlistType",
     translations: list[ExtensionTranslation],
+    config: dict[str, Any],
 ):
-    bot = custom.Bot(intents=discord.Intents.default())
+    intents = discord.Intents.default()
+    if config.get("prefix"):
+        intents.message_content = True
+    bot = custom.Bot(
+        intents=intents,
+        help_command=None,
+        command_prefix=(config.get("prefix") or commands.when_mentioned),
+    )
     for function, its_config in bot_functions:
         setup_func(function, bot=bot, config=its_config)
     i18n.apply(bot, translations)
-    await start_bot(bot, config["bot"]["token"])
+    await start_bot(bot, config["token"])
 
 
 async def setup_and_start_backend(
@@ -139,15 +148,23 @@ async def run_startup_functions(
     await asyncio.gather(*startup_coros)
 
 
-async def main(run_bot: bool = True, run_backend: bool = True):
+async def main(run_bot: bool | None = None, run_backend: bool | None = None):
     assert config.get("bot", {}).get("token"), "No bot token provided in config"
     unzip_extensions()
+    run_bot = run_bot if run_bot is not None else config.get("use", {}).get("bot", True)
+    run_backend = (
+        run_backend
+        if run_backend is not None
+        else config.get("use", {}).get("backend", True)
+    )
 
     bot_functions, back_functions, startup_functions, translations = load_extensions()
 
     coros: list[Coroutine[Any, Any, Any]] = []
     if bot_functions and run_bot:
-        coros.append(setup_and_start_bot(bot_functions, translations))
+        coros.append(
+            setup_and_start_bot(bot_functions, translations, config.get("bot", {}))
+        )
     if back_functions and run_backend:
         coros.append(setup_and_start_backend(back_functions))
     assert coros, "No extensions to run"

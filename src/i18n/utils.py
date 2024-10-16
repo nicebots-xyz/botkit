@@ -1,8 +1,9 @@
 # Copyright (c) NiceBots.xyz
 # SPDX-License-Identifier: MIT
 
-from typing import TypeVar
+from typing import TypeVar, TYPE_CHECKING
 import discord
+
 from .classes import (
     ExtensionTranslation,
     Deg1CommandTranslation,
@@ -10,7 +11,10 @@ from .classes import (
 )
 from src.log import logger as main_logger
 import yaml
+from discord.ext import commands as prefixed
 
+if TYPE_CHECKING:
+    from src import custom
 logger = main_logger.getChild("i18n")
 
 
@@ -64,6 +68,7 @@ CommandT = TypeVar(
     discord.ApplicationCommand,  # pyright: ignore[reportMissingTypeArgument]
     discord.SlashCommand,
     discord.SlashCommandGroup,
+    prefixed.Command,  # pyright: ignore[reportMissingTypeArgument]
 )
 
 
@@ -89,7 +94,9 @@ def localize_commands(
     err = 0
     tot = 0
     for command in commands:
-        if isinstance(command, (discord.SlashCommand, discord.SlashCommandGroup)):
+        if isinstance(
+            command, (discord.SlashCommand, discord.SlashCommandGroup, prefixed.Command)
+        ):
             tot += 1
             try:
                 try:
@@ -112,7 +119,8 @@ def localize_commands(
                 if translation.name:
                     name = remove_none(translation.name.model_dump(by_alias=True))
                     command.name = name.get(DEFAULT_LOCALE, command.name)
-                    command.name_localizations = name
+                    if not isinstance(command, prefixed.Command):
+                        command.name_localizations = name
                 if translation.description:
                     description = remove_none(
                         translation.description.model_dump(by_alias=True)
@@ -120,7 +128,8 @@ def localize_commands(
                     command.description = description.get(
                         DEFAULT_LOCALE, command.description
                     )
-                    command.description_localizations = description
+                    if not isinstance(command, prefixed.Command):
+                        command.description_localizations = description
                 if translation.strings:
                     command.translations = translation.strings  # pyright: ignore[reportAttributeAccessIssue]
                 if isinstance(command, discord.SlashCommand) and translation.options:
@@ -172,7 +181,7 @@ def load_translation(path: str) -> ExtensionTranslation:
 
 
 def apply(
-    bot: discord.Bot,
+    bot: "custom.Bot",
     translations: list[ExtensionTranslation],
     DEFAULT_LOCALE: str = "en-US",
 ) -> None:
@@ -193,7 +202,7 @@ def apply(
         return
 
     err, tot = localize_commands(
-        bot.pending_application_commands,  # pyright: ignore[reportUnknownMemberType,reportUnknownArgumentType]
+        [*bot.pending_application_commands, *bot.commands],  # pyright: ignore[reportUnknownMemberType,reportUnknownArgumentType]
         command_translations,
         DEFAULT_LOCALE,
     )
