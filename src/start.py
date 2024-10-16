@@ -96,7 +96,7 @@ def load_extensions() -> (
 
         validate_module(module, its_config)
         if translation and translation.strings:
-            its_config["translation"] = translation.strings
+            its_config["translations"] = translation.strings
         if hasattr(module, "setup") and callable(module.setup):
             bot_functions.append((module.setup, its_config))
         if hasattr(module, "setup_webserver") and callable(module.setup_webserver):
@@ -118,11 +118,17 @@ async def setup_and_start_bot(
     bot = custom.Bot(
         intents=intents,
         help_command=None,
-        command_prefix=(config.get("prefix") or commands.when_mentioned),
+        command_prefix=(
+            config.get("prefix", {}).get("prefix") or commands.when_mentioned
+        ),
     )
     for function, its_config in bot_functions:
         setup_func(function, bot=bot, config=its_config)
     i18n.apply(bot, translations)
+    if not config.get("prefix", {}).get("enabled", True):
+        bot.prefixed_commands = {}
+    if not config.get("slash", {}).get("enabled", True):
+        bot._pending_application_commands = []  # pyright: ignore[reportPrivateUsage]
     await start_bot(bot, config["token"])
 
 

@@ -138,7 +138,7 @@ class TranslationWrapper:
         return str(self._model)
 
 
-Translatable = Translation | dict[str, Translation]
+Translatable = Translation | dict[str, RawTranslation] | dict[str, RawTranslation]
 
 
 class NameDescriptionTranslation(Translation):

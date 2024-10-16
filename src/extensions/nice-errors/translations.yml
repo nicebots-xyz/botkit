@@ -1,0 +1,39 @@
+# Copyright (c) NiceBots
+# SPDX-License-Identifier: MIT
+
+strings:
+  error_command_not_found:
+    en-US: Whoops! That command doesn't exist. Did you mean `{similar_command}`?
+    de: Hoppla! Dieses Kommando existiert nicht. Meintest du `{similar_command}`?
+    nl: Oeps! Die opdracht bestaat niet. Bedoelde je `{similar_command}`?
+    fr: Oups ! Cette commande n'existe pas. Vouliez-vous dire `{similar_command}` ?
+    it: Ops! Quel comando non esiste. Intendevi `{similar_command}`?
+    es-ES: ¡Ups! Ese comando no existe. ¿Quisiste decir `{similar_command}`?
+    ru: Упс! Такой команды не существует. Возможно, вы имели в виду `{similar_command}`?
+
+  error_missing_permissions:
+    en-US: Whoops! I don't have the required permission to do that.
+    de: Hoppla! Ich habe nicht die erforderliche Berechtigung dafür.
+    nl: Oeps! Ik heb niet de vereiste toestemming om dat te doen.
+    fr: Oups ! Je n'ai pas la permission requise pour faire cela.
+    it: Ops! Non ho i permessi necessari per farlo.
+    es-ES: ¡Ups! No tengo el permiso necesario para hacer eso.
+    ru: Упс! У меня нет необходимых прав для выполнения этого действия.
+
+  error_generic:
+    en-US: Whoops! An error occurred while executing this command.
+    de: Hoppla! Bei der Ausführung dieses Kommandos ist ein Fehler aufgetreten.
+    nl: Oeps! Er is een fout opgetreden bij het uitvoeren van deze opdracht.
+    fr: Oups ! Une erreur s'est produite lors de l'exécution de cette commande.
+    it: Ops! Si è verificato un errore durante l'esecuzione di questo comando.
+    es-ES: ¡Ups! Ocurrió un error al ejecutar este comando.
+    ru: Упс! При выполнении этой команды произошла ошибка.
+
+  reported_to_devs:
+    en-US: This error has been reported to the developers.
+    de: Dieser Fehler wurde an die Entwickler gemeldet.
+    nl: Deze fout is gemeld aan de ontwikkelaars.
+    fr: Cette erreur a été signalée aux développeurs.
+    it: Questo errore è stato segnalato agli sviluppatori.
+    es-ES: Este error ha sido reportado a los desarrolladores.
+    ru: Об этой ошибке сообщено разработчикам.

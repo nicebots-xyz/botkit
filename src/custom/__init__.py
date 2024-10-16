@@ -75,3 +75,5 @@ class Bot(bridge.Bot):
 
 # if we used | we would sometimes need to use 'Context' instead of Context when type hinting bc else the interpreter will crash
 Context = Union[ExtContext, ApplicationContext]  # pyright: ignore[reportDeprecated]
+
+__all__ = ["Bot", "Context", "ExtContext", "ApplicationContext"]
