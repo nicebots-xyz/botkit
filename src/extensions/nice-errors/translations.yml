@@ -10,7 +10,14 @@ strings:
     it: Ops! Quel comando non esiste. Intendevi `{similar_command}`?
     es-ES: ¡Ups! Ese comando no existe. ¿Quisiste decir `{similar_command}`?
     ru: Упс! Такой команды не существует. Возможно, вы имели в виду `{similar_command}`?
-
+  run_x_instead:
+    en-US: Run "{command}" instead.
+    de: Führe stattdessen "{command}" aus.
+    nl: Voer in plaats daarvan "{command}" uit.
+    fr: Exécutez "{command}" à la place.
+    it: Esegui "{command}" invece.
+    es-ES: Ejecuta "{command}" en su lugar.
+    ru: Выполните "{command}" вместо этого.
   error_missing_permissions:
     en-US: Whoops! I don't have the required permission to do that.
     de: Hoppla! Ich habe nicht die erforderliche Berechtigung dafür.
@@ -19,7 +26,6 @@ strings:
     it: Ops! Non ho i permessi necessari per farlo.
     es-ES: ¡Ups! No tengo el permiso necesario para hacer eso.
     ru: Упс! У меня нет необходимых прав для выполнения этого действия.
-
   error_generic:
     en-US: Whoops! An error occurred while executing this command.
     de: Hoppla! Bei der Ausführung dieses Kommandos ist ein Fehler aufgetreten.
@@ -28,7 +34,6 @@ strings:
     it: Ops! Si è verificato un errore durante l'esecuzione di questo comando.
     es-ES: ¡Ups! Ocurrió un error al ejecutar este comando.
     ru: Упс! При выполнении этой команды произошла ошибка.
-
   reported_to_devs:
     en-US: This error has been reported to the developers.
     de: Dieser Fehler wurde an die Entwickler gemeldet.

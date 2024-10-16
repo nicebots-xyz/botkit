@@ -42,6 +42,11 @@ async def patch(config: dict[str, Any]):
             item: Item,  # pyright: ignore[reportMissingTypeArgument,reportUnknownParameterType]
             interaction: Interaction,
         ) -> None:
-            await handle_error(error, interaction, use_sentry_sdk=bool(sentry_sdk))
+            await handle_error(
+                error,
+                interaction,
+                raw_translations=config["translations"],
+                use_sentry_sdk=bool(sentry_sdk),
+            )
 
     discord.ui.View = PatchedView

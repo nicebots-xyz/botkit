@@ -52,4 +52,5 @@ dev = [
 [tool.pyright]
 reportAny = false
 reportUnusedCallResult = false
+reportUnknownMemberType = false
 pythonVersion = "3.11"
