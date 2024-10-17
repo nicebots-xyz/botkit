@@ -8,6 +8,9 @@ import discord
 from src.i18n.classes import ExtensionTranslation, TranslationWrapper, apply_locale
 from typing import Any, Union  # pyright: ignore[reportDeprecated]
 from discord.ext import bridge
+from logging import getLogger
+
+logger = getLogger("bot")
 
 
 class ApplicationContext(bridge.BridgeApplicationContext):
@@ -50,6 +53,10 @@ class Bot(bridge.Bot):
     def __init__(self, *args: Any, **options: Any):
         self.translations: list[ExtensionTranslation] = options.pop("translations", [])
         super().__init__(*args, **options)  # pyright: ignore[reportUnknownMemberType]
+
+        @self.listen(name="on_ready", once=True)
+        async def on_ready():  # pyright: ignore[reportUnusedFunction]
+            logger.success("Bot started successfully")  # pyright: ignore[reportAttributeAccessIssue]
 
     @override
     async def get_application_context(
