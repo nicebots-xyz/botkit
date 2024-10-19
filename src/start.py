@@ -75,6 +75,16 @@ def load_extensions() -> (
     translations: list[ExtensionTranslation] = []
     for extension in iglob("src/extensions/*"):
         name = splitext(basename(extension))[0]
+
+        its_config = config["extensions"].get(name, {})
+        module: ModuleType = importlib.import_module(f"src.extensions.{name}")
+        if not its_config:
+            its_config = module.default
+            config["extensions"][name] = its_config
+        if not its_config["enabled"]:
+            del module
+            continue
+        logger.info(f"Loading extension {name}")
         translation: ExtensionTranslation | None = None
         if translation_path := next_default(iglob(extension + "/translations.yml")):
             try:
@@ -84,15 +94,6 @@ def load_extensions() -> (
                 logger.error(f"Error loading translation {translation_path}: {e}")
         else:
             logger.warning(f"No translation found for extension {name}")
-        its_config = config["extensions"].get(name, {})
-        logger.info(f"Loading extension {name}")
-        module: ModuleType = importlib.import_module(f"src.extensions.{name}")
-        if not its_config:
-            its_config = module.default
-            config["extensions"][name] = its_config
-        if not its_config["enabled"]:
-            del module
-            continue
 
         validate_module(module, its_config)
         if translation and translation.strings:
