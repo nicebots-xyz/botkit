@@ -22,9 +22,9 @@ hyperframe==6.0.1
 idna==3.10
 itsdangerous==2.2.0
 jinja2==3.1.4
-markupsafe==3.0.1
+markupsafe==3.0.2
 multidict==6.1.0
-orjson==3.10.7
+orjson==3.10.9
 priority==2.0.0
 propcache==0.2.0
 py-cord==2.6.1
@@ -39,4 +39,4 @@ schema==0.7.7
 typing-extensions==4.12.2
 werkzeug==3.0.4
 wsproto==1.2.0
-yarl==1.15.2
+yarl==1.15.5
