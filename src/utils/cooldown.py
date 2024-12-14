@@ -1,3 +1,6 @@
+# Copyright (c) NiceBots
+# SPDX-License-Identifier: MIT
+
 from enum import Enum
 import time
 from collections.abc import Awaitable, Callable, Coroutine
