@@ -133,10 +133,14 @@ async def setup_and_start_bot(
     intents = discord.Intents.default()
     if config.get("prefix"):
         intents.message_content = True
+    # Get cache configuration
+    cache_config = config.get("cache", {})
     bot = custom.Bot(
         intents=intents,
         help_command=None,
         command_prefix=(config.get("prefix", {}).get("prefix") or commands.when_mentioned),
+        cache_type=cache_config.get("type", "memory"),
+        cache_config=cache_config.get("redis"),
     )
     for function, its_config in bot_functions:
         setup_func(function, bot=bot, config=its_config)
