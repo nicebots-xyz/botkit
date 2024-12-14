@@ -43,7 +43,7 @@ class CooldownExceeded(commands.CheckFailure):
         super().__init__(f"You are on {bucket_type.value} cooldown")
 
 
-def get_bucket_key(ctx: custom.ApplicationContext, base_key: str, bucket_type: BucketType) -> str:
+def get_bucket_key(ctx: custom.ApplicationContext, base_key: str, bucket_type: BucketType) -> str:  # noqa: PLR0911
     """Generate a cooldown key based on the bucket type."""
     match bucket_type:
         case BucketType.USER:
@@ -68,7 +68,7 @@ def get_bucket_key(ctx: custom.ApplicationContext, base_key: str, bucket_type: B
             return base_key
 
 
-def cooldown[C: commands.Cog, **P](
+def cooldown[C: commands.Cog, **P](  # noqa: PLR0913
     key: ReactiveCooldownSetting[str],
     *,
     limit: ReactiveCooldownSetting[int],
