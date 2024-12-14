@@ -41,5 +41,12 @@ logging:
 use:
   bot: true # Whether to run the bot
   backend: false # Whether to run the backend
-
-
+cache:
+  type: "memory" # Cache type. Possible values: "memory" or "redis"
+  redis: # Redis configuration (only used if type is "redis")
+    host: "localhost" # Redis server host
+    port: 6379 # Redis server port
+    db: 0 # Redis database number
+    password: null # Redis password (optional)
+    username: null # Redis username (optional)
+    ssl: false # Whether to use SSL for Redis connection
