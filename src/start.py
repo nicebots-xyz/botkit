@@ -37,7 +37,7 @@ async def start_bot(bot: custom.Bot, token: str) -> None:
     except LoginFailure as e:
         logger.critical("Failed to log in, is the bot token valid?")
         logger.debug("", exc_info=e)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         logger.critical("An unexpected error occurred while starting the bot.")
         logger.debug("", exc_info=e)
 
@@ -71,7 +71,7 @@ async def start_backend(app: Quart, bot: discord.Bot, token: str) -> None:
         await bot.login(token)
         await serve(app, app_config)
         patch("hypercorn.error")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         logger.error("An error occurred while starting the backend server.")
         logger.debug("", exc_info=e)
 
