@@ -38,7 +38,7 @@ async def start_bot(bot: custom.Bot, token: str) -> None:
         logger.critical("Failed to log in, is the bot token valid?")
         logger.debug("", exc_info=e)
     except Exception as e:
-        logger.error("An unexpected error occurred while starting the bot.")
+        logger.critical("An unexpected error occurred while starting the bot.")
         logger.debug("", exc_info=e)
 
 
