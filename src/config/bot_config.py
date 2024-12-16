@@ -59,10 +59,17 @@ if os.path.exists("config.yaml"):
 elif os.path.exists("config.yml"):
     path = "config.yml"
 
-config: dict[str, dict[str, Any]]
+from collections import defaultdict
+def merge_dicts(dct, merge_dct):
+    for k, v in merge_dct.items():
+        if (isinstance(dct.get(k), dict) and isinstance(v, dict)):
+            merge_dicts(dct[k], v)
+        else:
+            dct[k] = v
+
+config: dict[str, dict[str, Any]] = defaultdict(dict)
 if path:
-    # noinspection PyArgumentEqualDefault
     with open(path, encoding="utf-8") as f:
-        config = yaml.safe_load(f)
-else:
-    config = load_from_env()
+        config.update(yaml.safe_load(f))
+
+merge_dicts(config, load_from_env())
