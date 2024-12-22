@@ -9,7 +9,7 @@ from schema import Schema
 
 from src import custom
 from src.log import logger
-from src.utils.cooldown import cooldown
+from src.utils.cooldown import BucketType, cooldown
 
 default = {
     "enabled": True,
@@ -32,6 +32,7 @@ class BridgePing(commands.Cog):
         limit=1,
         per=5,
         strong=True,
+        bucket_type=BucketType.USER,
     )
     async def ping(
         self,
