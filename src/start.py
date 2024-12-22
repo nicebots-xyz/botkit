@@ -37,6 +37,9 @@ async def start_bot(bot: custom.Bot, token: str) -> None:
     except LoginFailure as e:
         logger.critical("Failed to log in, is the bot token valid?")
         logger.debug("", exc_info=e)
+    except Exception as e:  # noqa: BLE001
+        logger.critical("An unexpected error occurred while starting the bot.")
+        logger.debug("", exc_info=e)
 
 
 async def start_backend(app: Quart, bot: discord.Bot, token: str) -> None:
@@ -64,9 +67,13 @@ async def start_backend(app: Quart, bot: discord.Bot, token: str) -> None:
     app_config.logger_class = CustomLogger
     app_config.include_server_header = False  # security
     app_config.bind = ["0.0.0.0:5000"]
-    await bot.login(token)
-    await serve(app, app_config)
-    patch("hypercorn.error")
+    try:
+        await bot.login(token)
+        await serve(app, app_config)
+        patch("hypercorn.error")
+    except Exception as e:  # noqa: BLE001
+        logger.critical("An error occurred while starting the backend server.")
+        logger.debug("", exc_info=e)
 
 
 def load_extensions() -> (
@@ -94,7 +101,12 @@ def load_extensions() -> (
             continue
 
         its_config = config["extensions"].get(name, config["extensions"].get(name.replace("_", "-"), {}))
-        module: ModuleType = importlib.import_module(f"src.extensions.{name}")
+        try:
+            module: ModuleType = importlib.import_module(f"src.extensions.{name}")
+        except ImportError as e:
+            logger.error(f"Failed to import extension {name}")
+            logger.debug("", exc_info=e)
+            continue
         if not its_config:
             its_config = module.default
             config["extensions"][name] = its_config

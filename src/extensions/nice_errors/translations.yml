@@ -26,6 +26,14 @@ strings:
     it: Ops! Non ho i permessi necessari per farlo.
     es-ES: ¡Ups! No tengo el permiso necesario para hacer eso.
     ru: Упс! У меня нет необходимых прав для выполнения этого действия.
+  error_cooldown_exceeded:
+    en-US: Whoops! You're doing that too fast. Please wait before trying again.
+    de: Hoppla! Du machst das zu schnell. Bitte warte, bevor du es erneut versuchst.
+    nl: Oeps! Je doet dat te snel. Wacht even voordat je het opnieuw probeert.
+    fr: Oups ! Vous faites cela trop vite. Veuillez attendre avant de réessayer.
+    it: Ops! Stai facendo troppo in fretta. Attendi prima di riprovare.
+    es-ES: ¡Ups! Estás haciendo eso demasiado rápido. Por favor, espera antes de intentarlo de nuevo.
+    ru: Упс! Вы делаете это слишком быстро. Пожалуйста, подождите, прежде чем попробовать снова.
   error_generic:
     en-US: Whoops! An error occurred while executing this command.
     de: Hoppla! Bei der Ausführung dieses Kommandos ist ein Fehler aufgetreten.
