@@ -92,7 +92,7 @@ def cooldown[C: commands.Cog, **P](  # noqa: PLR0913
     def inner(func: CogCommandFunction[C, P]) -> CogCommandFunction[C, P]:
         @wraps(func)
         async def wrapper(self: C, ctx: custom.ApplicationContext, *args: P.args, **kwargs: P.kwargs) -> None:
-            cache = ctx.bot.cache
+            cache = ctx.bot.botkit_cache
             key_value: str = await parse_reactive_setting(key, ctx.bot, ctx)
             limit_value: int = await parse_reactive_setting(limit, ctx.bot, ctx)
             per_value: int = await parse_reactive_setting(per, ctx.bot, ctx)

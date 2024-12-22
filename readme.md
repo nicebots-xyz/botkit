@@ -122,24 +122,26 @@ BOTKIT__cache__redis__port=6379
 ### Cache Configuration
 
 Botkit supports two types of caching:
+
 - **Memory Cache**: Simple in-memory cache (default)
 - **Redis Cache**: Distributed cache using Redis
 
-To configure the cache, use the `cache` section in your config:
+To configure the cache, use the `cache` section under the `bot` in your config:
 
 ```yaml
-cache:
-  type: "redis"  # Use "memory" for in-memory cache
-  redis:  # Redis configuration (only needed when type is "redis")
-    host: "localhost"
-    port: 6379
-    db: 0
-    password: "optional"  # Optional Redis password
-    username: "optional"  # Optional Redis username
-    ssl: false  # Whether to use SSL
+bot:
+  cache:
+    type: "redis" # Use "memory" for in-memory cache
+    redis: # Redis configuration (only needed when type is "redis")
+      host: "localhost"
+      port: 6379
+      db: 0
+      password: "optional" # Optional Redis password
+      ssl: false # Whether to use SSL
 ```
 
-If Redis cache is requested but no configuration is provided, Botkit will fall back to memory cache with a warning.
+If Redis cache is requested but no configuration is provided, Botkit will fall back to
+memory cache with a warning.
 
 ## Creating Extensions
 

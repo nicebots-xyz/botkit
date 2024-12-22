@@ -1,0 +1,9 @@
+# Copyright (c) NiceBots
+# SPDX-License-Identifier: MIT
+
+services:
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    command: --loglevel debug

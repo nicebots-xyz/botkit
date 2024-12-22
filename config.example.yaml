@@ -36,17 +36,16 @@ extensions:
       every: 300 # 300 seconds = 5 minutes
 bot:
   token: "bot token here" # Your bot token
+  cache:
+    type: "memory" # Cache type. Possible values: "memory" or "redis"
+    redis: # Redis configuration (only used if type is "redis")
+      host: "localhost" # Redis server host
+      port: 6379 # Redis server port
+      db: 0 # Redis database number
+      password: null # Redis password (optional)
+      ssl: false # Whether to use SSL for Redis connection
 logging:
   level: "INFO" # The logging level. Possible values: DEBUG, INFO, WARNING, ERROR, CRITICAL
 use:
   bot: true # Whether to run the bot
   backend: false # Whether to run the backend
-cache:
-  type: "memory" # Cache type. Possible values: "memory" or "redis"
-  redis: # Redis configuration (only used if type is "redis")
-    host: "localhost" # Redis server host
-    port: 6379 # Redis server port
-    db: 0 # Redis database number
-    password: null # Redis password (optional)
-    username: null # Redis username (optional)
-    ssl: false # Whether to use SSL for Redis connection

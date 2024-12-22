@@ -56,15 +56,16 @@ class Bot(bridge.Bot):
     ) -> None:
         self.translations: list[ExtensionTranslation] = options.pop("translations", [])
 
+        self.botkit_cache: aiocache.BaseCache
         # Initialize cache based on type and config
         if cache_type == "redis":
             if cache_config:
-                self.cache = aiocache.RedisCache(
+                logger.info("Using Redis cache")
+                self.botkit_cache = aiocache.RedisCache(
                     endpoint=cache_config.get("host", "localhost"),
                     port=cache_config.get("port", 6379),
                     db=cache_config.get("db", 0),
                     password=cache_config.get("password"),
-                    username=cache_config.get("username"),
                     ssl=cache_config.get("ssl", False),
                     namespace="botkit",
                 )
@@ -72,9 +73,10 @@ class Bot(bridge.Bot):
                 logger.warning(
                     "Redis cache type specified but no configuration provided. Falling back to memory cache."
                 )
-                self.cache = aiocache.SimpleMemoryCache(namespace="botkit")
+                self.botkit_cache = aiocache.SimpleMemoryCache(namespace="botkit")
         else:
-            self.cache = aiocache.SimpleMemoryCache(namespace="botkit")
+            logger.info("Using memory cache")
+            self.botkit_cache = aiocache.SimpleMemoryCache(namespace="botkit")
 
         super().__init__(*args, **options)
 
