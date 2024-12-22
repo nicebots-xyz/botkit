@@ -72,7 +72,7 @@ async def start_backend(app: Quart, bot: discord.Bot, token: str) -> None:
         await serve(app, app_config)
         patch("hypercorn.error")
     except Exception as e:  # noqa: BLE001
-        logger.error("An error occurred while starting the backend server.")
+        logger.critical("An error occurred while starting the backend server.")
         logger.debug("", exc_info=e)
 
 
@@ -104,7 +104,8 @@ def load_extensions() -> (
         try:
             module: ModuleType = importlib.import_module(f"src.extensions.{name}")
         except ImportError as e:
-            logger.error(f"Failed to import extension {name}: {e}")
+            logger.error(f"Failed to import extension {name}")
+            logger.debug("", exc_info=e)
             continue
         if not its_config:
             its_config = module.default
