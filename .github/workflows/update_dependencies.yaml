@@ -55,7 +55,7 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          
+
           if [ -n "${{ inputs.pr_branch }}" ]; then
             # Push to existing branch
             BRANCH_NAME=$(echo ${{ inputs.pr_branch }} | cut -d'/' -f 3)
@@ -64,18 +64,30 @@ jobs:
             git commit -m "Update dependencies"
             git push origin $BRANCH_NAME
           else
-            # Create new branch and PR
-            NEW_BRANCH="update-dependencies-${{ github.run_id }}"
-            git checkout -b $NEW_BRANCH
-            git add requirements.txt pyproject.toml pdm.lock
-            git commit -m "Update dependencies"
-            git push origin $NEW_BRANCH
-          
-            gh pr create \
-              --title "Update dependencies" \
-              --body "This PR updates the project dependencies. Please review the changes and merge if everything looks good." \
-              --base ${{ github.ref_name }} \
-              --head $NEW_BRANCH
+            # Check for existing PR
+            EXISTING_PR=$(gh pr list --search "Update dependencies in:title is:open" --json headRefName,number -q '.[0]')
+
+            if [ -n "$EXISTING_PR" ]; then
+              # Update existing PR
+              BRANCH_NAME=$(echo $EXISTING_PR | jq -r .headRefName)
+              git checkout -B $BRANCH_NAME
+              git add requirements.txt pyproject.toml pdm.lock
+              git commit -m "Update dependencies"
+              git push -f origin $BRANCH_NAME
+            else
+              # Create new branch and PR
+              NEW_BRANCH="update-dependencies-${{ github.run_id }}"
+              git checkout -b $NEW_BRANCH
+              git add requirements.txt pyproject.toml pdm.lock
+              git commit -m "Update dependencies"
+              git push origin $NEW_BRANCH
+
+              gh pr create \
+                --title "Update dependencies" \
+                --body "This PR updates the project dependencies. Please review the changes and merge if everything looks good." \
+                --base ${{ github.ref_name }} \
+                --head $NEW_BRANCH
+            fi
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
