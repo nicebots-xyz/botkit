@@ -64,16 +64,47 @@ jobs:
             git commit -m "Update dependencies"
             git push origin $BRANCH_NAME
           else
-            # Check for existing PR
-            EXISTING_PR=$(gh pr list --search "Update dependencies in:title is:open" --json headRefName,number -q '.[0]')
+            # Check for existing PR - strict search for exact title and our specific branch pattern
+            EXISTING_PR=$(gh pr list --search "in:title Update dependencies is:open label:automated-dependencies-update" --json headRefName,number,author -q '.[0]')
 
             if [ -n "$EXISTING_PR" ]; then
-              # Update existing PR
+              # Multiple validation checks before using an existing branch
               BRANCH_NAME=$(echo $EXISTING_PR | jq -r .headRefName)
-              git checkout -B $BRANCH_NAME
+              PR_AUTHOR=$(echo $EXISTING_PR | jq -r .author.login)
+              
+              if [[ "$PR_AUTHOR" != "github-actions[bot]" ]]; then
+                echo "Found PR but author is $PR_AUTHOR, not github-actions[bot]. Creating new branch."
+                NEW_BRANCH="update-dependencies-${{ github.run_id }}"
+                git checkout -b $NEW_BRANCH
+                BRANCH_NAME=$NEW_BRANCH
+              elif [[ $BRANCH_NAME != update-dependencies-* ]]; then
+                echo "Found PR but branch $BRANCH_NAME doesn't match our pattern. Creating new branch."
+                NEW_BRANCH="update-dependencies-${{ github.run_id }}"
+                git checkout -b $NEW_BRANCH
+                BRANCH_NAME=$NEW_BRANCH
+              else
+                echo "Found valid PR with branch $BRANCH_NAME by github-actions[bot]. Updating it."
+                git checkout -B $BRANCH_NAME
+              fi
+              
               git add requirements.txt pyproject.toml pdm.lock
               git commit -m "Update dependencies"
               git push -f origin $BRANCH_NAME
+              else
+                # If branch doesn't match our pattern, create a new one
+                NEW_BRANCH="update-dependencies-${{ github.run_id }}"
+                git checkout -b $NEW_BRANCH
+                git add requirements.txt pyproject.toml pdm.lock
+                git commit -m "Update dependencies"
+                git push origin $NEW_BRANCH
+
+                gh pr create \
+                  --title "Update dependencies" \
+                  --body "This PR updates the project dependencies. Please review the changes and merge if everything looks good." \
+                  --base ${{ github.ref_name }} \
+                  --head $NEW_BRANCH \
+                  --label "automated-dependencies-update"
+              fi
             else
               # Create new branch and PR
               NEW_BRANCH="update-dependencies-${{ github.run_id }}"
@@ -86,7 +117,8 @@ jobs:
                 --title "Update dependencies" \
                 --body "This PR updates the project dependencies. Please review the changes and merge if everything looks good." \
                 --base ${{ github.ref_name }} \
-                --head $NEW_BRANCH
+                --head $NEW_BRANCH \
+                --label "automated-dependencies-update"
             fi
           fi
         env:
