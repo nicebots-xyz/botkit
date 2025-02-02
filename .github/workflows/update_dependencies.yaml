@@ -123,6 +123,5 @@ jobs:
               create_pr $NEW_BRANCH
             fi
           fi
-          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
