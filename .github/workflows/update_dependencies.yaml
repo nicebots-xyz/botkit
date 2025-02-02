@@ -50,6 +50,19 @@ jobs:
         run: |
           git diff --exit-code --quiet requirements.txt || echo "changed=true" >> $GITHUB_OUTPUT
 
+      - name: Create required label if not exists
+        run: |
+          # Check if label exists
+          LABEL_EXISTS=$(gh label list | grep "automated-dependencies-update" || true)
+          if [ -z "$LABEL_EXISTS" ]; then
+            echo "Creating automated-dependencies-update label..."
+            gh label create "automated-dependencies-update" \
+              --color "2DA44E" \
+              --description "Automated PR for updating project dependencies"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Handle dependency updates
         if: steps.git-check.outputs.changed == 'true'
         run: |
