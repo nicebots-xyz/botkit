@@ -76,12 +76,14 @@ async def start_backend(app: Quart, bot: discord.Bot, token: str) -> None:
         logger.debug("", exc_info=e)
 
 
-def load_extensions() -> tuple[
-    "FunctionlistType",
-    "FunctionlistType",
-    "FunctionlistType",
-    "list[ExtensionTranslation]",
-]:
+def load_extensions() -> (
+    tuple[
+        "FunctionlistType",
+        "FunctionlistType",
+        "FunctionlistType",
+        "list[ExtensionTranslation]",
+    ]
+):
     """Load extensions from the extensions directory.
 
     Returns:

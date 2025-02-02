@@ -1,13 +1,14 @@
 # Copyright (c) NiceBots.xyz
 # SPDX-License-Identifier: MIT
 
+# ruff: noqa: S101, S105
+
 import os
 from typing import Any
 
-import pytest
 import yaml
 
-from src.config.bot_config import merge_dicts, load_from_env
+from src.config.bot_config import load_from_env, merge_dicts
 
 
 def test_merge_dicts_basic() -> None:
@@ -51,19 +52,19 @@ def test_load_from_env() -> None:
         "BOTKIT__EXTENSIONS__PING__COLOR": "0xFF0000",
         "BOTKIT__EXTENSIONS__TOPGG__TOKEN": "test-topgg-token",
     }
-    
+
     for key, value in test_env.items():
         os.environ[key] = value
 
     try:
         config = load_from_env()
-        
+
         # Check the loaded configuration
         assert config["token"] == "test-token"
         assert config["extensions"]["ping"]["enabled"] is True
         assert config["extensions"]["ping"]["color"] == 0xFF0000
         assert config["extensions"]["topgg"]["token"] == "test-topgg-token"
-    
+
     finally:
         # Clean up environment variables
         for key in test_env:
@@ -76,18 +77,9 @@ def test_config_file_and_env_integration(tmp_path: Any) -> None:
     config_file = tmp_path / "config.yaml"
     config_data = {
         "token": "file-token",
-        "extensions": {
-            "ping": {
-                "enabled": False,
-                "color": 0x00FF00,
-                "message": "Pong!"
-            },
-            "topgg": {
-                "enabled": True
-            }
-        }
+        "extensions": {"ping": {"enabled": False, "color": 0x00FF00, "message": "Pong!"}, "topgg": {"enabled": True}},
     }
-    
+
     with open(config_file, "w", encoding="utf-8") as f:
         yaml.dump(config_data, f)
 
@@ -95,9 +87,9 @@ def test_config_file_and_env_integration(tmp_path: Any) -> None:
     test_env = {
         "BOTKIT__TOKEN": "env-token",
         "BOTKIT__EXTENSIONS__PING__ENABLED": "true",
-        "BOTKIT__EXTENSIONS__PING__COLOR": "0xFF0000"
+        "BOTKIT__EXTENSIONS__PING__COLOR": "0xFF0000",
     }
-    
+
     for key, value in test_env.items():
         os.environ[key] = value
 
@@ -105,18 +97,18 @@ def test_config_file_and_env_integration(tmp_path: Any) -> None:
         # Load config from file
         with open(config_file, encoding="utf-8") as f:
             config = yaml.safe_load(f)
-        
+
         # Merge with environment variables
         env_config = load_from_env()
         merge_dicts(config, env_config)
-        
+
         # Verify the merged configuration
         assert config["token"] == "env-token"  # Overridden by env
         assert config["extensions"]["ping"]["enabled"] is True  # Overridden by env
         assert config["extensions"]["ping"]["color"] == 0xFF0000  # Overridden by env
         assert config["extensions"]["ping"]["message"] == "Pong!"  # Kept from file
         assert config["extensions"]["topgg"]["enabled"] is True  # Kept from file
-    
+
     finally:
         # Clean up environment variables
         for key in test_env:

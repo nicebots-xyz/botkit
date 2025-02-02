@@ -3,6 +3,7 @@
 
 import contextlib
 import os
+from collections import defaultdict
 from typing import Any
 
 import orjson
@@ -18,7 +19,7 @@ def load_from_env() -> dict[str, dict[str, Any]]:
     _config: dict[str, Any] = {}
     values = {k: v for k, v in os.environ.items() if k.startswith("BOTKIT__")}
     for key, value in values.items():
-        parts = key[len("BOTKIT__"):].lower().split("__")
+        parts = key[len("BOTKIT__") :].lower().split("__")
         current = _config
         for i, part in enumerate(parts):
             if i == len(parts) - 1:
@@ -43,10 +44,8 @@ def load_json_recursive(data: dict[str, Any]) -> dict[str, Any]:
             elif value.lower() == "false":
                 data[key] = False
             elif value.startswith("0x"):
-                try:
+                with contextlib.suppress(ValueError):
                     data[key] = int(value, 16)
-                except ValueError:
-                    pass
             else:
                 with contextlib.suppress(orjson.JSONDecodeError):
                     data[key] = orjson.loads(value)
@@ -59,13 +58,15 @@ if os.path.exists("config.yaml"):
 elif os.path.exists("config.yml"):
     path = "config.yml"
 
-from collections import defaultdict
-def merge_dicts(dct, merge_dct):
+
+
+def merge_dicts(dct: dict[str, Any], merge_dct: dict[str, Any]) -> None:
     for k, v in merge_dct.items():
-        if (isinstance(dct.get(k), dict) and isinstance(v, dict)):
+        if isinstance(dct.get(k), dict) and isinstance(v, dict):
             merge_dicts(dct[k], v)
         else:
             dct[k] = v
+
 
 config: dict[str, dict[str, Any]] = defaultdict(dict)
 if path:
