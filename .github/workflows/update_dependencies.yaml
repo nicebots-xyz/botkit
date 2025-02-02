@@ -56,12 +56,28 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
 
+          # Function to commit changes
+          commit_changes() {
+            git add requirements.txt pyproject.toml pdm.lock
+            git commit -m "Update dependencies"
+          }
+
+          # Function to create PR
+          create_pr() {
+            local BRANCH=$1
+            gh pr create \
+              --title "Update dependencies" \
+              --body "This PR updates the project dependencies. Please review the changes and merge if everything looks good." \
+              --base ${{ github.ref_name }} \
+              --head $BRANCH \
+              --label "automated-dependencies-update"
+          }
+
           if [ -n "${{ inputs.pr_branch }}" ]; then
             # Push to existing branch
             BRANCH_NAME=$(echo ${{ inputs.pr_branch }} | cut -d'/' -f 3)
             git checkout $BRANCH_NAME
-            git add requirements.txt pyproject.toml pdm.lock
-            git commit -m "Update dependencies"
+            commit_changes
             git push origin $BRANCH_NAME
           else
             # Check for existing PR - strict search for exact title and our specific branch pattern
@@ -72,54 +88,28 @@ jobs:
               BRANCH_NAME=$(echo $EXISTING_PR | jq -r .headRefName)
               PR_AUTHOR=$(echo $EXISTING_PR | jq -r .author.login)
               
-              if [[ "$PR_AUTHOR" != "github-actions[bot]" ]]; then
-                echo "Found PR but author is $PR_AUTHOR, not github-actions[bot]. Creating new branch."
-                NEW_BRANCH="update-dependencies-${{ github.run_id }}"
-                git checkout -b $NEW_BRANCH
-                BRANCH_NAME=$NEW_BRANCH
-              elif [[ $BRANCH_NAME != update-dependencies-* ]]; then
-                echo "Found PR but branch $BRANCH_NAME doesn't match our pattern. Creating new branch."
-                NEW_BRANCH="update-dependencies-${{ github.run_id }}"
-                git checkout -b $NEW_BRANCH
-                BRANCH_NAME=$NEW_BRANCH
-              else
+              if [[ "$PR_AUTHOR" == "github-actions[bot]" && "$BRANCH_NAME" == update-dependencies-* ]]; then
                 echo "Found valid PR with branch $BRANCH_NAME by github-actions[bot]. Updating it."
                 git checkout -B $BRANCH_NAME
-              fi
-              
-              git add requirements.txt pyproject.toml pdm.lock
-              git commit -m "Update dependencies"
-              git push -f origin $BRANCH_NAME
+                commit_changes
+                git push -f origin $BRANCH_NAME
               else
-                # If branch doesn't match our pattern, create a new one
+                echo "Found PR but it's not from our bot or wrong branch pattern. Creating new branch."
                 NEW_BRANCH="update-dependencies-${{ github.run_id }}"
                 git checkout -b $NEW_BRANCH
-                git add requirements.txt pyproject.toml pdm.lock
-                git commit -m "Update dependencies"
+                commit_changes
                 git push origin $NEW_BRANCH
-
-                gh pr create \
-                  --title "Update dependencies" \
-                  --body "This PR updates the project dependencies. Please review the changes and merge if everything looks good." \
-                  --base ${{ github.ref_name }} \
-                  --head $NEW_BRANCH \
-                  --label "automated-dependencies-update"
+                create_pr $NEW_BRANCH
               fi
             else
-              # Create new branch and PR
+              echo "No existing PR found. Creating new branch and PR."
               NEW_BRANCH="update-dependencies-${{ github.run_id }}"
               git checkout -b $NEW_BRANCH
-              git add requirements.txt pyproject.toml pdm.lock
-              git commit -m "Update dependencies"
+              commit_changes
               git push origin $NEW_BRANCH
-
-              gh pr create \
-                --title "Update dependencies" \
-                --body "This PR updates the project dependencies. Please review the changes and merge if everything looks good." \
-                --base ${{ github.ref_name }} \
-                --head $NEW_BRANCH \
-                --label "automated-dependencies-update"
+              create_pr $NEW_BRANCH
             fi
+          fi
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
