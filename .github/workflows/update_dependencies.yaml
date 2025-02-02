@@ -97,17 +97,16 @@ jobs:
             EXISTING_PR=$(gh pr list --search "in:title Update dependencies is:open label:automated-dependencies-update" --json headRefName,number,author -q '.[0]')
 
             if [ -n "$EXISTING_PR" ]; then
-              # Multiple validation checks before using an existing branch
+              # Check if PR has our automation label
               BRANCH_NAME=$(echo $EXISTING_PR | jq -r .headRefName)
-              PR_AUTHOR=$(echo $EXISTING_PR | jq -r .author.login)
               
-              if [[ "$PR_AUTHOR" == "github-actions[bot]" && "$BRANCH_NAME" == update-dependencies-* ]]; then
-                echo "Found valid PR with branch $BRANCH_NAME by github-actions[bot]. Updating it."
+              if [[ "$BRANCH_NAME" == update-dependencies-* ]]; then
+                echo "Found valid automated PR with branch $BRANCH_NAME. Updating it."
                 git checkout -B $BRANCH_NAME
                 commit_changes
                 git push -f origin $BRANCH_NAME
               else
-                echo "Found PR but it's not from our bot or wrong branch pattern. Creating new branch."
+                echo "Found PR but wrong branch pattern. Creating new branch."
                 NEW_BRANCH="update-dependencies-${{ github.run_id }}"
                 git checkout -b $NEW_BRANCH
                 commit_changes
