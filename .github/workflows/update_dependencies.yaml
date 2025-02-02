@@ -50,15 +50,24 @@ jobs:
         run: |
           git diff --exit-code --quiet requirements.txt || echo "changed=true" >> $GITHUB_OUTPUT
 
-      - name: Create required label if not exists
+      - name: Ensure required label exists
+        id: check-label
         run: |
-          # Check if label exists
-          LABEL_EXISTS=$(gh label list | grep "automated-dependencies-update" || true)
-          if [ -z "$LABEL_EXISTS" ]; then
-            echo "Creating automated-dependencies-update label..."
-            gh label create "automated-dependencies-update" \
-              --color "2DA44E" \
-              --description "Automated PR for updating project dependencies"
+          # Try to get the label info
+          LABEL_INFO=$(gh api -H "Accept: application/vnd.github+json" \
+            "/repos/${{ github.repository }}/labels/automated-dependencies-update" 2>/dev/null || echo "")
+          
+          if [ -z "$LABEL_INFO" ]; then
+            echo "Label not found, creating it..."
+            gh api --method POST -H "Accept: application/vnd.github+json" \
+              "/repos/${{ github.repository }}/labels" \
+              -f name='automated-dependencies-update' \
+              -f color='2DA44E' \
+              -f description='Automated PR for updating project dependencies'
+            echo "created=true" >> $GITHUB_OUTPUT
+          else
+            echo "Label already exists"
+            echo "created=false" >> $GITHUB_OUTPUT
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
