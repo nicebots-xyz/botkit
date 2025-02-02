@@ -16,17 +16,12 @@ SPLIT: str = "__"
 
 def load_from_env() -> dict[str, dict[str, Any]]:
     _config: dict[str, Any] = {}
-    values = {k: v for k, v in os.environ.items() if k.startswith(f"BOTKIT{SPLIT}")}
-    values = {k[len(f"BOTKIT{SPLIT}") :]: v for k, v in values.items()}
-    current: dict[str, Any] = {}
+    values = {k: v for k, v in os.environ.items() if k.startswith("BOTKIT__")}
     for key, value in values.items():
-        for i, part in enumerate(key.split(SPLIT)):
-            part = part.lower()  # noqa: PLW2901
-            if i == 0:
-                if part not in _config:
-                    _config[part] = {}
-                current = _config[part]
-            elif i == len(key.split(SPLIT)) - 1:
+        parts = key[len("BOTKIT__"):].lower().split("__")
+        current = _config
+        for i, part in enumerate(parts):
+            if i == len(parts) - 1:
                 current[part] = value
             else:
                 if part not in current:
@@ -47,6 +42,11 @@ def load_json_recursive(data: dict[str, Any]) -> dict[str, Any]:
                 data[key] = True
             elif value.lower() == "false":
                 data[key] = False
+            elif value.startswith("0x"):
+                try:
+                    data[key] = int(value, 16)
+                except ValueError:
+                    pass
             else:
                 with contextlib.suppress(orjson.JSONDecodeError):
                     data[key] = orjson.loads(value)
