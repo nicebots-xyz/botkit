@@ -59,7 +59,6 @@ elif os.path.exists("config.yml"):
     path = "config.yml"
 
 
-
 def merge_dicts(dct: dict[str, Any], merge_dct: dict[str, Any]) -> None:
     for k, v in merge_dct.items():
         if isinstance(dct.get(k), dict) and isinstance(v, dict):
