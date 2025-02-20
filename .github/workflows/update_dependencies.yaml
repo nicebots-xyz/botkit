@@ -50,43 +50,76 @@ jobs:
         run: |
           git diff --exit-code --quiet requirements.txt || echo "changed=true" >> $GITHUB_OUTPUT
 
+      - name: Create required label if not exists
+        run: |
+          # Check if label exists
+          LABEL_EXISTS=$(gh label list | grep "automated-dependencies-update" || true)
+          if [ -z "$LABEL_EXISTS" ]; then
+            echo "Creating automated-dependencies-update label..."
+            gh label create "automated-dependencies-update" \
+              --color "2DA44E" \
+              --description "Automated PR for updating project dependencies"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Handle dependency updates
         if: steps.git-check.outputs.changed == 'true'
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
 
+          # Function to commit changes
+          commit_changes() {
+            git add requirements.txt pyproject.toml pdm.lock
+            git commit -m "Update dependencies"
+          }
+
+          # Function to create PR
+          create_pr() {
+            local BRANCH=$1
+            gh pr create \
+              --title "Update dependencies" \
+              --body "This PR updates the project dependencies. Please review the changes and merge if everything looks good." \
+              --base ${{ github.ref_name }} \
+              --head $BRANCH \
+              --label "automated-dependencies-update"
+          }
+
           if [ -n "${{ inputs.pr_branch }}" ]; then
             # Push to existing branch
             BRANCH_NAME=$(echo ${{ inputs.pr_branch }} | cut -d'/' -f 3)
             git checkout $BRANCH_NAME
-            git add requirements.txt pyproject.toml pdm.lock
-            git commit -m "Update dependencies"
+            commit_changes
             git push origin $BRANCH_NAME
           else
-            # Check for existing PR
-            EXISTING_PR=$(gh pr list --search "Update dependencies in:title is:open" --json headRefName,number -q '.[0]')
+            # Check for existing PR - strict search for exact title and our specific branch pattern
+            EXISTING_PR=$(gh pr list --search "in:title Update dependencies is:open label:automated-dependencies-update" --json headRefName,number,author -q '.[0]')
 
             if [ -n "$EXISTING_PR" ]; then
-              # Update existing PR
+              # Check if PR has our automation label
               BRANCH_NAME=$(echo $EXISTING_PR | jq -r .headRefName)
-              git checkout -B $BRANCH_NAME
-              git add requirements.txt pyproject.toml pdm.lock
-              git commit -m "Update dependencies"
-              git push -f origin $BRANCH_NAME
+              
+              if [[ "$BRANCH_NAME" == update-dependencies-* ]]; then
+                echo "Found valid automated PR with branch $BRANCH_NAME. Updating it."
+                git checkout -B $BRANCH_NAME
+                commit_changes
+                git push -f origin $BRANCH_NAME
+              else
+                echo "Found PR but wrong branch pattern. Creating new branch."
+                NEW_BRANCH="update-dependencies-${{ github.run_id }}"
+                git checkout -b $NEW_BRANCH
+                commit_changes
+                git push origin $NEW_BRANCH
+                create_pr $NEW_BRANCH
+              fi
             else
-              # Create new branch and PR
+              echo "No existing PR found. Creating new branch and PR."
               NEW_BRANCH="update-dependencies-${{ github.run_id }}"
               git checkout -b $NEW_BRANCH
-              git add requirements.txt pyproject.toml pdm.lock
-              git commit -m "Update dependencies"
+              commit_changes
               git push origin $NEW_BRANCH
-
-              gh pr create \
-                --title "Update dependencies" \
-                --body "This PR updates the project dependencies. Please review the changes and merge if everything looks good." \
-                --base ${{ github.ref_name }} \
-                --head $NEW_BRANCH
+              create_pr $NEW_BRANCH
             fi
           fi
         env:

@@ -52,7 +52,7 @@ to leverage its powerful features to create truly unique and capable bots.
 
 - [pdm](https://pdm-project.org/en/latest/) - A modern Python packaging and dependency
   management tool.
-- Python 3.11
+- Python 3.12
 - A Discord bot. You can create a new bot and get a token from the
   [Discord Developer Portal](https://discord.com/developers/applications).
 

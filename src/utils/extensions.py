@@ -30,12 +30,13 @@ def check_typing(module: ModuleType, func: Callable, types: dict[str, Any]) -> N
 def check_func(module: ModuleType, func: Callable, max_args: int, types: dict[str, Any]) -> None:
     assert callable(func), f"Function {func.__name__} of module {module.__name__} is not callable"
     signature = inspect.signature(func)
-    assert (
-        len(signature.parameters) <= max_args
-    ), f"Function {func.__name__} of module {module.__name__} has too many arguments"
-    assert all(
-        param in types for param in signature.parameters
-    ), f"Function {func.__name__} of module {module.__name__} does not accept the correct arguments ({', '.join(types.keys())})"  # noqa: E501
+    assert len(signature.parameters) <= max_args, (
+        f"Function {func.__name__} of module {module.__name__} has too many arguments"
+    )
+    assert all(param in types for param in signature.parameters), (
+        f"Function {func.__name__} of module {module.__name__} does not accept the correct arguments"
+        "({', '.join(types.keys())})"
+    )
     # check_typing(module, func, types) # temporarily disabled due to unwanted behavior  # noqa: ERA001
 
 
@@ -73,9 +74,9 @@ def validate_module(module: ModuleType, config: dict[str, Any] | None = None) ->
         module.default,
         dict,
     ), f"Extension {module.__name__} has a default configuration of type {type(module.default)} instead of dict"
-    assert (
-        "enabled" in module.default
-    ), f"Extension {module.__name__} does not have an enabled key in its default configuration"
+    assert "enabled" in module.default, (
+        f"Extension {module.__name__} does not have an enabled key in its default configuration"
+    )
     if hasattr(module, "schema"):
         assert isinstance(
             module.schema,
