@@ -135,9 +135,50 @@ class Bot(bridge.Bot):
             ctx.load_translations()
         return ctx
 
+    @property
+    @override
+    def intents(self) -> discord.Intents:
+        """The intents configured for this connection or a copy of the intents if the bot is connected.
+
+        Returns
+        -------
+        :class:`Intents`
+            The intents configured for this Client.
+
+        """
+        # _connection._intents returns the intents themselves, _connection.intents returns a copy
+        # so if the bot is connected, we return a copy so that changes don't affect the connection
+        # if the bot is not connected, we return the actual intents so that the user can make changes
+        if self.ws is None:  # pyright: ignore [reportUnnecessaryComparison]
+            return self._connection._intents  # noqa: SLF001  # pyright: ignore [reportPrivateUsage]
+        return self._connection.intents
+
+    @intents.setter
+    def intents(self, value: Any) -> None:  # pyright: ignore [reportExplicitAny]
+        """Set the intents for this Client.
+
+        Parameters
+        ----------
+        value: :class:`Intents`
+            The intents to set for this Client.
+
+        Raises
+        ------
+        TypeError
+            The value is not an instance of Intents.
+        AttributeError
+            The intents cannot be changed after the connection is established.
+
+        """
+        if not isinstance(value, discord.Intents):
+            raise TypeError(f"Intents must be an instance of Intents not {value.__class__!r}")
+        if self.ws is not None:  # pyright: ignore [reportUnnecessaryComparison]
+            raise AttributeError("Cannot change intents after the connection is established.")
+        self._connection._intents.value = value.value  # noqa: SLF001  # pyright: ignore [reportPrivateUsage]
+
 
 if not TYPE_CHECKING:
-    Context: ApplicationContext = ApplicationContext  # pyright: ignore [reportRedeclaration]
+    Context: ApplicationContext = ApplicationContext
 
 if TYPE_CHECKING:  # temp fix for https://github.com/Pycord-Development/pycord/pull/2611
     type Context = ExtContext | ApplicationContext
