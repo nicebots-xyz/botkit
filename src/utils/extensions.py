@@ -8,7 +8,7 @@ import zipfile
 from collections.abc import Callable
 from glob import iglob
 from types import ModuleType
-from typing import Any
+from typing import Any, TypeGuard
 
 import discord
 from quart import Quart
@@ -18,13 +18,13 @@ from src.log import logger
 
 
 def check_typing(module: ModuleType, func: Callable, types: dict[str, Any]) -> None:
-    signature = inspect.signature(func)
-    for name, parameter in signature.parameters.items():
-        if name in types and parameter.annotation != types[name]:
-            warnings.warn(
-                f"Parameter {name} of function {func.__name__} of module {module.__name__} does not have the correct type annotation (is {parameter.annotation} should be {types[name]})",  # noqa: E501
-                stacklevel=1,
-            )
+            signature = inspect.signature(func)
+            for name, parameter in signature.parameters.items():
+                if name in types and parameter.annotation != types[name]:
+                    warnings.warn(
+                        f"Parameter {name} of function {func.__name__} of module {module.__name__} does not have the correct type annotation (is {parameter.annotation} should be {types[name]})",  # noqa: E501
+                        stacklevel=1,
+                    )
 
 
 def check_func(module: ModuleType, func: Callable, max_args: int, types: dict[str, Any]) -> None:
