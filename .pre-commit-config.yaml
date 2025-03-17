@@ -29,6 +29,6 @@ repos:
       # Run the formatter.
       - id: ruff-format
   - repo: https://github.com/bhundven/copywrite # waiting for https://github.com/hashicorp/copywrite/pull/120 to be merged
-    rev: 937f17f09c46992447dfa8977bb96eda512588c4
+    rev: 9d021bf61a094a5eac6ae3084ceed2dda4700a73
     hooks:
       - id: add-headers
