@@ -29,28 +29,30 @@ if TYPE_CHECKING:
 
 
 async def start_bot(bot: custom.Bot, token: str, rest_config: RestConfig, public_key: str | None = None) -> None:
-    try:
-        if isinstance(bot, custom.CustomRestBot):
-            if not public_key:
-                raise TypeError("CustomRestBot requires a public key to start.")  # noqa: TRY301
-            await bot.start(
-                token=token,
-                public_key=public_key,
-                health=rest_config.health,
-                uvicorn_options={
-                    "host": rest_config.host,
-                    "port": rest_config.port,
-                },
-            )
-        else:
-            await bot.start(token)
-    except LoginFailure as e:
-        logger.critical("Failed to log in, is the bot token valid?")
-        logger.debug("", exc_info=e)
-    except Exception as e:  # noqa: BLE001
-        logger.critical("An unexpected error occurred while starting the bot.")
-        logger.debug("", exc_info=e)
+        try:
+            if isinstance(bot, custom.CustomRestBot):
+                if not public_key:
+                    raise TypeError("CustomRestBot requires a public key to start.")  # noqa: TRY301
+                await bot.start(
+                    token=token,
+                    public_key=public_key,
+                    health=rest_config.health,
+                    uvicorn_options={
+                        "host": rest_config.host,
+                        "port": rest_config.port,
+                    },
+                )
+            else:
+                await bot.start(token)
+        except LoginFailure as e:
+            logger.critical("Failed to log in, is the bot token valid?")
+            logger.debug("", exc_info=e)
+        except Exception as e:  # noqa: BLE001
+            logger.critical("An unexpected error occurred while starting the bot.")
+            logger.debug("", exc_info=e)
 
+
+# blerp
 
 async def start_backend(app: Quart, bot: discord.Bot, token: str) -> None:
     from hypercorn.asyncio import serve  # pyright: ignore [reportUnknownVariableType]
