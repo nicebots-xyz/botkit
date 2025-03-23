@@ -1,0 +1,84 @@
+name: PR Autofix
+
+on:
+  pull_request:
+    branches:
+      - '**'  # This will run on all branches, and we'll detect the default branch
+    types: [opened, synchronize]
+
+jobs:
+  autofix:
+    name: Lint and Format
+    runs-on: ubuntu-latest
+
+    # Skip if the last 3 commits are from the GitHub Actions bot
+    if: >
+      !startsWith(github.event.commits[0].author.name, 'github-actions') ||
+      !startsWith(github.event.commits[1].author.name, 'github-actions') ||
+      !startsWith(github.event.commits[2].author.name, 'github-actions')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # We need the full history for comparing branches
+          ref: ${{ github.head_ref }}  # Check out the PR branch
+          persist-credentials: false
+
+      - name: Check if PR targets default branch
+        id: check-target
+        run: |
+          DEFAULT_BRANCH=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)
+          TARGET_BRANCH="${{ github.base_ref }}"
+          if [ "$TARGET_BRANCH" = "$DEFAULT_BRANCH" ]; then
+            echo "PR targets the default branch ($DEFAULT_BRANCH). Proceeding with autofix."
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "PR does not target the default branch ($DEFAULT_BRANCH). Skipping autofix."
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup PDM
+        uses: pdm-project/setup-pdm@v4
+        if: steps.check-target.outputs.should_run == 'true'
+        with:
+          cache: true
+
+      - name: Install dependencies
+        if: steps.check-target.outputs.should_run == 'true'
+        run: pdm install -d
+
+      - name: Run linting
+        if: steps.check-target.outputs.should_run == 'true'
+        run: pdm run lint
+
+      - name: Run formatting
+        if: steps.check-target.outputs.should_run == 'true'
+        run: pdm run format
+
+      - name: Check for changes
+        if: steps.check-target.outputs.should_run == 'true'
+        id: check-changes
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "Has changes that need to be committed"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "No changes detected"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit changes
+        if: steps.check-target.outputs.should_run == 'true' && steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add -A
+          git commit -m "Autofix: Lint and format code"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@77c5b412c50b723d2a4fbc6d71fb5723bcd439aa
+        with:
+          # use PAT if available, otherwise use GITHUB_TOKEN
+          github_token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}
