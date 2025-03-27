@@ -17,7 +17,7 @@ load_dotenv()
 SPLIT: str = "__"
 
 
-def load_from_env() -> dict[str, dict[str, Any]]:
+def load_from_env() -> dict[str, Any]:  # pyright: ignore [reportExplicitAny]
     _config: dict[str, Any] = {}  # pyright: ignore [reportExplicitAny]
     values = {k: v for k, v in os.environ.items() if k.startswith("BOTKIT__")}
     for key, value in values.items():
