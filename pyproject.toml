@@ -16,13 +16,14 @@ dependencies = [
     "schema>=0.7.7",
     "hypercorn>=0.17.3",
     "quart>=0.19.6",
-    "pydantic>=2.9.2",
+    "pydantic>=2.10.6",
     "coloredlogs>=15.0.1",
     "aiofile>=3.9.0",
     "sentry-sdk>=2.18.0",
     "aiocache[redis]>=0.12.3",
     "tortoise-orm[asyncpg]>=0.23.0",
     "aerich[toml]>=0.8.1",
+    "pycord-rest-bot>=0.1.0a7",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
@@ -36,6 +37,7 @@ export = "pdm export -o requirements.txt --prod"
 tests = "pytest tests"
 start = "python src"
 check-listings = {call = "scripts:check_listings.main"}
+convert-config = { call = "scripts.convert_config:main" }
 
 [tool.pdm]
 distribution = false
@@ -80,7 +82,7 @@ docstring-code-line-length = "dynamic"
 
 [tool.ruff.lint]
 select = ["ALL"]
-per-file-ignores = { "src/database/migrations/*"= ["INP001", "ARG001"] }
+per-file-ignores = { "src/database/migrations/*"= ["INP001", "ARG001"], "tests/*"= ["S101"], "scripts/**" = ["T201"]  }
 extend-ignore = [
     "N999",
     "D104",

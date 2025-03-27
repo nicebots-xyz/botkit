@@ -104,7 +104,7 @@ def cooldown[C: commands.Cog, **P](
             full_key = get_bucket_key(ctx, key_value, bucket_type_value)
 
             now = time.time()
-            time_stamps = cast(tuple[float, ...], await cache.get(full_key, default=(), namespace="cooldown"))
+            time_stamps = cast("tuple[float, ...]", await cache.get(full_key, default=(), namespace="cooldown"))
             time_stamps = tuple(filter(lambda x: x > now - per_value, time_stamps))
             time_stamps = time_stamps[-limit_value:]
 

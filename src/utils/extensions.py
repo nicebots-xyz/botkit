@@ -12,7 +12,6 @@ from typing import Any
 
 import discord
 from quart import Quart
-from schema import Schema, SchemaError
 
 from src.log import logger
 
@@ -40,8 +39,7 @@ def check_func(module: ModuleType, func: Callable, max_args: int, types: dict[st
     # check_typing(module, func, types) # temporarily disabled due to unwanted behavior  # noqa: ERA001
 
 
-# noinspection DuplicatedCode
-def validate_module(module: ModuleType, config: dict[str, Any] | None = None) -> None:
+def validate_module(module: ModuleType, config: dict[str, Any] | None = None) -> None:  # pyright: ignore [reportUnusedParameter] # noqa: ARG001
     """Validate the module to ensure it has the required functions and attributes to be loaded as an extension.
 
     :param module: The module to validate
@@ -77,26 +75,6 @@ def validate_module(module: ModuleType, config: dict[str, Any] | None = None) ->
     assert "enabled" in module.default, (
         f"Extension {module.__name__} does not have an enabled key in its default configuration"
     )
-    if hasattr(module, "schema"):
-        assert isinstance(
-            module.schema,
-            Schema | dict,
-        ), f"Extension {module.__name__} has a schema of type {type(module.schema)} instead of Schema or dict"
-
-        if isinstance(module.schema, dict):
-            module.schema = Schema(module.schema)
-        if config:
-            module.schema.validate(config)
-        else:
-            try:
-                module.schema.validate(module.default)
-            except SchemaError as e:
-                warnings.warn(
-                    f"Default configuration for extension {module.__name__} does not match schema: {e}",
-                    stacklevel=1,
-                )
-    else:
-        warnings.warn(f"Extension {module.__name__} does not have a schema", stacklevel=1)
 
 
 def unzip_extensions() -> None:

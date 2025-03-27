@@ -119,6 +119,22 @@ BOTKIT__cache__redis__host=redis.example.com
 BOTKIT__cache__redis__port=6379
 ```
 
+### Converting Configuration Formats
+
+When deploying in containerized or high-availability environments where persistent
+volumes might not be available or when using orchestration platforms like Docker Swarm,
+it's often preferable to use environment variables instead of configuration files.
+Botkit provides a convenient script to convert between YAML and environment variable
+formats:
+
+```bash
+pdm run convert-config -i config.yml --terminal
+```
+
+This will output your YAML configuration as environment variables that you can then use
+in your container configuration or deployment platform. For more details about the
+convert-config script, see the [Using scripts](#using-scripts) section.
+
 ### Cache Configuration
 
 Botkit supports two types of caching:
@@ -172,7 +188,9 @@ properly. These are:
   - `bot`: The Discord bot instance.
   - `config`: The configuration dictionary for the extension.
 
-> [!NOTE] Either `setup` or `setup_webserver` is required for the extension to work
+<!-- prettier-ignore -->
+> [!NOTE]
+> Either `setup` or `setup_webserver` is required for the extension to work
 > properly. You can also provide both.
 
 - `on_startup` (optional): An asynchronous function that is called when the bot starts.
@@ -255,7 +273,9 @@ strings:
   # ... other general strings
 ```
 
-> [!NOTE] The top-level `strings` section (outside of `commands`) is what gets mapped to
+<!-- prettier-ignore -->
+> [!NOTE]
+>The top-level `strings` section (outside of `commands`) is what gets mapped to
 > `config["translations"]`. This section is for general strings not directly tied to
 > specific commands.
 
@@ -315,7 +335,9 @@ async def ping(self, ctx: custom.ApplicationContext):
     await ctx.respond(response)
 ```
 
-> [!NOTE] The translations available under `ctx.translations` are the ones set under
+<!-- prettier-ignore -->
+> [!NOTE]
+> The translations available under `ctx.translations` are the ones set under
 > `strings` in the command's translation.
 
 ### Best Practices
@@ -416,6 +438,45 @@ DiscordMe: # add this section if you want to check discord.me
 
 4. Run the script using `pdm run check-listings`.
 
+### `convert-config`
+
+This script converts the configuration between YAML and env formats.
+
+#### Usage
+
+By default, if run with no arguments, it converts the `config.yaml` or `config.yml`
+present in the root to `.env` format. If a `.env` file is present and is empty or one is
+not present, it converts there. Otherwise, it asks the user if it should overwrite the
+existing `.env` file. If not, it writes to a `datetime.converted.env` file.
+
+#### Options
+
+- `-i`, `--input`: Specify the input file path.
+- `--input-format`: Specify the input format (`yaml`, `yml`, `env`).
+- `--output`: Specify the output file path.
+- `--output-format`: Specify the output format (`yaml`, `yml`, `env`).
+- `--terminal`: Output to the terminal instead of a file.
+
+#### Examples
+
+Convert `config.yaml` to `.env`:
+
+```sh
+pdm run convert-config
+```
+
+Convert a specific file and output to the terminal:
+
+```sh
+pdm run convert-config -i config.yml --terminal
+```
+
+Convert `.env` to `config.yaml`:
+
+```sh
+pdm run convert-config -i .env --output config.yaml
+```
+
 ## Provided Extensions
 
 We provide multiple extensions directly within this project to get you started. These
@@ -457,6 +518,29 @@ for Python code. We recommend using a linter like [black](https://github.com/psf
 to ensure your code adheres to the style guidelines. We provide a command to lint the
 code using `pdm run lint`. For this to work you have to install the development
 dependencies using `pdm install -d` if you haven't already.
+
+## Copyright Headers Management
+
+This project uses HashiCorp's [Copywrite](https://github.com/hashicorp/copywrite) tool
+to manage copyright headers across all source files. Copywrite automatically ensures
+consistent copyright headers and license information across the codebase.
+
+The project includes a `.copywrite.hcl` file that configures how copyright headers are
+managed:
+
+### Usage
+
+To check if any files are missing copyright headers:
+
+```bash
+copywrite headers --plan
+```
+
+To automatically add missing copyright headers:
+
+```bash
+copywrite headers
+```
 
 ## Deployment
 

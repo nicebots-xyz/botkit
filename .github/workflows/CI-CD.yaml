@@ -14,13 +14,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  tests:
-    uses: ./.github/workflows/test.yaml
+  quality:
+    uses: ./.github/workflows/quality.yaml
 
   docker:
-    needs: tests
+    needs: quality
     permissions:
       contents: read
       packages: write
       id-token: write
     uses: ./.github/workflows/docker.yaml
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    needs: docker
+    uses: ./.github/workflows/deploy.yaml
+    secrets: inherit

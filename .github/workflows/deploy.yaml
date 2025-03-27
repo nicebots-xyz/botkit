@@ -1,0 +1,15 @@
+name: Call Endpoint
+
+on: workflow_call
+
+jobs:
+  call-endpoint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if DEPLOY_URL is set and call endpoint
+        run: |
+          if [ -n "${{ secrets.DEPLOY_URL }}" ]; then
+            curl -X POST -H "Content-Type: application/json" -d '{"text":"Image updated"}' "${{ secrets.DEPLOY_URL }}"
+          else
+            echo "DEPLOY_URL is not set. Skipping."
+          fi

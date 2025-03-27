@@ -1,0 +1,50 @@
+name: Quality Checks
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [format, lint, test]
+        include:
+          - check: format
+            name: "Format Check"
+            command: "pdm run ruff format --check ."
+          - check: lint
+            name: "Lint Check"
+            command: "pdm run ruff check ."
+          - check: test
+            name: "Tests Check"
+            command: "pdm run tests"
+
+    name: ${{ matrix.name }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PDM
+        uses: pdm-project/setup-pdm@v4
+        with:
+          cache: true
+
+      - name: Install dependencies
+        run: pdm install -d
+
+      - name: ${{ matrix.name }}
+        run: ${{ matrix.command }}
+
+  check-license-header:
+    name: License Header Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Copywrite
+        uses: hashicorp/setup-copywrite@5e3e8a26d7b9f8a508848ad0a069dfd2f7aa5339
+      - name: Check Header Compliance
+        run: copywrite headers --plan --config .copywrite.hcl

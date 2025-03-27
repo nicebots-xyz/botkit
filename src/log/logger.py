@@ -16,15 +16,15 @@ logging.addLevelName(SUCCESS, "SUCCESS")
 
 
 class CustomLogger(logging.Logger):
-    def success(self, msg: str, *args: Any, **kwargs: Any) -> None:  # pyright: ignore[reportUnknownParameterType,reportMissingParameterType]
+    def success(self, msg: str, *args: Any, **kwargs: Any) -> None:
         if self.isEnabledFor(SUCCESS):
-            self._log(SUCCESS, msg, args, **kwargs)  # pyright: ignore[reportUnknownArgumentType]
+            self._log(SUCCESS, msg, args, **kwargs)
 
 
 # Register the custom logger class
 logging.setLoggerClass(CustomLogger)
 
-level: int = getattr(logging, config.get("logging", {}).get("level", "").upper() or "INFO")
+level: int = getattr(logging, config.logging.level.upper())
 logging.basicConfig(level=level, handlers=[])
 
 os.makedirs("logs", exist_ok=True)
@@ -54,7 +54,6 @@ def patch(logger_: str | logging.Logger) -> logging.Logger:
         logger_ = logging.getLogger(logger_)
         if not logger_:
             raise ValueError("Logger does not exist")
-    logger_.debug("")
     logger_.handlers = []  # Clear any existing handlers
     logger_.addHandler(file_handler)
     logger_.propagate = False

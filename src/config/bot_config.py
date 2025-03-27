@@ -10,13 +10,15 @@ import orjson
 import yaml
 from dotenv import load_dotenv
 
+from .models import Config
+
 load_dotenv()
 
 SPLIT: str = "__"
 
 
 def load_from_env() -> dict[str, dict[str, Any]]:
-    _config: dict[str, Any] = {}
+    _config: dict[str, Any] = {}  # pyright: ignore [reportExplicitAny]
     values = {k: v for k, v in os.environ.items() if k.startswith("BOTKIT__")}
     for key, value in values.items():
         parts = key[len("BOTKIT__") :].lower().split("__")
@@ -58,8 +60,11 @@ if os.path.exists("config.yaml"):
 elif os.path.exists("config.yml"):
     path = "config.yml"
 
+_config: dict[str, Any] = defaultdict(dict)  # pyright: ignore [reportExplicitAny]
+config: Config
 
-def merge_dicts(dct: dict[str, Any], merge_dct: dict[str, Any]) -> None:
+
+def merge_dicts(dct: dict[str, Any], merge_dct: dict[str, Any]) -> None:  # pyright: ignore [reportExplicitAny]
     for k, v in merge_dct.items():
         if isinstance(dct.get(k), dict) and isinstance(v, dict):
             merge_dicts(dct[k], v)
@@ -67,9 +72,10 @@ def merge_dicts(dct: dict[str, Any], merge_dct: dict[str, Any]) -> None:
             dct[k] = v
 
 
-config: dict[str, dict[str, Any]] = defaultdict(dict)
 if path:
     with open(path, encoding="utf-8") as f:
-        config.update(yaml.safe_load(f))
+        _config.update(yaml.safe_load(f))
 
-merge_dicts(config, load_from_env())
+merge_dicts(_config, load_from_env())
+
+config = Config(**_config) if _config else Config()

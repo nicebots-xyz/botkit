@@ -72,14 +72,14 @@ jobs:
           # Function to commit changes
           commit_changes() {
             git add requirements.txt pyproject.toml pdm.lock
-            git commit -m "Update dependencies"
+            git commit -m ":arrow_up: Update dependencies lock"
           }
 
           # Function to create PR
           create_pr() {
             local BRANCH=$1
             gh pr create \
-              --title "Update dependencies" \
+              --title ":arrow_up: Update dependencies lock" \
               --body "This PR updates the project dependencies. Please review the changes and merge if everything looks good." \
               --base ${{ github.ref_name }} \
               --head $BRANCH \

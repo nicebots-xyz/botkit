@@ -21,18 +21,14 @@ repos:
         exclude: \.(po|pot|yml|yaml)$
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: v0.9.4
+    rev: v0.11.0
     hooks:
       # Run the linter.
       - id: ruff
         args: [ --fix ]
       # Run the formatter.
       - id: ruff-format
-  -   repo: local
-      hooks:
-        - id: copywrite
-          name: copywrite
-          entry: copywrite headers
-          language: system
-          pass_filenames: false
-          files: .
+  - repo: https://github.com/bhundven/copywrite # waiting for https://github.com/hashicorp/copywrite/pull/120 to be merged
+    rev: 937f17f09c46992447dfa8977bb96eda512588c4
+    hooks:
+      - id: add-headers

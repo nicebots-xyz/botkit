@@ -5,8 +5,8 @@ import asyncio
 import importlib
 import importlib.util
 from glob import iglob
-from os.path import basename, splitext
-from typing import TYPE_CHECKING, Any, TypedDict
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, cast
 
 import discord
 import yaml
@@ -16,24 +16,34 @@ from quart import Quart
 
 from src import custom, i18n
 from src.config import config
+from src.config.models import BotConfig, Extension, RestConfig
 from src.i18n.classes import ExtensionTranslation
 from src.log import logger, patch
 from src.utils import setup_func, unzip_extensions, validate_module
-from src.utils.iterator import next_default
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Coroutine
     from types import ModuleType
 
-    class FunctionConfig(TypedDict):
-        enabled: bool
-
-    FunctionlistType = list[tuple[Callable[..., Any], FunctionConfig]]
+    FunctionlistType = list[tuple[Callable[..., Any], Extension]]
 
 
-async def start_bot(bot: custom.Bot, token: str) -> None:
+async def start_bot(bot: custom.Bot, token: str, rest_config: RestConfig, public_key: str | None = None) -> None:
     try:
-        await bot.start(token)
+        if isinstance(bot, custom.CustomRestBot):
+            if not public_key:
+                raise TypeError("CustomRestBot requires a public key to start.")  # noqa: TRY301
+            await bot.start(
+                token=token,
+                public_key=public_key,
+                health=rest_config.health,
+                uvicorn_options={
+                    "host": rest_config.host,
+                    "port": rest_config.port,
+                },
+            )
+        else:
+            await bot.start(token)
     except LoginFailure as e:
         logger.critical("Failed to log in, is the bot token valid?")
         logger.debug("", exc_info=e)
@@ -93,29 +103,34 @@ def load_extensions() -> tuple[
     back_functions: FunctionlistType = []
     startup_functions: FunctionlistType = []
     translations: list[ExtensionTranslation] = []
-    for extension in iglob("src/extensions/*"):
-        name = splitext(basename(extension))[0]
+    for _extension in iglob("src/extensions/*"):
+        extension = Path(_extension)
+        name = extension.name
         if name.endswith(("_", "_/", ".py")):
             continue
 
-        its_config = config["extensions"].get(name, config["extensions"].get(name.replace("_", "-"), {}))
+        _, its_config = config.get_extension(name, {})
+        if its_config and not its_config.get("enabled"):
+            # Early return if extension is configured to be disabled explicitly
+            continue
+
         try:
             module: ModuleType = importlib.import_module(f"src.extensions.{name}")
         except ImportError as e:
             logger.error(f"Failed to import extension {name}")
             logger.debug("", exc_info=e)
             continue
-        if not its_config:
-            its_config = module.default
-            config["extensions"][name] = its_config
-        if not its_config["enabled"]:
+
+        its_config = its_config or cast("Extension", module.default)
+        if not its_config.get("enabled"):
             del module
             continue
+
         logger.info(f"Loading extension {name}")
         translation: ExtensionTranslation | None = None
-        if translation_path := next_default(iglob(extension + "/translations.yml")):
+        if (translation_path := (extension / "translations.yml")).exists():
             try:
-                translation = i18n.load_translation(translation_path)
+                translation = i18n.load_translation(str(translation_path))
                 translations.append(translation)
             except yaml.YAMLError as e:
                 logger.error(f"Error loading translation {translation_path}: {e}")
@@ -138,28 +153,27 @@ def load_extensions() -> tuple[
 async def setup_and_start_bot(
     bot_functions: "FunctionlistType",
     translations: list[ExtensionTranslation],
-    config: dict[str, Any],
+    config: BotConfig,
 ) -> None:
     intents = discord.Intents.default()
-    if config.get("prefix"):
+    if config.prefix:
         intents.message_content = True
-    # Get cache configuration
-    cache_config = config.get("cache", {})
-    bot = custom.Bot(
+    cls = custom.CustomRestBot if config.rest else custom.CustomBot
+    bot = cls(
         intents=intents,
         help_command=None,
-        command_prefix=(config.get("prefix", {}).get("prefix") or commands.when_mentioned),
-        cache_type=cache_config.get("type", "memory"),
-        cache_config=cache_config.get("redis"),
+        command_prefix=(str(config.prefix) or commands.when_mentioned),
+        cache_type=config.cache.type,
+        cache_config=config.cache.redis,
     )
     for function, its_config in bot_functions:
         setup_func(function, bot=bot, config=its_config)
     i18n.apply(bot, translations)
-    if not config.get("prefix", {}).get("enabled", True):
+    if not config.prefix:
         bot.prefixed_commands = {}
-    if not config.get("slash", {}).get("enabled", True):
-        bot._pending_application_commands = []  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
-    await start_bot(bot, config["token"])
+    if not config.slash:
+        bot._pending_application_commands = []  # pyright: ignore[reportPrivateUsage]
+    await start_bot(bot, config.token, config.rest, config.public_key)
 
 
 async def setup_and_start_backend(
@@ -169,7 +183,7 @@ async def setup_and_start_backend(
     app = Quart("backend")
     for function, its_config in back_functions:
         setup_func(function, app=app, bot=back_bot, config=its_config)
-    await start_backend(app, back_bot, config["bot"]["token"])
+    await start_backend(app, back_bot, config.bot.token)
 
 
 async def run_startup_functions(
@@ -184,28 +198,28 @@ async def run_startup_functions(
 
 
 async def start(run_bot: bool | None = None, run_backend: bool | None = None) -> None:
-    if not config.get("bot", {}).get("token"):
+    if not config.bot.token:
         logger.critical("No bot token provided in config, exiting...")
         return
-    if config.get("db", {}).get("enabled", False):
+    if config.db.enabled:
         from src.database.config import init
 
         logger.info("Initializing database...")
         await init()
 
     unzip_extensions()
-    run_bot = run_bot if run_bot is not None else config.get("use", {}).get("bot", True)
-    run_backend = run_backend if run_backend is not None else config.get("use", {}).get("backend", True)
+    run_bot = run_bot if run_bot is not None else config.use.bot
+    run_backend = run_backend if run_backend is not None else config.use.backend
 
     bot_functions, back_functions, startup_functions, translations = load_extensions()
 
     coros: list[Coroutine[Any, Any, Any]] = []
     if bot_functions and run_bot:
-        coros.append(setup_and_start_bot(bot_functions, translations, config.get("bot", {})))
+        coros.append(setup_and_start_bot(bot_functions, translations, config.bot))
     if back_functions and run_backend:
         coros.append(setup_and_start_backend(back_functions))
     if not coros:
-        logger.error("No extensions to run, exiting...")
+        logger.error("Nothing to start, exiting...")
         return
 
     if startup_functions:

@@ -11,7 +11,7 @@ from src.config import config
 logger = getLogger("bot").getChild("database")
 
 TORTOISE_ORM = {
-    "connections": {"default": config["db"]["url"]},
+    "connections": {"default": config.db.url},
     "apps": {
         "models": {
             "models": ["src.database.models", "aerich.models"],
@@ -28,7 +28,7 @@ async def init() -> None:
         location="./src/database/migrations/",
     )
     await command.init()
-    migrated = await command.upgrade(run_in_transaction=True)  # pyright: ignore[reportUnknownVariableType]
+    migrated = await command.upgrade(run_in_transaction=True)
     logger.success(f"Successfully migrated {migrated} migrations")  # pyright: ignore [reportAttributeAccessIssue]
     await Tortoise.init(config=TORTOISE_ORM)
 
