@@ -108,7 +108,7 @@ files = [
 
 [[package]]
 name = "aiohttp"
-version = "3.11.17"
+version = "3.11.18"
 requires_python = ">=3.9"
 summary = "Async http client/server framework (asyncio)"
 groups = ["default"]
@@ -123,23 +123,23 @@ dependencies = [
     "yarl<2.0,>=1.17.0",
 ]
 files = [
-    {file = "aiohttp-3.11.17-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:03ee8b587cc7bd345552235cd7117097c169f3a531a7239dc9a3c6b6db1cf46a"},
-    {file = "aiohttp-3.11.17-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:2bd255da118f96446567d9870621a07b8f36b1130826b07f2910ef1aeb4a85c0"},
-    {file = "aiohttp-3.11.17-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:2620d1cbeb688094045f06000b5b6127df2eb768cae07d95137b0e998cd6ce04"},
-    {file = "aiohttp-3.11.17-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9eac3842f3258c77d35bfe93356fedbc6e5e943fd056534be71b694289b36973"},
-    {file = "aiohttp-3.11.17-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:626dffeeeee34f2b5a327df05d6cb48ecfabcb141d56590d3c779accedc62d88"},
-    {file = "aiohttp-3.11.17-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:aded01d2bda55b2f62a361a2d55f8c9c04436eff6220e579ca7fb72cfe68b48a"},
-    {file = "aiohttp-3.11.17-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0b830715cb818efc4fbd7b9631661e3498b068f23680982d7586103333b0d4df"},
-    {file = "aiohttp-3.11.17-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:3ac7ac3d0a7ab5ce1076c788640274f594397603381747b3d4142beec004c44a"},
-    {file = "aiohttp-3.11.17-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:9dba68088ecdd16b306513463f7e295699bc52bb09573d2bc3ff3d0e7bdc34ff"},
-    {file = "aiohttp-3.11.17-cp312-cp312-musllinux_1_2_armv7l.whl", hash = "sha256:80ba863e1e1055577f27a484b0f002b31297432016262d5f9d2dab5c6d21c5ad"},
-    {file = "aiohttp-3.11.17-cp312-cp312-musllinux_1_2_i686.whl", hash = "sha256:003c955924fa7d1b100599ce4f5da3ce68bd151b81b5a8c18369ba585766ed31"},
-    {file = "aiohttp-3.11.17-cp312-cp312-musllinux_1_2_ppc64le.whl", hash = "sha256:6e615b94364f7ea0dc95922c351e106ffb2eded09ffd7a7102ab2e202d17bdaa"},
-    {file = "aiohttp-3.11.17-cp312-cp312-musllinux_1_2_s390x.whl", hash = "sha256:05eb25fa6e5495b3866a3b974fe3b214d5a0b6bb862cd54b7ec4d997948aa12c"},
-    {file = "aiohttp-3.11.17-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:3a3fb727360af3e94667e243cb21cf5069c0df9a70adcc81751136d53f526bc6"},
-    {file = "aiohttp-3.11.17-cp312-cp312-win32.whl", hash = "sha256:93a7cfacf28887ddebd9c697d590002e8d52ac51acb4faf0d00abe1bb791339e"},
-    {file = "aiohttp-3.11.17-cp312-cp312-win_amd64.whl", hash = "sha256:c43311c94200a63e31b62e82872c6dd43fe904cbb8f161c830bfe65c17583658"},
-    {file = "aiohttp-3.11.17.tar.gz", hash = "sha256:2bf3ff374c3abd7a5c6c8de3ad7ed91e0e89a8b53353314c93766c3add5a208a"},
+    {file = "aiohttp-3.11.18-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:63d71eceb9cad35d47d71f78edac41fcd01ff10cacaa64e473d1aec13fa02df2"},
+    {file = "aiohttp-3.11.18-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:d1929da615840969929e8878d7951b31afe0bac883d84418f92e5755d7b49508"},
+    {file = "aiohttp-3.11.18-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:7d0aebeb2392f19b184e3fdd9e651b0e39cd0f195cdb93328bd124a1d455cd0e"},
+    {file = "aiohttp-3.11.18-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3849ead845e8444f7331c284132ab314b4dac43bfae1e3cf350906d4fff4620f"},
+    {file = "aiohttp-3.11.18-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:5e8452ad6b2863709f8b3d615955aa0807bc093c34b8e25b3b52097fe421cb7f"},
+    {file = "aiohttp-3.11.18-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:3b8d2b42073611c860a37f718b3d61ae8b4c2b124b2e776e2c10619d920350ec"},
+    {file = "aiohttp-3.11.18-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:40fbf91f6a0ac317c0a07eb328a1384941872f6761f2e6f7208b63c4cc0a7ff6"},
+    {file = "aiohttp-3.11.18-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:44ff5625413fec55216da5eaa011cf6b0a2ed67a565914a212a51aa3755b0009"},
+    {file = "aiohttp-3.11.18-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:7f33a92a2fde08e8c6b0c61815521324fc1612f397abf96eed86b8e31618fdb4"},
+    {file = "aiohttp-3.11.18-cp312-cp312-musllinux_1_2_armv7l.whl", hash = "sha256:11d5391946605f445ddafda5eab11caf310f90cdda1fd99865564e3164f5cff9"},
+    {file = "aiohttp-3.11.18-cp312-cp312-musllinux_1_2_i686.whl", hash = "sha256:3cc314245deb311364884e44242e00c18b5896e4fe6d5f942e7ad7e4cb640adb"},
+    {file = "aiohttp-3.11.18-cp312-cp312-musllinux_1_2_ppc64le.whl", hash = "sha256:0f421843b0f70740772228b9e8093289924359d306530bcd3926f39acbe1adda"},
+    {file = "aiohttp-3.11.18-cp312-cp312-musllinux_1_2_s390x.whl", hash = "sha256:e220e7562467dc8d589e31c1acd13438d82c03d7f385c9cd41a3f6d1d15807c1"},
+    {file = "aiohttp-3.11.18-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:ab2ef72f8605046115bc9aa8e9d14fd49086d405855f40b79ed9e5c1f9f4faea"},
+    {file = "aiohttp-3.11.18-cp312-cp312-win32.whl", hash = "sha256:12a62691eb5aac58d65200c7ae94d73e8a65c331c3a86a2e9670927e94339ee8"},
+    {file = "aiohttp-3.11.18-cp312-cp312-win_amd64.whl", hash = "sha256:364329f319c499128fd5cd2d1c31c44f234c58f9b96cc57f743d16ec4f3238c8"},
+    {file = "aiohttp-3.11.18.tar.gz", hash = "sha256:ae856e1138612b7e412db63b7708735cff4d38d0399f6a5435d3dac2669f558a"},
 ]
 
 [[package]]
@@ -251,7 +251,7 @@ files = [
 
 [[package]]
 name = "basedpyright"
-version = "1.29.0"
+version = "1.29.1"
 requires_python = ">=3.8"
 summary = "static type checking for Python (but based)"
 groups = ["dev"]
@@ -259,8 +259,8 @@ dependencies = [
     "nodejs-wheel-binaries>=20.13.1",
 ]
 files = [
-    {file = "basedpyright-1.29.0-py3-none-any.whl", hash = "sha256:926ae39eaccfe15e7dbd997dd4e48b22f98bcf201e4cbb8620aa6b8cfbee723b"},
-    {file = "basedpyright-1.29.0.tar.gz", hash = "sha256:90742d5a59e4f877ad3639bafb7a40280512129572b56dd51d8cb9375070d7c0"},
+    {file = "basedpyright-1.29.1-py3-none-any.whl", hash = "sha256:b7eb65b9d4aaeeea29a349ac494252032a75a364942d0ac466d7f07ddeacc786"},
+    {file = "basedpyright-1.29.1.tar.gz", hash = "sha256:06bbe6c3b50ab4af20f80e154049477a50d8b81d2522eadbc9f472f2f92cd44b"},
 ]
 
 [[package]]
@@ -291,26 +291,26 @@ files = [
 
 [[package]]
 name = "caio"
-version = "0.9.22"
-requires_python = "<4,>=3.7"
+version = "0.9.24"
+requires_python = ">=3.9"
 summary = "Asynchronous file IO for Linux MacOS or Windows."
 groups = ["default"]
 files = [
-    {file = "caio-0.9.22-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:25aae4c3b846eeca63c7d75d63b3fd8deaba9650ef1168d8a239e6a927299ded"},
-    {file = "caio-0.9.22-cp312-cp312-manylinux_2_34_aarch64.whl", hash = "sha256:ac332b8e2c8e0840fe10ee6971b38f8dac6ad64ecf6087ee3f70cd376f511699"},
-    {file = "caio-0.9.22-cp312-cp312-manylinux_2_34_x86_64.whl", hash = "sha256:6f991e4812fd2d6e87f91ff78fcc7d4f299bd98765334756580d4ea42cad89f1"},
-    {file = "caio-0.9.22.tar.gz", hash = "sha256:7ea533d90e5fa0bba33bc8f4805b4c90f19e8d8ac5139a8033b92a6ab5c4012b"},
+    {file = "caio-0.9.24-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:7ae3566228383175265a7583107f21a7cb044a752ea29ba84fce7c1a49a05903"},
+    {file = "caio-0.9.24-cp312-cp312-manylinux_2_34_aarch64.whl", hash = "sha256:a306b0dda91cb4ca3170f066c114597f8ea41b3da578574a9d2b54f86963de68"},
+    {file = "caio-0.9.24-cp312-cp312-manylinux_2_34_x86_64.whl", hash = "sha256:8ee158e56128d865fb7d57a9c9c22fca4e8aa8d8664859c977a36fff3ccb3609"},
+    {file = "caio-0.9.24.tar.gz", hash = "sha256:5bcdecaea02a9aa8e3acf0364eff8ad9903d57d70cdb274a42270126290a77f1"},
 ]
 
 [[package]]
 name = "certifi"
-version = "2025.1.31"
+version = "2025.4.26"
 requires_python = ">=3.6"
 summary = "Python package for providing Mozilla's CA Bundle."
 groups = ["default"]
 files = [
-    {file = "certifi-2025.1.31-py3-none-any.whl", hash = "sha256:ca78db4565a652026a4db2bcdf68f2fb589ea80d0be70e03929ed730746b84fe"},
-    {file = "certifi-2025.1.31.tar.gz", hash = "sha256:3d5da6925056f6f18f119200434a4780a94263f10d1c21d032a6f6b2baa20651"},
+    {file = "certifi-2025.4.26-py3-none-any.whl", hash = "sha256:30350364dfe371162649852c63336a15c70c6510c2ad5015b21c2345311805f3"},
+    {file = "certifi-2025.4.26.tar.gz", hash = "sha256:0a816057ea3cdefcef70270d2c515e4506bbc954f417fa5ade2021213bb8f0c6"},
 ]
 
 [[package]]
@@ -467,16 +467,13 @@ files = [
 
 [[package]]
 name = "h11"
-version = "0.14.0"
-requires_python = ">=3.7"
+version = "0.16.0"
+requires_python = ">=3.8"
 summary = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
 groups = ["default"]
-dependencies = [
-    "typing-extensions; python_version < \"3.8\"",
-]
 files = [
-    {file = "h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761"},
-    {file = "h11-0.14.0.tar.gz", hash = "sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d"},
+    {file = "h11-0.16.0-py3-none-any.whl", hash = "sha256:63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86"},
+    {file = "h11-0.16.0.tar.gz", hash = "sha256:4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1"},
 ]
 
 [[package]]
@@ -690,7 +687,7 @@ files = [
 
 [[package]]
 name = "nodejs-wheel-binaries"
-version = "22.14.0"
+version = "22.15.0"
 requires_python = ">=3.7"
 summary = "unoffical Node.js package"
 groups = ["dev"]
@@ -698,15 +695,15 @@ dependencies = [
     "typing-extensions; python_version < \"3.8\"",
 ]
 files = [
-    {file = "nodejs_wheel_binaries-22.14.0-py2.py3-none-macosx_11_0_arm64.whl", hash = "sha256:d8ab8690516a3e98458041286e3f0d6458de176d15c14f205c3ea2972131420d"},
-    {file = "nodejs_wheel_binaries-22.14.0-py2.py3-none-macosx_11_0_x86_64.whl", hash = "sha256:b2f200f23b3610bdbee01cf136279e005ffdf8ee74557aa46c0940a7867956f6"},
-    {file = "nodejs_wheel_binaries-22.14.0-py2.py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d0877832abd7a9c75c8c5caafa37f986c9341ee025043c2771213d70c4c1defa"},
-    {file = "nodejs_wheel_binaries-22.14.0-py2.py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8fded5a70a8a55c2135e67bd580d8b7f2e94fcbafcc679b6a2d5b92f88373d69"},
-    {file = "nodejs_wheel_binaries-22.14.0-py2.py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:c1ade6f3ece458b40c02e89c91d5103792a9f18aaad5026da533eb0dcb87090e"},
-    {file = "nodejs_wheel_binaries-22.14.0-py2.py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:34fa5ed4cf3f65cbfbe9b45c407ffc2fc7d97a06cd8993e6162191ff81f29f48"},
-    {file = "nodejs_wheel_binaries-22.14.0-py2.py3-none-win_amd64.whl", hash = "sha256:ca7023276327455988b81390fa6bbfa5191c1da7fc45bc57c7abc281ba9967e9"},
-    {file = "nodejs_wheel_binaries-22.14.0-py2.py3-none-win_arm64.whl", hash = "sha256:fd59c8e9a202221e316febe1624a1ae3b42775b7fb27737bf12ec79565983eaf"},
-    {file = "nodejs_wheel_binaries-22.14.0.tar.gz", hash = "sha256:c1dc43713598c7310d53795c764beead861b8c5021fe4b1366cb912ce1a4c8bf"},
+    {file = "nodejs_wheel_binaries-22.15.0-py2.py3-none-macosx_11_0_arm64.whl", hash = "sha256:aa16366d48487fff89446fb237693e777aa2ecd987208db7d4e35acc40c3e1b1"},
+    {file = "nodejs_wheel_binaries-22.15.0-py2.py3-none-macosx_11_0_x86_64.whl", hash = "sha256:a54bb3fee9170003fa8abc69572d819b2b1540344eff78505fcc2129a9175596"},
+    {file = "nodejs_wheel_binaries-22.15.0-py2.py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:867121ccf99d10523f6878a26db86e162c4939690e24cfb5bea56d01ea696c93"},
+    {file = "nodejs_wheel_binaries-22.15.0-py2.py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0ab0fbcda2ddc8aab7db1505d72cb958f99324b3834c4543541a305e02bfe860"},
+    {file = "nodejs_wheel_binaries-22.15.0-py2.py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:2bde1d8e00cd955b9ce9ee9ac08309923e2778a790ee791b715e93e487e74bfd"},
+    {file = "nodejs_wheel_binaries-22.15.0-py2.py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:acdd4ef73b6701aab9fbe02ac5e104f208a5e3c300402fa41ad7bc7f49499fbf"},
+    {file = "nodejs_wheel_binaries-22.15.0-py2.py3-none-win_amd64.whl", hash = "sha256:51deaf13ee474e39684ce8c066dfe86240edb94e7241950ca789befbbbcbd23d"},
+    {file = "nodejs_wheel_binaries-22.15.0-py2.py3-none-win_arm64.whl", hash = "sha256:01a3fe4d60477f93bf21a44219db33548c75d7fed6dc6e6f4c05cf0adf015609"},
+    {file = "nodejs_wheel_binaries-22.15.0.tar.gz", hash = "sha256:ff81aa2a79db279c2266686ebcb829b6634d049a5a49fc7dc6921e4f18af9703"},
 ]
 
 [[package]]
@@ -1042,29 +1039,29 @@ files = [
 
 [[package]]
 name = "ruff"
-version = "0.11.6"
+version = "0.11.7"
 requires_python = ">=3.7"
 summary = "An extremely fast Python linter and code formatter, written in Rust."
 groups = ["dev"]
 files = [
-    {file = "ruff-0.11.6-py3-none-linux_armv6l.whl", hash = "sha256:d84dcbe74cf9356d1bdb4a78cf74fd47c740bf7bdeb7529068f69b08272239a1"},
-    {file = "ruff-0.11.6-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:9bc583628e1096148011a5d51ff3c836f51899e61112e03e5f2b1573a9b726de"},
-    {file = "ruff-0.11.6-py3-none-macosx_11_0_arm64.whl", hash = "sha256:f2959049faeb5ba5e3b378709e9d1bf0cab06528b306b9dd6ebd2a312127964a"},
-    {file = "ruff-0.11.6-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:63c5d4e30d9d0de7fedbfb3e9e20d134b73a30c1e74b596f40f0629d5c28a193"},
-    {file = "ruff-0.11.6-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:26a4b9a4e1439f7d0a091c6763a100cef8fbdc10d68593df6f3cfa5abdd9246e"},
-    {file = "ruff-0.11.6-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:b5edf270223dd622218256569636dc3e708c2cb989242262fe378609eccf1308"},
-    {file = "ruff-0.11.6-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:f55844e818206a9dd31ff27f91385afb538067e2dc0beb05f82c293ab84f7d55"},
-    {file = "ruff-0.11.6-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:1d8f782286c5ff562e4e00344f954b9320026d8e3fae2ba9e6948443fafd9ffc"},
-    {file = "ruff-0.11.6-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:01c63ba219514271cee955cd0adc26a4083df1956d57847978383b0e50ffd7d2"},
-    {file = "ruff-0.11.6-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:15adac20ef2ca296dd3d8e2bedc6202ea6de81c091a74661c3666e5c4c223ff6"},
-    {file = "ruff-0.11.6-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:4dd6b09e98144ad7aec026f5588e493c65057d1b387dd937d7787baa531d9bc2"},
-    {file = "ruff-0.11.6-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:45b2e1d6c0eed89c248d024ea95074d0e09988d8e7b1dad8d3ab9a67017a5b03"},
-    {file = "ruff-0.11.6-py3-none-musllinux_1_2_i686.whl", hash = "sha256:bd40de4115b2ec4850302f1a1d8067f42e70b4990b68838ccb9ccd9f110c5e8b"},
-    {file = "ruff-0.11.6-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:77cda2dfbac1ab73aef5e514c4cbfc4ec1fbef4b84a44c736cc26f61b3814cd9"},
-    {file = "ruff-0.11.6-py3-none-win32.whl", hash = "sha256:5151a871554be3036cd6e51d0ec6eef56334d74dfe1702de717a995ee3d5b287"},
-    {file = "ruff-0.11.6-py3-none-win_amd64.whl", hash = "sha256:cce85721d09c51f3b782c331b0abd07e9d7d5f775840379c640606d3159cae0e"},
-    {file = "ruff-0.11.6-py3-none-win_arm64.whl", hash = "sha256:3567ba0d07fb170b1b48d944715e3294b77f5b7679e8ba258199a250383ccb79"},
-    {file = "ruff-0.11.6.tar.gz", hash = "sha256:bec8bcc3ac228a45ccc811e45f7eb61b950dbf4cf31a67fa89352574b01c7d79"},
+    {file = "ruff-0.11.7-py3-none-linux_armv6l.whl", hash = "sha256:d29e909d9a8d02f928d72ab7837b5cbc450a5bdf578ab9ebee3263d0a525091c"},
+    {file = "ruff-0.11.7-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:dd1fb86b168ae349fb01dd497d83537b2c5541fe0626e70c786427dd8363aaee"},
+    {file = "ruff-0.11.7-py3-none-macosx_11_0_arm64.whl", hash = "sha256:d3d7d2e140a6fbbc09033bce65bd7ea29d6a0adeb90b8430262fbacd58c38ada"},
+    {file = "ruff-0.11.7-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4809df77de390a1c2077d9b7945d82f44b95d19ceccf0c287c56e4dc9b91ca64"},
+    {file = "ruff-0.11.7-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:f3a0c2e169e6b545f8e2dba185eabbd9db4f08880032e75aa0e285a6d3f48201"},
+    {file = "ruff-0.11.7-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:49b888200a320dd96a68e86736cf531d6afba03e4f6cf098401406a257fcf3d6"},
+    {file = "ruff-0.11.7-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:2b19cdb9cf7dae00d5ee2e7c013540cdc3b31c4f281f1dacb5a799d610e90db4"},
+    {file = "ruff-0.11.7-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:64e0ee994c9e326b43539d133a36a455dbaab477bc84fe7bfbd528abe2f05c1e"},
+    {file = "ruff-0.11.7-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:bad82052311479a5865f52c76ecee5d468a58ba44fb23ee15079f17dd4c8fd63"},
+    {file = "ruff-0.11.7-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7940665e74e7b65d427b82bffc1e46710ec7f30d58b4b2d5016e3f0321436502"},
+    {file = "ruff-0.11.7-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:169027e31c52c0e36c44ae9a9c7db35e505fee0b39f8d9fca7274a6305295a92"},
+    {file = "ruff-0.11.7-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:305b93f9798aee582e91e34437810439acb28b5fc1fee6b8205c78c806845a94"},
+    {file = "ruff-0.11.7-py3-none-musllinux_1_2_i686.whl", hash = "sha256:a681db041ef55550c371f9cd52a3cf17a0da4c75d6bd691092dfc38170ebc4b6"},
+    {file = "ruff-0.11.7-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:07f1496ad00a4a139f4de220b0c97da6d4c85e0e4aa9b2624167b7d4d44fd6b6"},
+    {file = "ruff-0.11.7-py3-none-win32.whl", hash = "sha256:f25dfb853ad217e6e5f1924ae8a5b3f6709051a13e9dad18690de6c8ff299e26"},
+    {file = "ruff-0.11.7-py3-none-win_amd64.whl", hash = "sha256:0a931d85959ceb77e92aea4bbedfded0a31534ce191252721128f77e5ae1f98a"},
+    {file = "ruff-0.11.7-py3-none-win_arm64.whl", hash = "sha256:778c1e5d6f9e91034142dfd06110534ca13220bfaad5c3735f6cb844654f6177"},
+    {file = "ruff-0.11.7.tar.gz", hash = "sha256:655089ad3224070736dc32844fde783454f8558e71f501cb207485fe4eee23d4"},
 ]
 
 [[package]]
@@ -1082,7 +1079,7 @@ files = [
 
 [[package]]
 name = "sentry-sdk"
-version = "2.26.1"
+version = "2.27.0"
 requires_python = ">=3.6"
 summary = "Python client for Sentry (https://sentry.io)"
 groups = ["default"]
@@ -1091,8 +1088,8 @@ dependencies = [
     "urllib3>=1.26.11",
 ]
 files = [
-    {file = "sentry_sdk-2.26.1-py2.py3-none-any.whl", hash = "sha256:e99390e3f217d13ddcbaeaed08789f1ca614d663b345b9da42e35ad6b60d696a"},
-    {file = "sentry_sdk-2.26.1.tar.gz", hash = "sha256:759e019c41551a21519a95e6cef6d91fb4af1054761923dadaee2e6eca9c02c7"},
+    {file = "sentry_sdk-2.27.0-py2.py3-none-any.whl", hash = "sha256:c58935bfff8af6a0856d37e8adebdbc7b3281c2b632ec823ef03cd108d216ff0"},
+    {file = "sentry_sdk-2.27.0.tar.gz", hash = "sha256:90f4f883f9eff294aff59af3d58c2d1b64e3927b28d5ada2b9b41f5aeda47daf"},
 ]
 
 [[package]]
@@ -1108,13 +1105,13 @@ files = [
 
 [[package]]
 name = "soupsieve"
-version = "2.6"
+version = "2.7"
 requires_python = ">=3.8"
 summary = "A modern CSS selector implementation for Beautiful Soup."
 groups = ["dev"]
 files = [
-    {file = "soupsieve-2.6-py3-none-any.whl", hash = "sha256:e72c4ff06e4fb6e4b5a9f0f55fe6e81514581fca1515028625d0f299c602ccc9"},
-    {file = "soupsieve-2.6.tar.gz", hash = "sha256:e2e68417777af359ec65daac1057404a3c8a5455bb8abc36f1a9866ab1a51abb"},
+    {file = "soupsieve-2.7-py3-none-any.whl", hash = "sha256:6e60cc5c1ffaf1cebcc12e8188320b72071e922c2e897f737cadce79ad5d30c4"},
+    {file = "soupsieve-2.7.tar.gz", hash = "sha256:ad282f9b6926286d2ead4750552c8a6142bc4c783fd66b0293547c8fe6ae126a"},
 ]
 
 [[package]]
