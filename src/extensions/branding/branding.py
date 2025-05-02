@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MIT
 
 import logging
-import random
 from datetime import datetime
 from typing import Any
 
@@ -12,6 +11,7 @@ from discord.ext import commands, tasks
 from typing_extensions import TypedDict
 
 from src.log import logger
+import secrets
 
 BASE_URL = "https://top.gg/api"
 
@@ -94,8 +94,8 @@ class Branding(commands.Cog):
     async def update_status(self) -> None:
         status_types = list(self.config["status"].keys())  # pyright: ignore [reportOptionalMemberAccess]
         status_types.remove("every")
-        status_type: str = random.choice(status_types)  # noqa: S311
-        status: str = random.choice(self.config["status"][status_type])  # noqa: S311  # pyright: ignore [reportOptionalSubscript, reportUnknownArgumentType]
+        status_type: str = secrets.choice(status_types)  # noqa: S311
+        status: str = secrets.choice(self.config["status"][status_type])  # noqa: S311  # pyright: ignore [reportOptionalSubscript, reportUnknownArgumentType]
         activity = discord.Activity(
             name=status,
             type=getattr(discord.ActivityType, status_type),
