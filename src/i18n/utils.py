@@ -3,6 +3,9 @@
 
 from typing import TYPE_CHECKING, TypeVar
 
+import os
+from pathlib import Path
+
 import discord
 import yaml
 from discord.ext import commands as prefixed
@@ -180,6 +183,105 @@ def load_translation(path: str) -> ExtensionTranslation:
     with open(path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     return ExtensionTranslation(**data)
+
+
+def _load_recursive_translations(folder_path: Path, prefix: str = "") -> dict:
+    """Recursively load translations from a folder structure.
+
+    Args:
+    ----
+        folder_path (Path): The path to the translations folder.
+        prefix (str): The current prefix for nested keys.
+
+    Returns:
+    -------
+        dict: A flattened dictionary with dot-notation keys for nested structure.
+
+    """
+    result = {}
+    
+    if not folder_path.exists() or not folder_path.is_dir():
+        return result
+    
+    for item in folder_path.iterdir():
+        if item.is_file() and item.suffix in ('.yml', '.yaml'):
+            # Load YAML file content
+            try:
+                with open(item, encoding="utf-8") as f:
+                    file_data = yaml.safe_load(f)
+                if file_data is not None:
+                    # Use filename without extension as key
+                    key = item.stem
+                    full_key = f"{prefix}.{key}" if prefix else key
+                    
+                    # If the file contains a flat structure of translations, add them with dot notation
+                    if isinstance(file_data, dict):
+                        for sub_key, sub_value in file_data.items():
+                            nested_key = f"{full_key}.{sub_key}"
+                            result[nested_key] = sub_value
+                    else:
+                        result[full_key] = file_data
+            except yaml.YAMLError as e:
+                logger.warning(f"Error loading translation file {item}: {e}")
+        elif item.is_dir() and not item.name.startswith('.'):
+            # Recursively process subdirectories
+            new_prefix = f"{prefix}.{item.name}" if prefix else item.name
+            subdir_data = _load_recursive_translations(item, new_prefix)
+            result.update(subdir_data)
+    
+    return result
+
+
+def load_translation_folder(folder_path: str) -> ExtensionTranslation:
+    """Load translations from a folder structure.
+
+    Args:
+    ----
+        folder_path (str): The path to the translations folder.
+
+    Returns:
+    -------
+        ExtensionTranslation: The loaded translation with nested structure.
+
+    Raises:
+    ------
+        yaml.YAMLError: If any YAML file is not valid.
+
+    """
+    path = Path(folder_path)
+    flattened_data = _load_recursive_translations(path)
+    
+    # Separate commands and strings based on the structure
+    result_data = {}
+    commands_data = {}
+    strings_data = {}
+    
+    for key, value in flattened_data.items():
+        if key.startswith('commands.'):
+            # Extract command structure
+            parts = key.split('.', 2)  # ['commands', 'command_name', 'rest']
+            if len(parts) >= 2:
+                command_name = parts[1]
+                if command_name not in commands_data:
+                    commands_data[command_name] = {}
+                
+                if len(parts) == 2:
+                    # Direct command data
+                    commands_data[command_name].update(value if isinstance(value, dict) else {})
+                else:
+                    # Nested command data (e.g., commands.ping.name)
+                    rest_key = parts[2]
+                    commands_data[command_name][rest_key] = value
+        else:
+            # Everything else goes to strings with dot notation
+            strings_data[key] = value
+    
+    if commands_data:
+        result_data['commands'] = commands_data
+    if strings_data:
+        result_data['strings'] = strings_data
+    
+    return ExtensionTranslation(**result_data)
 
 
 def apply(

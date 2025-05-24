@@ -128,12 +128,25 @@ def load_extensions() -> tuple[
 
         logger.info(f"Loading extension {name}")
         translation: ExtensionTranslation | None = None
-        if (translation_path := (extension / "translations.yml")).exists():
+        
+        # Check for translations.yml file first (backward compatibility)
+        translation_file = extension / "translations.yml"
+        translation_folder = extension / "translations"
+        
+        if translation_file.exists():
             try:
-                translation = i18n.load_translation(str(translation_path))
+                translation = i18n.load_translation(str(translation_file))
                 translations.append(translation)
+                logger.debug(f"Loaded translation file for extension {name}")
             except yaml.YAMLError as e:
-                logger.error(f"Error loading translation {translation_path}: {e}")
+                logger.error(f"Error loading translation file {translation_file}: {e}")
+        elif translation_folder.exists() and translation_folder.is_dir():
+            try:
+                translation = i18n.load_translation_folder(str(translation_folder))
+                translations.append(translation)
+                logger.debug(f"Loaded translation folder for extension {name}")
+            except yaml.YAMLError as e:
+                logger.error(f"Error loading translation folder {translation_folder}: {e}")
         else:
             logger.warning(f"No translation found for extension {name}")
 
