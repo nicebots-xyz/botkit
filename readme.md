@@ -236,8 +236,16 @@ your extensions:
 
 ### Translation File Structure
 
-Each extension can have its own `translations.yml` file located at
-`src/extensions/EXT_NAME/translations.yml`. This file follows a specific structure:
+Each extension can have translations in one of two formats:
+
+1. **Single File**: A `translations.yml` file located at `src/extensions/EXT_NAME/translations.yml`
+2. **Folder Structure**: A `translations/` folder located at `src/extensions/EXT_NAME/translations/`
+
+If both exist, the single file takes precedence for backward compatibility.
+
+#### Single File Format
+
+The traditional `translations.yml` file follows this structure:
 
 ```yaml
 commands:
@@ -278,6 +286,61 @@ strings:
 >The top-level `strings` section (outside of `commands`) is what gets mapped to
 > `config["translations"]`. This section is for general strings not directly tied to
 > specific commands.
+
+#### Folder Structure Format
+
+The new folder structure allows for better organization of translations, especially for extensions with many commands and strings. Here's how it works:
+
+```
+src/extensions/my_extension/
+├── __init__.py
+└── translations/
+    ├── commands/
+    │   ├── hello.yaml
+    │   └── goodbye.yaml
+    ├── strings/
+    │   ├── general.yaml
+    │   └── errors.yaml
+    └── c.help/           # Shortcut for commands.help/
+        └── subcommand.yml
+```
+
+**Folder Name Features:**
+- **Dot Notation**: Dots in folder names create nested structures (e.g., `strings.general` becomes a nested key)
+- **Shortcuts**: Use `c.`, `t.`, and `s.` as shortcuts for `commands.`, `translations.`, and `strings.` respectively (only in folder names, not in YAML files)
+- **File Extensions**: Both `.yml` and `.yaml` files are supported
+
+**Example file contents:**
+
+**commands/hello.yaml:**
+```yaml
+name:
+  en-US: hello
+  fr: bonjour
+description:
+  en-US: Say hello
+  fr: Dire bonjour
+strings:
+  response:
+    en-US: Hello, {user}!
+    fr: Bonjour, {user}!
+```
+
+**strings/general.yaml:**
+```yaml
+welcome:
+  en-US: Welcome to the bot!
+  fr: Bienvenue dans le bot!
+help:
+  en-US: Need help? Use /help
+  fr: Besoin d'aide? Utilisez /help
+```
+
+**How it maps:**
+- Files in `commands/` become command definitions
+- Files in `strings/` become general strings with dot-notation keys (e.g., `strings.general.welcome`)
+- Folder shortcuts expand: `c.help/` becomes `commands.help/`
+- Nested folders create nested keys: `strings.errors.not_found`
 
 ### Nested Commands and Sub-commands
 

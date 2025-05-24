@@ -185,6 +185,33 @@ def load_translation(path: str) -> ExtensionTranslation:
     return ExtensionTranslation(**data)
 
 
+def _expand_folder_name(folder_name: str) -> str:
+    """Expand folder name shortcuts and handle dots as path separators.
+    
+    Args:
+    ----
+        folder_name (str): The folder name to expand.
+        
+    Returns:
+    -------
+        str: The expanded folder name with shortcuts replaced and dots converted to path separators.
+    """
+    # Handle shortcuts (only in folder names)
+    shortcuts = {
+        'c.': 'commands.',
+        't.': 'translations.',
+        's.': 'strings.'
+    }
+    
+    for shortcut, expansion in shortcuts.items():
+        if folder_name.startswith(shortcut):
+            folder_name = expansion + folder_name[len(shortcut):]
+            break
+    
+    # Convert dots to path separators for nested structure
+    return folder_name.replace('.', '.')
+
+
 def _load_recursive_translations(folder_path: Path, prefix: str = "") -> dict:
     """Recursively load translations from a folder structure.
 
@@ -214,8 +241,13 @@ def _load_recursive_translations(folder_path: Path, prefix: str = "") -> dict:
                     key = item.stem
                     full_key = f"{prefix}.{key}" if prefix else key
                     
-                    # If the file contains a flat structure of translations, add them with dot notation
-                    if isinstance(file_data, dict):
+                    # For command files, keep the entire structure intact
+                    # For string files, flatten with dot notation
+                    if prefix.startswith('commands.') or (prefix == '' and key == 'commands'):
+                        # This is a command file - keep structure intact
+                        result[full_key] = file_data
+                    elif isinstance(file_data, dict):
+                        # This is a strings file - flatten with dot notation
                         for sub_key, sub_value in file_data.items():
                             nested_key = f"{full_key}.{sub_key}"
                             result[nested_key] = sub_value
@@ -224,8 +256,9 @@ def _load_recursive_translations(folder_path: Path, prefix: str = "") -> dict:
             except yaml.YAMLError as e:
                 logger.warning(f"Error loading translation file {item}: {e}")
         elif item.is_dir() and not item.name.startswith('.'):
-            # Recursively process subdirectories
-            new_prefix = f"{prefix}.{item.name}" if prefix else item.name
+            # Expand folder name with shortcuts and dot notation
+            expanded_name = _expand_folder_name(item.name)
+            new_prefix = f"{prefix}.{expanded_name}" if prefix else expanded_name
             subdir_data = _load_recursive_translations(item, new_prefix)
             result.update(subdir_data)
     
@@ -266,12 +299,15 @@ def load_translation_folder(folder_path: str) -> ExtensionTranslation:
                     commands_data[command_name] = {}
                 
                 if len(parts) == 2:
-                    # Direct command data
+                    # Direct command data (file named after command group)
                     commands_data[command_name].update(value if isinstance(value, dict) else {})
                 else:
-                    # Nested command data (e.g., commands.ping.name)
-                    rest_key = parts[2]
-                    commands_data[command_name][rest_key] = value
+                    # This is a file inside a command folder (e.g., commands.admin.ban)
+                    # The file name becomes a sub-command
+                    subcommand_name = parts[2]
+                    if 'commands' not in commands_data[command_name]:
+                        commands_data[command_name]['commands'] = {}
+                    commands_data[command_name]['commands'][subcommand_name] = value
         else:
             # Everything else goes to strings with dot notation
             strings_data[key] = value
