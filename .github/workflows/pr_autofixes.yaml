@@ -45,7 +45,7 @@ jobs:
 
       - name: Setup Copywrite
         if: steps.check-target.outputs.should_run == 'true'
-        uses: hashicorp/setup-copywrite@5e3e8a26d7b9f8a508848ad0a069dfd2f7aa5339
+        uses: hashicorp/setup-copywrite@32f9f1c86f661b8a51100768976a06f1b281a035
 
       - name: Install dependencies
         if: steps.check-target.outputs.should_run == 'true'
