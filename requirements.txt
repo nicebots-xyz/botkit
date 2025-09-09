@@ -43,7 +43,7 @@ priority==2.0.0
 propcache==0.3.2
 py-cord @ git+https://github.com/Pycord-Development/pycord.git@ff628eee595c2e07f04921de4abb89f29f268407
 pycord-rest-bot==0.1.2
-pycparser==2.22
+pycparser==2.23
 pydantic==2.11.7
 pydantic-core==2.33.2
 pynacl==1.5.0
