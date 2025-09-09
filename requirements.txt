@@ -17,7 +17,7 @@ attrs==25.3.0
 blinker==1.9.0
 caio==0.9.24
 certifi==2025.8.3
-cffi==1.17.1
+cffi==2.0.0
 click==8.2.1
 colorama==0.4.6; sys_platform == "win32" or platform_system == "Windows"
 coloredlogs==15.0.1
