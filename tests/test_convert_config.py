@@ -38,7 +38,8 @@ def test_yaml_to_env() -> None:
         "BOTKIT__extensions__listings__enabled=false\n"
         "BOTKIT__extensions__listings__topgg_token=your_top.gg_token\n"
         "BOTKIT__extensions__ping__enabled=true\n"
-        "BOTKIT__logging__level=INFO\n")
+        "BOTKIT__logging__level=INFO\n"
+    )
 
     assert env_content == expected_env_content, f"Expected:\n{expected_env_content}\nGot:\n{env_content}"
 
