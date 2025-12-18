@@ -6,6 +6,7 @@ on:
 permissions:
   contents: read
 
+jobs:
   autofix:
     name: Autofix Pull Request
     runs-on: ubuntu-latest
