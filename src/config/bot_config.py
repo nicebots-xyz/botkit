@@ -4,13 +4,11 @@
 import contextlib
 import os
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import orjson
 import yaml
 from dotenv import load_dotenv
-
-from .models import Config
 
 load_dotenv()
 
@@ -61,7 +59,6 @@ elif os.path.exists("config.yml"):
     path = "config.yml"
 
 _config: dict[str, Any] = defaultdict(dict)  # pyright: ignore [reportExplicitAny]
-config: Config
 
 
 def merge_dicts(dct: dict[str, Any], merge_dct: dict[str, Any]) -> None:  # pyright: ignore [reportExplicitAny]
@@ -77,17 +74,3 @@ if path:
         _config.update(yaml.safe_load(f))
 
 merge_dicts(_config, load_from_env())
-
-# Lazy load Config object
-if TYPE_CHECKING:
-    config: Config
-else:
-    _config_obj: Config | None = None
-
-    def __getattr__(name: str) -> Any:
-        if name == "config":
-            global _config_obj  # noqa: PLW0603
-            if _config_obj is None:
-                _config_obj = Config(**_config) if _config else Config()
-            return _config_obj
-        raise AttributeError(name)
