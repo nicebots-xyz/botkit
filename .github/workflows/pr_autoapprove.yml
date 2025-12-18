@@ -15,5 +15,15 @@ jobs:
         format(',{0},', vars.AUTO_APPROVE_ACTORS),
         format(',{0},', github.event.pull_request.user.id)
       )
+
     steps:
-      - uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request
+            await github.rest.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              event: "APPROVE",
+            })
