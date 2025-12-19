@@ -49,6 +49,20 @@ class NiceErrors(commands.Cog):
             use_sentry_sdk=self.sentry_sdk,
         )
 
+    @discord.Cog.listener("on_view_error")
+    async def on_view_error(
+        self,
+        error: Exception,
+        item: discord.ui.ViewItem[discord.ui.BaseView],  # noqa: ARG002
+        interaction: discord.Interaction,
+    ) -> None:
+        await error_handler.handle_error(
+            error,
+            interaction,
+            raw_translations=self.config["translations"],
+            use_sentry_sdk=self.sentry_sdk,
+        )
+
     def add_error_handler(self, *args: Any, **kwargs: Any) -> None:
         error_handler.add_error_handler(*args, **kwargs)
 
