@@ -207,23 +207,6 @@ properly. These are:
   already present. It is required to have AT MINIMAL the `enabled` key set to `False` or
   `True` (you generally want to prefer `True` for a more intuitive experience to new
   users, but it is not required, especially if you code just for yourself).
-- `schema`: A dictionary (or a `schema.Schema`, if you want more granular control)
-  containing the schema for the extension's configuration. This is used to validate the
-  configuration in the `config.yml` file. The schema should be a dictionary where the
-  keys are the configuration keys, and the values are the types of the values. For
-  example:
-
-```python
-schema = {
-    "enabled": bool,
-    "token": str,
-    "prefix": str,
-    "channel": int,
-    "role": int,
-    "users": list,
-    "options": dict,
-}
-```
 
 We really encourage you to follow these instructions, even if you’re coding privately,
 as it will make your code more readable and maintainable in the long run.
@@ -514,9 +497,8 @@ requests with descriptive commit messages.
 ## Code Style and Linting
 
 This project follows the [PEP 8](https://www.python.org/dev/peps/pep-0008/) style guide
-for Python code. We recommend using a linter like [black](https://github.com/psf/black)
-to ensure your code adheres to the style guidelines. We provide a command to lint the
-code using `pdm run lint`. For this to work you have to install the development
+for Python code. We provide a command to lint the code using `pdm run lint` and format
+it with `pdm run format`. For this to work you have to install the development
 dependencies using `pdm install -d` if you haven't already.
 
 ## Copyright Headers Management
