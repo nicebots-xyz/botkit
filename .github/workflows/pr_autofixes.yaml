@@ -40,3 +40,4 @@ jobs:
         run: copywrite headers --config .copywrite.hcl
 
       - uses: autofix-ci/action@635ffb0c9798bd160680f18fd73371e355b85f27 # v1.3.2
+        if: always()
