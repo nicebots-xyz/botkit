@@ -1,3 +1,8 @@
+<!--
+SPDX-License-Identifier: MIT
+Copyright: 2024-2026 NiceBots.xyz
+-->
+
 # Nice-Errors Extension
 
 The Nice-Errors extension is an essential tool for your Botkit, designed to enhance

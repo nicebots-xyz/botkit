@@ -1,3 +1,8 @@
+<!--
+SPDX-License-Identifier: MIT
+Copyright: 2024-2026 NiceBots.xyz
+-->
+
 # Getting Started with Botkit and Pycord: Creating Your First Bot Extension
 
 This comprehensive tutorial will guide you through the process of setting up Botkit,

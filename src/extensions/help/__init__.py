@@ -1,4 +1,6 @@
-# Copyright (c) NiceBots all rights reserved
+# SPDX-License-Identifier: MIT
+# Copyright: 2024-2026 NiceBots.xyz
+
 from collections import defaultdict
 from functools import cached_property
 from typing import Any, Final, final

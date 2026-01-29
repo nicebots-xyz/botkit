@@ -1,3 +1,8 @@
+<!--
+SPDX-License-Identifier: MIT
+Copyright: 2024-2026 NiceBots.xyz
+-->
+
 # Botkit: An Advanced Framework for Crafting Sophisticated Discord Bots with py-cord
 
 ## What is Botkit?

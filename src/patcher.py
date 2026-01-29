@@ -1,5 +1,5 @@
-# Copyright (c) NiceBots.xyz
 # SPDX-License-Identifier: MIT
+# Copyright: 2024-2026 NiceBots.xyz
 
 import os
 import sys

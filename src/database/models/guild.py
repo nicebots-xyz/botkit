@@ -1,5 +1,6 @@
-# Copyright (c) NiceBots
 # SPDX-License-Identifier: MIT
+# Copyright: 2024-2026 NiceBots.xyz
+
 
 from tortoise import fields
 from tortoise.models import Model

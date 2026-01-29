@@ -1,5 +1,6 @@
-# Copyright (c) NiceBots
 # SPDX-License-Identifier: MIT
+# Copyright: 2024-2026 NiceBots.xyz
+
 
 from src.i18n.classes import RawTranslation, Translation
 

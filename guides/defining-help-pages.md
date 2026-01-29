@@ -1,3 +1,8 @@
+<!--
+SPDX-License-Identifier: MIT
+Copyright: 2024-2026 NiceBots.xyz
+-->
+
 # Defining Help Pages in Botkit
 
 This guide will walk you through the process of defining help pages for your Botkit

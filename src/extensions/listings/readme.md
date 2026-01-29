@@ -1,3 +1,8 @@
+<!--
+SPDX-License-Identifier: MIT
+Copyright: 2024-2026 NiceBots.xyz
+-->
+
 # Listings Extension
 
 The Listings extension is a powerful tool that allows your bot to interact with various

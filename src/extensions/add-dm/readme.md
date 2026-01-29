@@ -1,3 +1,8 @@
+<!--
+SPDX-License-Identifier: MIT
+Copyright: 2024-2026 NiceBots.xyz
+-->
+
 # Add-DM Extension
 
 The Add-DM extension is a valuable addition to your Botkit, designed to automatically

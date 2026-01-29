@@ -1,5 +1,5 @@
-# Copyright (c) NiceBots.xyz
-# SPDX-License-Identifier: MIT
+# Copyright (c) HashiCorp, Inc.
+
 
 ARG PYTHON_VERSION=3.12
 ARG NODE_VERSION=20

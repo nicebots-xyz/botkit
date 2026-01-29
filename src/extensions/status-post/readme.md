@@ -1,3 +1,8 @@
+<!--
+SPDX-License-Identifier: MIT
+Copyright: 2024-2026 NiceBots.xyz
+-->
+
 # Status Extension
 
 The Status extension is a straightforward, yet essential part of your Botkit. It

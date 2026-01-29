@@ -1,3 +1,8 @@
+<!--
+SPDX-License-Identifier: MIT
+Copyright: 2024-2026 NiceBots.xyz
+-->
+
 # Branding Extension
 
 The Branding extension is a versatile tool that allows you to customize your bot's

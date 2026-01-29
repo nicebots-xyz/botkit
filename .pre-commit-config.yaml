@@ -1,5 +1,6 @@
-# Copyright (c) NiceBots
-# SPDX-License-Identifier: MIT
+# Copyright (c) HashiCorp, Inc.
+
+
 
 ci:
   autoupdate_commit_msg: "chore(pre-commit): pre-commit autoupdate"

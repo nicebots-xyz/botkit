@@ -24,9 +24,6 @@ jobs:
         with:
           cache: true
 
-      - name: Setup Copywrite
-        uses: hashicorp/setup-copywrite@32638da2d4e81d56a0764aa1547882fc4d209636  # v1.1.3
-
       - name: Install dependencies
         run: pdm install -d
 
@@ -35,9 +32,6 @@ jobs:
 
       - name: Run formatting
         run: pdm run format
-
-      - name: Add license headers
-        run: copywrite headers --config .copywrite.hcl
 
       - uses: autofix-ci/action@635ffb0c9798bd160680f18fd73371e355b85f27 # v1.3.2
         if: always()
