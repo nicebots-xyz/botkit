@@ -1,5 +1,5 @@
-# Copyright (c) HashiCorp, Inc.
-
+# SPDX-License-Identifier: MIT
+# Copyright: 2024-2026 NiceBots.xyz
 
 ARG PYTHON_VERSION=3.12
 ARG NODE_VERSION=20

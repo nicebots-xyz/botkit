@@ -508,25 +508,25 @@ dependencies using `pdm install -d` if you haven't already.
 
 ## Copyright Headers Management
 
-This project uses HashiCorp's [Copywrite](https://github.com/hashicorp/copywrite) tool
-to manage copyright headers across all source files. Copywrite automatically ensures
+This project uses [nicebots-xyz/Licensor](https://github.com/nicebots-xyz/licensor) tool
+to manage copyright headers across all source files. Licensor automatically ensures
 consistent copyright headers and license information across the codebase.
 
-The project includes a `.copywrite.hcl` file that configures how copyright headers are
-managed:
+The project includes a `licensor-config.yaml` file that configures how copyright headers
+are managed:
 
 ### Usage
 
 To check if any files are missing copyright headers:
 
 ```bash
-copywrite headers --plan
+licensor check * --ignore ".*"
 ```
 
 To automatically add missing copyright headers:
 
 ```bash
-copywrite headers
+licensor add * --ignore ".*"
 ```
 
 ## Deployment

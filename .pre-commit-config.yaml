@@ -1,6 +1,5 @@
-# Copyright (c) HashiCorp, Inc.
-
-
+# SPDX-License-Identifier: MIT
+# Copyright: 2024-2026 NiceBots.xyz
 
 ci:
   autoupdate_commit_msg: "chore(pre-commit): pre-commit autoupdate"
@@ -29,7 +28,3 @@ repos:
         args: [ --fix ]
       # Run the formatter.
       - id: ruff-format
-  - repo: https://github.com/bhundven/copywrite # waiting for https://github.com/hashicorp/copywrite/pull/120 to be merged
-    rev: 937f17f09c46992447dfa8977bb96eda512588c4
-    hooks:
-      - id: add-headers
