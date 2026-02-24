@@ -3,7 +3,7 @@
 
 from collections.abc import Callable, Sequence
 from functools import partial
-from typing import Literal, overload
+from typing import Literal, Protocol, overload
 
 from discord.ext import commands
 
@@ -92,11 +92,12 @@ async def _preload_or_create_guild(ctx: custom.Context, prefetch_related: Sequen
     return True
 
 
-type PreloadFunction = Callable[[custom.Context, Sequence[str]], Literal[True]]
+class PreloadFunction(Protocol):
+    async def __call__(self, ctx: custom.Context, prefetch_related: Sequence[str]) -> Literal[True]: ...
 
 
 @overload
-def preload_x[T](f: T, preloader: PreloadFunction, prefetch_related: Sequence[str] | None = None) -> T: ...
+def preload_x[T](f: T, *, preloader: PreloadFunction, prefetch_related: Sequence[str] | None = None) -> T: ...
 
 
 @overload
@@ -106,8 +107,8 @@ def preload_x[T](
 
 
 def preload_x[T](
-    f: Callable[[T], T] | None = None, *, preloader: PreloadFunction, prefetch_related: Sequence[str] | None = None
-):
+    f: T | None = None, *, preloader: PreloadFunction, prefetch_related: Sequence[str] | None = None
+) -> T | Callable[[T], T]:
     if prefetch_related is None:
         prefetch_related = []
 

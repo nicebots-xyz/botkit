@@ -201,7 +201,7 @@ def apply(
         return
 
     err, tot = localize_commands(
-        [*bot.pending_application_commands, *bot.commands],  # pyright: ignore[reportUnknownMemberType,reportUnknownArgumentType]
+        [*bot.pending_application_commands, *bot.commands],  # pyright: ignore[reportUnknownArgumentType]
         command_translations,
         default_locale,
     )

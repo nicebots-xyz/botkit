@@ -17,7 +17,8 @@ default = {
 
 class BridgePing(commands.Cog):
     def __init__(self, bot: custom.Bot) -> None:
-        self.bot = bot
+        self.bot: custom.Bot = bot
+        super().__init__()
 
     @bridge.bridge_command()
     @cooldown(

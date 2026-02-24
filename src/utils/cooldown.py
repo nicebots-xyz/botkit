@@ -5,14 +5,14 @@ from collections.abc import Awaitable, Callable, Coroutine
 from enum import Enum
 from functools import wraps
 from inspect import isawaitable
-from typing import Any, Concatenate, cast
+from typing import Concatenate, Never, cast
 
 import discord
 from discord.ext import commands
 
 from src import custom
 
-type ReactiveCooldownSetting[T: Any] = T | Callable[[custom.Bot, custom.Context], T | Coroutine[Any, Any, T]]
+type ReactiveCooldownSetting[T] = T | Callable[[custom.Bot, custom.Context], T | Coroutine[Never, None, T]]
 type CogCommandFunction[T: commands.Cog, **P] = Callable[Concatenate[T, P], Awaitable[None]]
 
 
@@ -53,10 +53,12 @@ def get_bucket_key(ctx: custom.Context, base_key: str, bucket_type: BucketType) 
         case BucketType.GUILD:
             return f"{base_key}:guild:{ctx.guild.id}" if ctx.guild else base_key
         case BucketType.CHANNEL:
-            return f"{base_key}:channel:{ctx.channel.id}"
+            channel_id = ctx.channel.id if ctx.channel else 0
+            return f"{base_key}:channel:{channel_id}"
         case BucketType.CATEGORY:
-            category_id = ctx.channel.category_id if hasattr(ctx.channel, "category_id") else None
-            return f"{base_key}:category:{category_id}" if category_id else f"{base_key}:channel:{ctx.channel.id}"
+            category_id = getattr(ctx.channel, "category_id", None) if ctx.channel else None
+            channel_id = ctx.channel.id if ctx.channel else 0
+            return f"{base_key}:category:{category_id}" if category_id else f"{base_key}:channel:{channel_id}"
         case BucketType.ROLE:
             if ctx.guild and hasattr(ctx.author, "roles") and isinstance(ctx.author, discord.Member):
                 top_role_id = max((role.id for role in ctx.author.roles), default=0)

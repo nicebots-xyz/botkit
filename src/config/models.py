@@ -2,11 +2,11 @@
 # Copyright: 2024-2026 NiceBots.xyz
 
 
-from typing import Any, Literal, overload, override
+from typing import Literal, overload, override
 
 from pydantic import BaseModel
 
-type Extension = dict[str, Any]
+type Extension = dict[str, object]
 
 
 class RedisConfig(BaseModel):
@@ -71,14 +71,14 @@ class UseConfig(BaseModel):
 
 class DbExtraApp(BaseModel):
     url: str | None = None
-    params: dict[str, Any] | None = None
+    params: dict[str, object] | None = None
     models: list[str] = []
 
 
 class DbConfig(BaseModel):
     url: str
     enabled: bool = True
-    params: dict[str, Any] | None = None
+    params: dict[str, object] | None = None
     extra_apps: dict[str, DbExtraApp] = {}
 
 

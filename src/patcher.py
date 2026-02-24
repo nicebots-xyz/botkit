@@ -1,12 +1,9 @@
 # SPDX-License-Identifier: MIT
 # Copyright: 2024-2026 NiceBots.xyz
 
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-# the above line allows us to import from src without any issues whilst using src/__main__.py
 import importlib.util
+import inspect
+import os
 from glob import iglob
 
 from src.config import config
@@ -27,4 +24,6 @@ async def load_and_run_patches() -> None:
         patch_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(patch_module)
         if hasattr(patch_module, "patch") and callable(patch_module.patch):
-            await setup_func(patch_module.patch, config=its_config)
+            result = setup_func(patch_module.patch, config=its_config)
+            if inspect.isawaitable(result):
+                await result

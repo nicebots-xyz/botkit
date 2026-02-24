@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: MIT
 # Copyright: 2024-2026 NiceBots.xyz
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
-from .bot_config import _config
+from .bot_config import raw_config
 from .models import Config
 
 # Lazy load Config object
@@ -12,11 +12,11 @@ if TYPE_CHECKING:
 else:
     _config_obj: Config | None = None
 
-    def __getattr__(name: str) -> Any:
+    def __getattr__(name: str) -> Config:
         if name == "config":
             global _config_obj  # noqa: PLW0603
             if _config_obj is None:
-                _config_obj = Config(**_config) if _config else Config()
+                _config_obj = Config(**raw_config) if raw_config else Config()
             return _config_obj
         raise AttributeError(name)
 

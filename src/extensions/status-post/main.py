@@ -22,6 +22,7 @@ class Status(commands.Cog):
         self.bot: discord.Bot = bot
         self.config: dict[Any, Any] = config
         self.push_status_loop: tasks.Loop = tasks.loop(seconds=self.config["every"])(self.push_status_loop_meth)  # pyright: ignore [reportMissingTypeArgument]
+        super().__init__()
 
     @commands.Cog.listener(once=True)
     async def on_ready(self) -> None:

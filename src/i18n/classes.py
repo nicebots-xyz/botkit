@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: MIT
 # Copyright: 2024-2026 NiceBots.xyz
 
-from collections.abc import Generator, Iterator
-from typing import Any, Self, override
+from collections.abc import Generator, Iterator, Sequence
+from typing import Any, Self, cast, overload, override
 
 from pydantic import BaseModel, Field
 
@@ -76,7 +76,11 @@ class RawTranslation(BaseModel):
     vi: str | None = None
 
     class Config:
-        populate_by_name = True
+        populate_by_name: bool = True
+
+    def get_for_locale(self, locale: str) -> str | None:
+        """Get translation for a specific locale, falling back to the field default."""
+        return self.model_dump(by_alias=False).get(locale.replace("-", "_"))
 
 
 class Translation(BaseModel):
@@ -84,49 +88,58 @@ class Translation(BaseModel):
         return apply_locale(self, locale)
 
 
-class TranslationWrapper[T: "Translatable"]:
-    def __init__(self, model: "Translatable", locale: str, default: str = DEFAULT) -> None:
+Translatable = Translation | dict[str, RawTranslation]
+
+type WrappedInput[V: Translatable] = None | str | int | float | bool | RawTranslation | Sequence["WrappedInput[V]"] | V
+type WrappedValue[V: Translatable] = None | str | int | float | bool | list["WrappedValue[V]"] | "TranslationWrapper[V]"
+
+
+class TranslationWrapper[T: Translatable]:
+    def __init__(self, model: T, locale: str, default: str = DEFAULT) -> None:
         self._model: T = model
         self._default: str
         self.default = default.replace("-", "_")
         self._locale: str
         self.locale = locale.replace("-", "_")
 
-    def _wrap_value(self, value: Any) -> Any:
+    @overload
+    def _wrap_value(self, value: None) -> None: ...
+    @overload
+    def _wrap_value(self, value: str | float | bool) -> str | int | float | bool: ...
+    @overload
+    def _wrap_value(self, value: RawTranslation) -> str | None: ...
+    @overload
+    def _wrap_value[V: Translatable](self, value: Sequence[WrappedInput[V]]) -> list[WrappedValue[V]]: ...
+    @overload
+    def _wrap_value[V: Translatable](self, value: V) -> "TranslationWrapper[V]": ...
+
+    def _wrap_value[V: Translatable](
+        self, value: None | str | float | bool | RawTranslation | Sequence[WrappedInput[V]] | V
+    ) -> Any:
         """Consistently wrap values in TranslationWrapper if needed."""
         if value is None:
             return None
         if isinstance(value, str | int | float | bool):
             return value
         if isinstance(value, RawTranslation):
-            try:
-                return getattr(value, self._locale) or getattr(value, self._default)
-            except AttributeError:
-                return getattr(value, self._default)
-        if isinstance(value, list | tuple):
+            return value.get_for_locale(self._locale) or value.get_for_locale(self._default)
+        if isinstance(value, Sequence):
             return [self._wrap_value(item) for item in value]
 
-        # For any other type (including Pydantic models), apply locale
         return apply_locale(value, self._locale)
 
     def __getattr__(self, key: str) -> Any:
         if isinstance(self._model, dict):
             if key not in self._model:
                 raise AttributeError(f'Key "{key}" not found in {self._model}')
-            value = self._model[key]
+            value: WrappedInput[Translatable] = self._model[key]
         else:
             value = getattr(self._model, key)
         return self._wrap_value(value)
 
-    def __getitem__(self, item: Any) -> Any:
-        if isinstance(self._model, dict):
-            if not isinstance(item, str):
-                raise TypeError(f"Key must be a string, not {type(item).__name__}")
-            return self.__getattr__(item)
-        if isinstance(self._model, list):
-            if not isinstance(item, int):
-                raise TypeError(f"Index must be an integer, not {type(item).__name__}")
-            return self._wrap_value(self._model[item])
+    def __getitem__(self, item: object) -> Any:
+        if not isinstance(item, str):
+            raise TypeError(f"Key must be a string, not {type(item).__name__}")
         return self.__getattr__(item)
 
     def keys(self) -> Generator[str, None, None]:
@@ -134,33 +147,27 @@ class TranslationWrapper[T: "Translatable"]:
             raise TypeError(f"Cannot get keys from {type(self._model).__name__}")
         yield from self._model.keys()
 
-    def items(self) -> Generator[tuple[str, Any], None, None]:
+    def items(self) -> Generator[tuple[str, WrappedValue[Translatable]], None, None]:
         if isinstance(self._model, dict):
             for key, value in self._model.items():
                 yield key, self._wrap_value(value)
         else:
             for key in self.keys():
-                yield key, self._wrap_value(getattr(self._model, key))
+                yield key, self._wrap_value(cast("WrappedInput[Translatable]", getattr(self._model, key)))
 
-    def values(self) -> Generator[Any, None, None]:
+    def values(self) -> Generator[WrappedValue[Translatable], None, None]:
         if isinstance(self._model, dict):
             for value in self._model.values():
                 yield self._wrap_value(value)
         else:
             for key in self.keys():
-                yield self._wrap_value(getattr(self._model, key))
+                yield self._wrap_value(cast("WrappedInput[Translatable]", getattr(self._model, key)))
 
-    def __iter__(self) -> Iterator[Any]:
-        if isinstance(self._model, list):
-            for item in self._model:
-                yield self._wrap_value(item)
-        else:
-            yield from self.keys()
+    def __iter__(self) -> Iterator[WrappedValue[Translatable]]:
+        yield from self.keys()
 
     def __len__(self) -> int:
         if isinstance(self._model, dict):
-            return len(self._model)
-        if isinstance(self._model, list):
             return len(self._model)
         return len(self._model.__dict__)
 
@@ -195,9 +202,6 @@ class TranslationWrapper[T: "Translatable"]:
         return str(self._model)
 
 
-Translatable = Translation | dict[str, RawTranslation] | dict[str, RawTranslation]
-
-
 class NameDescriptionTranslation(Translation):
     name: RawTranslation | None = None
     description: RawTranslation | None = None
@@ -228,7 +232,7 @@ class ExtensionTranslation(Translation):
 
 
 def apply_locale[T: "Translatable"](
-    model: T,
+    model: T | TranslationWrapper[T],
     locale: str | None,
     default: str | None = DEFAULT,
 ) -> TranslationWrapper[T]:

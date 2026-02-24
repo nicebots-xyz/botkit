@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: MIT
 # Copyright: 2024-2026 NiceBots.xyz
 
-from typing import Any, override
+from typing import Any, final, override
 
 import aiohttp
 import discord
-from discord.ext import commands, tasks
+from discord.ext import tasks
 
 from src.log import logger
 
@@ -35,14 +35,16 @@ async def try_post_request(url: str, headers: dict[Any, Any], payload: dict[Any,
         logger.exception(f"Failed to post request to {url}")
 
 
-class Listings(commands.Cog):
+@final
+class Listings(discord.Cog):
     def __init__(self, bot: discord.Bot, config: dict[Any, Any]) -> None:
         self.bot: discord.Bot = bot
         self.config: dict[Any, Any] = config
         self.topgg = bool(config.get("topgg_token"))
         self.discordscom = bool(config.get("discordscom_token"))
+        super().__init__()
 
-    @commands.Cog.listener("on_ready")
+    @discord.Cog.listener("on_ready")
     async def on_ready(self) -> None:
         self.update_count_loop.start()
 

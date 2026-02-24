@@ -16,7 +16,7 @@ logging.addLevelName(SUCCESS, "SUCCESS")
 
 
 class CustomLogger(logging.Logger):
-    def success(self, msg: str, *args: Any, **kwargs: Any) -> None:
+    def success(self, msg: str, *args: object, **kwargs: Any) -> None:  # pyright: ignore[reportExplicitAny]
         if self.isEnabledFor(SUCCESS):
             self._log(SUCCESS, msg, args, **kwargs)
 
@@ -71,10 +71,22 @@ def patch(logger_: str | logging.Logger) -> logging.Logger:
 # Configure discord logger
 patch("discord")
 
+
 # Configure application logger
-logger = logging.getLogger("bot")
-patch(logger)
-logger.setLevel(level)
+def get_logger(name: str) -> CustomLogger:
+    """Get a logger instance with CustomLogger type.
+
+    Since we've set CustomLogger as the logger class via setLoggerClass,
+    getLogger will return instances of CustomLogger.
+    """
+    return logging.getLogger(name)  # pyright: ignore[reportReturnType]
+
+
+_logger_instance = get_logger("bot")
+patch(_logger_instance)
+_logger_instance.setLevel(level)
+
+logger: CustomLogger = _logger_instance
 
 # Prevent application logger from propagating to root logger
 logger.propagate = False

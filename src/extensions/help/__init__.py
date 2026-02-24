@@ -88,7 +88,7 @@ def get_gradient_color(shade_index: int, color_index: int, max_shade: int = 50, 
 class HelpView(DesignerView):
     def __init__(
         self,
-        categories_data: dict[str, list[dict]],
+        categories_data: dict[str, list[dict]],  # pyright: ignore[reportMissingTypeArgument]
         ui_translations: TranslationWrapper[dict[str, RawTranslation]],
         bot: custom.Bot,
     ) -> None:
@@ -180,7 +180,7 @@ class HelpView(DesignerView):
             for cmd_name in page_data["related_commands"]:
                 cmd = self.bot.get_application_command(cmd_name)
                 if cmd:
-                    commands_content_list.append(f"- {cmd.mention}")
+                    commands_content_list.append(f"- {cmd.mention}")  # pyright: ignore[reportAttributeAccessIssue]
             if commands_content_list:
                 container.add_item(commands_title)
                 commands_content = TextDisplay("\n".join(commands_content_list))
@@ -253,34 +253,34 @@ def get_categories_data(
     ui_translations: TranslationWrapper[dict[str, RawTranslation]],  # noqa: ARG001
     categories: dict[str, TranslationWrapper[HelpCategoryTranslation]],
     bot: custom.Bot,  # noqa: ARG001
-) -> dict[str, list[dict]]:
+) -> dict[str, list[dict[str, Any]]]:
     """Generate category data for the help view.
 
     Returns a dictionary where keys are category names and values are lists of page data dictionaries.
     Each page data dictionary contains title, description, color, and optional quick_tips,
     examples, and related_commands.
     """
-    categories_data: defaultdict[str, list[dict]] = defaultdict(list)
+    categories_data: defaultdict[str, list[dict]] = defaultdict(list)  # pyright: ignore[reportMissingTypeArgument]
     for i, category in enumerate(categories):
         for j, page in enumerate(category.pages.values()):  # pyright: ignore [reportUnknownArgumentType, reportUnknownVariableType, reportAttributeAccessIssue]
             page_data = {
                 "title": f"{category.name} - {page.title}",  # pyright: ignore [reportAttributeAccessIssue]
-                "description": page.description,  # pyright: ignore [reportUnknownArgumentType]
+                "description": page.description,
                 "color": get_gradient_color(i, j),
             }
 
             if page.quick_tips:
-                page_data["quick_tips"] = page.quick_tips  # pyright: ignore [reportUnknownArgumentType]
+                page_data["quick_tips"] = page.quick_tips
 
             if page.examples:
-                page_data["examples"] = page.examples  # pyright: ignore [reportUnknownArgumentType]
+                page_data["examples"] = page.examples
 
             if page.related_commands:
-                page_data["related_commands"] = page.related_commands  # pyright: ignore [reportUnknownArgumentType, reportUnknownVariableType, reportAttributeAccessIssue]
+                page_data["related_commands"] = page.related_commands
 
             categories_data[category.name].append(page_data)  # pyright: ignore [reportAttributeAccessIssue]
 
-    return dict(categories_data)
+    return dict(categories_data)  # pyright: ignore[reportUnknownVariableType, reportUnknownArgumentType]
 
 
 @final
@@ -289,11 +289,12 @@ class Help(commands.Cog):
         self.bot = bot
         self.ui_translations = ui_translations
         self.locales = locales
+        super().__init__()
 
     @cached_property
-    def categories_data(self) -> dict[str, dict[str, list[dict]]]:
+    def categories_data(self) -> dict[str, dict[str, list[dict]]]:  # pyright: ignore[reportMissingTypeArgument]
         """Generate and cache help category data for all locales."""
-        data: defaultdict[str, dict[str, list[dict]]] = defaultdict(dict)
+        data: defaultdict[str, dict[str, list[dict]]] = defaultdict(dict)  # pyright: ignore[reportMissingTypeArgument]
         for locale in self.locales:
             t = help_translation.get_for_locale(locale)
             ui = apply_locale(self.ui_translations, locale)
@@ -312,7 +313,7 @@ class Help(commands.Cog):
     async def help_slash(self, ctx: custom.ApplicationContext) -> None:
         """Display help information using the new UI components."""
         help_view = HelpView(
-            categories_data=self.categories_data.get(ctx.locale, self.categories_data["en-US"]),
+            categories_data=self.categories_data.get(ctx.locale or "") or self.categories_data["en-US"],
             ui_translations=apply_locale(self.ui_translations, ctx.locale),
             bot=self.bot,
         )

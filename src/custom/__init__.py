@@ -9,17 +9,20 @@ import aiocache
 import discord
 
 try:
-    from pycord_rest import Bot as PycordRestBot
+    from pycord_rest import Bot as PycordRestBot  # pyright: ignore[reportAssignmentType]
 except ImportError:
-
-    class PycordRestBot: ...
+    # Fallback when pycord-rest is not installed
+    class PycordRestBot:  # pyright: ignore[reportRedeclaration]
+        """Placeholder for pycord-rest Bot when library is not installed."""
 
 
 try:
-    from uvicorn import Config as BaseUvicornConfig
+    from uvicorn import Config as BaseUvicornConfig  # pyright: ignore[reportAssignmentType]
 except ImportError:
+    # Fallback when uvicorn is not installed
+    class BaseUvicornConfig:  # pyright: ignore[reportRedeclaration]
+        """Placeholder for uvicorn Config when library is not installed."""
 
-    class BaseUvicornConfig:
         def configure_logging(self) -> None: ...
 
 
@@ -60,13 +63,15 @@ class ApplicationContext(bridge.BridgeApplicationContext):
         super().__setattr__(key, value)
 
 
-async def remove_reaction(user: discord.User, message: discord.Message, emoji: str) -> None:
+async def remove_reaction(
+    user: discord.User | discord.Member | discord.ClientUser, message: discord.Message, emoji: str
+) -> None:
     await message.remove_reaction(emoji, user)
 
 
 class ExtContext(bridge.BridgeExtContext):
     def __init__(self, **kwargs: Any) -> None:
-        self.translations: TranslationWrapper = TranslationWrapper({}, "en-US")  # empty placeholder
+        self.translations: TranslationWrapper[dict[str, RawTranslation]] = TranslationWrapper({}, "en-US")
         super().__init__(**kwargs)
         self.bot: Bot
         self.user_obj: User | None = None
@@ -207,7 +212,7 @@ class CustomUvicornConfig(BaseUvicornConfig):
         log.patch("uvicorn.access")
 
 
-class CustomRestBot(PycordRestBot, CustomBot):  # pyright: ignore[reportIncompatibleMethodOverride,reportUnsafeMultipleInheritance]
+class CustomRestBot(PycordRestBot, CustomBot):  # pyright: ignore[reportIncompatibleMethodOverride]
     __rest__: bool = True
 
     _UvicornConfig: type[BaseUvicornConfig] = CustomUvicornConfig

@@ -4,7 +4,7 @@
 import logging
 import random
 from datetime import datetime
-from typing import Any
+from typing import Any, cast, final
 
 import discord
 import pytz
@@ -16,7 +16,7 @@ from src.log import logger
 BASE_URL = "https://top.gg/api"
 
 logger: logging.Logger
-default: dict = {
+default: dict[str, Any] = {  # pyright: ignore[reportExplicitAny]
     "enabled": True,
     "status": {
         "watching": ["you", "/help"],
@@ -65,7 +65,8 @@ class Config(TypedDict):
     status: StatusConfig | None
 
 
-class Branding(commands.Cog):
+@final
+class Branding(discord.Cog):
     def __init__(self, bot: discord.Bot, config: Config) -> None:
         self.bot = bot
         self.config = config
@@ -115,22 +116,22 @@ def setup(bot: discord.Bot, config: dict[Any, Any]) -> None:
         if footer:
             if footer_value := footer.get("value"):
                 if isinstance(footer_value, str):
-                    footer["value"]: list[str] = [footer_value]
+                    footer["value"] = [footer_value]
             else:
-                footer["value"]: list[str] = []
+                footer["value"] = []
             if not footer.get("separator"):
                 footer["separator"] = "|"
         if (color := embed.get("color")) and isinstance(color, str):
-            embed["color"]: str = color.lstrip("#")
-            embed["color"]: int = int(embed["color"], 16)
+            embed["color"] = color.lstrip("#")
+            embed["color"] = int(embed["color"], 16)
 
         class Embed(discord.Embed):
             def __init__(self, **kwargs: Any) -> None:
                 super().__init__(**kwargs)
                 if footer:
-                    value: list[str] = footer["value"].copy()
+                    value: list[str] = footer["value"].copy()  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
                     if footer.get("time"):
-                        time: str = datetime.now(pytz.timezone(footer.get("tz", "UTC"))).strftime(
+                        time: str = datetime.now(pytz.timezone(footer.get("tz") or "UTC")).strftime(
                             f"%d %B %Y at %H:%M ({footer.get('tz', 'UTC')})",
                         )
                         value.append(time)
@@ -138,8 +139,8 @@ def setup(bot: discord.Bot, config: dict[Any, Any]) -> None:
                 if embed.get("author"):
                     self.set_author(name=embed["author"], icon_url=embed.get("author_url"))
                 if embed.get("color") and not kwargs.get("color"):
-                    self.color = discord.Color(embed["color"])
+                    self.color = discord.Color(embed["color"])  # pyright: ignore[reportArgumentType]
 
         discord.Embed = Embed
 
-    bot.add_cog(Branding(bot, config))
+    bot.add_cog(Branding(bot, cast("Config", config)))  # pyright: ignore[reportInvalidCast]

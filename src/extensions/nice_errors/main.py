@@ -26,6 +26,7 @@ class NiceErrors(commands.Cog):
         self.bot = bot
         self.sentry_sdk = sentry_sdk
         self.config = config
+        super().__init__()
 
     @discord.Cog.listener("on_application_command_error")
     async def on_error(
