@@ -21,6 +21,8 @@ def validate_module(module: ModuleType, config: dict[str, object] | None = None)
         AssertionError: If the module doesn't meet extension requirements
 
     """
+    from src.startup.types import SetupFunction, SetupWebserverFunction, StartupFunction
+
     if hasattr(module, "setup"):
         assert isinstance(module.setup, SetupFunction), (
             f"Extension {module.__name__} has an invalid setup function signature"
