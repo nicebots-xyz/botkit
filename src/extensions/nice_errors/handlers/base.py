@@ -46,7 +46,7 @@ class BaseErrorHandler[E: Exception](ABC):
         return _get_locale(ctx)
 
 
-type ErrorHandlerRType = tuple[bool, bool, str, dict[str, Any]]
+type ErrorHandlerRType = tuple[bool, bool, str, dict[str, Any]]  # handled, report, message, sendargs
 type ErrorHandlerType[E: Exception] = BaseErrorHandler[E]
 type ErrorHandlersType[E: Exception] = dict[
     type[E] | None,
@@ -115,6 +115,10 @@ class ErrorHandlerManager:
             f"Adding error handler {handler.__class__.__qualname__} for {error.__qualname__ if error is not None else 'Generic'}"  # noqa: E501
         )
         self.error_handlers[error] = handler
+
+    def remove_error_handler[E: Exception](self, error: type[E]) -> None:
+        logger.info(f"Removing error handler {error.__qualname__}")
+        del self.error_handlers[error]
 
 
 __all__ = (

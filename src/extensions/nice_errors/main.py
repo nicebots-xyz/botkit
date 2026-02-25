@@ -1,12 +1,14 @@
 # SPDX-License-Identifier: MIT
 # Copyright: 2024-2026 NiceBots.xyz
 
-from typing import Any, final
+from typing import Any, Never, final
 
 import discord
+import sentry_sdk
 from discord.ext import commands
 
 from src import custom
+from src.log import logger as base_logger
 from src.utils.cooldown import CooldownExceeded
 
 from .handlers import error_handler
@@ -19,17 +21,31 @@ default = {
     "enabled": True,
 }
 
+logger = base_logger.getChild("nice_errors")
+
 
 @final
 class NiceErrors(commands.Cog):
-    def __init__(self, bot: discord.Bot, sentry_sdk: bool, config: dict[str, Any]) -> None:
+    def __init__(self, bot: custom.Bot, sentry_sdk: bool, config: dict[str, Any]) -> None:
         self.bot = bot
         self.sentry_sdk = sentry_sdk
         self.config = config
+        self.bot.on_error = self.on_error  # type: ignore[assignment]  # pyright: ignore[reportAttributeAccessIssue]
         super().__init__()
 
-    @discord.Cog.listener("on_application_command_error")
     async def on_error(
+        self,
+        event_name: str,  # noqa: ARG002
+        *args: Never,  # noqa: ARG002
+        exc: Exception,
+        **kwargs: Never,  # noqa: ARG002
+    ) -> None:
+        if self.sentry_sdk:
+            sentry_sdk.capture_exception(exc)
+        logger.exception("Captured exception", exc_info=exc)
+
+    @discord.Cog.listener("on_application_command_error")
+    async def on_application_command_error(
         self,
         ctx: custom.ApplicationContext,
         error: discord.ApplicationCommandInvokeError,
