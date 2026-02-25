@@ -58,6 +58,7 @@ class BotConfig(BaseModel):
     slash: SlashConfig = SlashConfig(enabled=False)
     cache: CacheConfig = CacheConfig()
     rest: RestConfig = RestConfig()
+    cache_app_emojis: bool = True
 
 
 class LoggingConfig(BaseModel):

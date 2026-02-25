@@ -38,6 +38,7 @@ def create_bot(config: BotConfig) -> custom.Bot:
         command_prefix=(str(config.prefix) or commands.when_mentioned),
         cache_type=config.cache.type,
         cache_config=config.cache.redis,
+        cache_app_emojis=config.cache_app_emojis,
     )
 
 

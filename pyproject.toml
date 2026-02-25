@@ -24,6 +24,7 @@ dependencies = [
     "tortoise-orm[asyncpg]>=0.23.0",
     "aerich[toml]>=0.8.1",
     "py-cord>=2.7.0rc2",
+    "cachetools>=7.0.1",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"

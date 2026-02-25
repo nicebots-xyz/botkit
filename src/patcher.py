@@ -8,7 +8,7 @@ from glob import iglob
 
 from src.config import config
 from src.log import logger
-from src.utils.setup_func import setup_func
+from src.utils import setup_func
 
 
 async def load_and_run_patches() -> None:

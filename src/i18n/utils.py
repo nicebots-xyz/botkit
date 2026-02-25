@@ -14,6 +14,7 @@ from .classes import (
     Deg2CommandTranslation,
     ExtensionTranslation,
 )
+from .cog import TranslationCog
 
 if TYPE_CHECKING:
     from src import custom
@@ -205,6 +206,7 @@ def apply(
         command_translations,
         default_locale,
     )
+    bot.add_cog(TranslationCog(bot))
     if tot == err:
         logger.error(f"Localized {tot - err}/{tot} commands.")
     elif err:

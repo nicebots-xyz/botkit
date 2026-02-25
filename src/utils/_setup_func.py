@@ -55,4 +55,5 @@ def setup_func[**P, T](
             continue
         raise TypeError(f"Missing required argument '{name}' for function '{func.__name__}'")
 
-    return func(*args, **kwargs)
+    filtered_kwargs = {name: kwargs[name] for name in parameters if name in kwargs}
+    return func(*args, **filtered_kwargs)  # pyright: ignore[reportCallIssue]

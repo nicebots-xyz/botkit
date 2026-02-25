@@ -19,7 +19,6 @@ from src.startup.types import (
     StartupFunctionList,
     WebserverFunctionList,
 )
-from src.utils import validate_module
 
 if TYPE_CHECKING:
     from types import ModuleType
@@ -72,6 +71,8 @@ def load_extensions() -> tuple[
         - translations: List of loaded extension translations
 
     """
+    from src.utils import validate_module  # noqa: PLC0415
+
     bot_functions: SetupFunctionList = []
     back_functions: WebserverFunctionList = []
     startup_functions: StartupFunctionList = []

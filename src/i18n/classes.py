@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: MIT
 # Copyright: 2024-2026 NiceBots.xyz
 
-from collections.abc import Generator, Iterator, Sequence
-from typing import Any, Self, cast, overload, override
+from collections.abc import Generator, Iterator, Mapping, Sequence
+from typing import Any, ClassVar, Self, cast, overload, override
 
 from pydantic import BaseModel, Field
 
@@ -40,6 +40,175 @@ LOCALES = (
     "vi",
 )
 DEFAULT = "en-US"
+
+
+class _Placeholder:
+    def __init__(self, key: str) -> None:
+        """Initialize a placeholder key path.
+
+        Args:
+            key: Placeholder key path used for deferred formatting.
+
+        """
+        self._key: str = key
+
+    def __getattr__(self, attr: str) -> "_Placeholder":
+        """Extend the placeholder path using attribute-style access.
+
+        Args:
+            attr: Attribute name to append to the key path.
+
+        Returns:
+            A new placeholder with the appended key path.
+
+        """
+        return _Placeholder(f"{self._key}.{attr}")
+
+    def __getitem__(self, item: str | int) -> "_Placeholder":
+        """Extend the placeholder path using index-style access.
+
+        Args:
+            item: Index or key to append to the key path.
+
+        Returns:
+            A new placeholder with the appended indexed path.
+
+        """
+        return _Placeholder(f"{self._key}[{item}]")
+
+    @override
+    def __format__(self, spec: str) -> str:
+        """Render a placeholder token that preserves unresolved values.
+
+        Args:
+            spec: Optional format specifier for the placeholder.
+
+        Returns:
+            A format token string for unresolved placeholders.
+
+        """
+        if spec:
+            return "{" + self._key + ":" + spec + "}"
+        return "{" + self._key + "}"
+
+
+class AttrDict[K: str, V](Mapping[K, V]):
+    def __init__(self, underlying: Mapping[K, V]) -> None:
+        """Wrap a mapping to support both key and attribute access.
+
+        Args:
+            underlying: Mapping to expose through this wrapper.
+
+        """
+        self.underlying: Mapping[K, V] = underlying
+
+    @override
+    def __len__(self) -> int:
+        """Return the number of keys in the wrapped mapping.
+
+        Returns:
+            The mapping size.
+
+        """
+        return len(self.underlying)
+
+    @override
+    def __iter__(self) -> Iterator[K]:
+        """Iterate over keys in the wrapped mapping.
+
+        Returns:
+            An iterator of mapping keys.
+
+        """
+        return iter(self.underlying)
+
+    @override
+    def __getitem__(self, key: K) -> V:
+        """Retrieve a value by key from the wrapped mapping.
+
+        Args:
+            key: Key to resolve.
+
+        Returns:
+            Value associated with the key.
+
+        """
+        return self.underlying[key]
+
+    def __getattr__(self, key: K) -> V:
+        """Retrieve a value as an attribute.
+
+        Args:
+            key: Attribute name mapped to a dictionary key.
+
+        Returns:
+            Value associated with the key.
+
+        Raises:
+            AttributeError: If the key is not present in the mapping.
+
+        """
+        try:
+            return self.__getitem__(key)
+        except KeyError as e:
+            raise AttributeError(key) from e
+
+
+class LazyPartialDict[V: Mapping[str, str]](dict[str, AttrDict[str, str] | _Placeholder]):
+    def __init__(self, data: dict[str, V]) -> None:
+        """Initialize deferred formatting data.
+
+        Args:
+            data: Source values used when placeholders are available.
+
+        """
+        super().__init__()
+        self._data: dict[str, V] = data
+
+    def __missing__(self, key: str) -> AttrDict[str, str] | _Placeholder:
+        """Resolve missing keys for partial formatting.
+
+        Args:
+            key: Missing key requested by ``str.format_map``.
+
+        Returns:
+            Wrapped mapping if key exists, otherwise a placeholder token.
+
+        """
+        if key in self._data:
+            return AttrDict(self._data[key])
+        return _Placeholder(key)
+
+
+def add_global_kv(key: str, values: Mapping[str, str]) -> None:
+    """Add a key-value mapping to the global translation dictionary.
+
+    This function updates the global translation dictionary with a given
+    key-value pair. The key will map to a dictionary containing additional
+    key-value mappings that can be used for various translation or
+    application-specific purposes.
+
+    Args:
+        key: The key to be added to the global translation dictionary.
+        values: A dictionary containing key-value mappings to associate with the
+        given key in the global translation dictionary.
+
+    """
+    TranslationWrapper.GLOBAL_KV[key] = values
+
+
+def partial_fmt(template: str, data: dict[str, Mapping[str, str]]) -> str:
+    """Format a template string with partial data, leaving missing keys intact.
+
+    Args:
+        template: A format string with `{key.attr}` style placeholders.
+        data: A dict mapping top-level keys to dicts of their attributes.
+
+    Returns:
+        The template with available keys resolved, missing keys left as-is.
+
+    """
+    return template.format_map(LazyPartialDict(data))
 
 
 class RawTranslation(BaseModel):
@@ -102,6 +271,8 @@ class TranslationWrapper[T: Translatable]:
         self._locale: str
         self.locale = locale.replace("-", "_")
 
+    GLOBAL_KV: ClassVar[dict[str, Mapping[str, str]]] = {}
+
     @overload
     def _wrap_value(self, value: None) -> None: ...
     @overload
@@ -122,7 +293,8 @@ class TranslationWrapper[T: Translatable]:
         if isinstance(value, str | int | float | bool):
             return value
         if isinstance(value, RawTranslation):
-            return value.get_for_locale(self._locale) or value.get_for_locale(self._default)
+            r = value.get_for_locale(self._locale) or value.get_for_locale(self._default)
+            return partial_fmt(r, self.GLOBAL_KV) if r else None
         if isinstance(value, Sequence):
             return [self._wrap_value(item) for item in value]
 
