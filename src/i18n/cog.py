@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright: 2024-2026 NiceBots.xyz
 from collections.abc import Iterator, Mapping
 from datetime import timedelta
 from typing import TYPE_CHECKING, override
