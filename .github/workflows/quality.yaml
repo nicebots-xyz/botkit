@@ -45,11 +45,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
       - name: Setup Licensor
-        run: |
-          curl -L https://github.com/nicebots-xyz/licensor/releases/download/v0.0.2/licensor-v0.0.2-linux-x86_64.tar.gz -o licensor.tar.gz
-          tar -xzf licensor.tar.gz
-          sudo mv licensor licensor.jar /usr/local/bin/
-          sudo chmod +x /usr/local/bin/licensor
-        shell: bash
+        uses: nicebots-xyz/licensor/.github/actions/setup-licensor@v0.0.2
+        with:
+          version: v0.0.2
       - name: Check Header Compliance
         run: licensor check * --ignore ".*"
