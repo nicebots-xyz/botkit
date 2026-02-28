@@ -45,8 +45,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
       - name: Setup Licensor
-        uses: nicebots-xyz/licensor/.github/actions/setup-licensor@v0.0.2
+        uses: nicebots-xyz/licensor/.github/actions/setup-licensor@v0.0.4
         with:
-          version: v0.0.2
+          version: v0.0.4
       - name: Check Header Compliance
         run: licensor check * --ignore ".*"
