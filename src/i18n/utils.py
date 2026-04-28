@@ -74,6 +74,7 @@ def localize_commands[  # noqa: PLR0912
         discord.SlashCommandGroup,
         prefixed.Command,  # pyright: ignore[reportMissingTypeArgument]
         discord.MessageCommand,
+        discord.UserCommand,
     )
 ](
     commands: list[T],
@@ -101,7 +102,12 @@ def localize_commands[  # noqa: PLR0912
     tot = 0
     for command in commands:
         if isinstance(
-            command, discord.SlashCommand | discord.SlashCommandGroup | prefixed.Command | discord.MessageCommand
+            command,
+            discord.SlashCommand
+            | discord.SlashCommandGroup
+            | prefixed.Command
+            | discord.MessageCommand
+            | discord.UserCommand,
         ):
             tot += 1
             try:
