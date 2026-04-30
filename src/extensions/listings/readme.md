@@ -13,7 +13,8 @@ bot listing websites. It requires valid tokens for each listing website and is
 
 The Listings extension performs the following tasks:
 
-- It updates the server count of your bot on the listing websites every 30 minutes.
+- It updates listing metrics every 30 minutes.
+- For Top.gg, it submits both server count and user install count using Discord application info.
 - It handles any exceptions that might occur during the update process and logs them.
 
 ## Usage
@@ -26,8 +27,8 @@ tasks without any further intervention.
 
 The Listings extension requires the following configuration:
 
-- `topgg_token`: Your Top.gg token. This is a string, and it is required for the Top.gg
-  listing to work.
+- `topgg_token`: Your Top.gg v1 API token. This is a string, and it is required for the Top.gg
+  listing to work. It is sent as `Authorization: Bearer <token>`.
 - `discordscom_token`: Your Discords.com token. This is a string, and it is required for
   the Discords.com listing to work.
 - `enabled`: A boolean value that determines whether the extension is enabled or not. By
