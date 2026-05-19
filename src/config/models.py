@@ -63,11 +63,21 @@ class BotConfig(BaseModel):
 
 class LoggingConfig(BaseModel):
     level: Literal["DEBUG", "INFO", "WARNING", "SUCCESS", "ERROR", "CRITICAL"] = "INFO"
+    console: bool = True
+    file: bool = False
+    directory: str = "logs"
 
 
 class UseConfig(BaseModel):
     bot: bool = True
     backend: bool = False
+
+
+class BackendConfig(BaseModel):
+    host: str = "0.0.0.0"  # noqa: S104
+    port: int = 5000
+    access_log: bool = True
+    server_header: bool = False
 
 
 class DbExtraApp(BaseModel):
@@ -86,6 +96,7 @@ class DbConfig(BaseModel):
 class Config(BaseModel):
     db: DbConfig = DbConfig(url="", enabled=False)
     bot: BotConfig = BotConfig(token="")
+    backend: BackendConfig = BackendConfig()
     logging: LoggingConfig = LoggingConfig()
     use: UseConfig = UseConfig()
     extensions: dict[str, Extension] = {}

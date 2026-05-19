@@ -46,8 +46,16 @@ bot:
       db: 0 # Redis database number
       password: null # Redis password (optional)
       ssl: false # Whether to use SSL for Redis connection
+backend:
+  host: "0.0.0.0"
+  port: 5000
+  access_log: true
+  server_header: false
 logging:
   level: "INFO" # The logging level. Possible values: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  console: true
+  file: true
+  directory: "logs"
 use:
   bot: true # Whether to run the bot
   backend: false # Whether to run the backend

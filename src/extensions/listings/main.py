@@ -7,6 +7,7 @@ import aiohttp
 import discord
 from discord.ext import tasks
 
+from src import custom
 from src.log import logger
 
 TOPGG_BASE_URL = "https://top.gg/api/v1"
@@ -37,8 +38,8 @@ async def try_json_request(method: str, url: str, headers: dict[Any, Any], paylo
 
 @final
 class Listings(discord.Cog):
-    def __init__(self, bot: discord.Bot, config: dict[Any, Any]) -> None:
-        self.bot: discord.Bot = bot
+    def __init__(self, bot: custom.Bot, config: dict[Any, Any]) -> None:
+        self.bot: custom.Bot = bot
         self.config: dict[Any, Any] = config
         self.topgg = bool(config.get("topgg_token"))
         self.discordscom = bool(config.get("discordscom_token"))
@@ -76,7 +77,7 @@ class Listings(discord.Cog):
 
     async def update_count_topgg(self) -> None:
         headers: dict[str, str] = {"Authorization": f"Bearer {self.config['topgg_token']}"}
-        app_info = await self.bot.fetch_application_info()
+        app_info = await self.bot.application_info()
         if app_info.approximate_guild_count is None:
             logger.warning("Skipped top.gg update because app info counts are unavailable")
             return
@@ -88,7 +89,7 @@ class Listings(discord.Cog):
         logger.info("Updated top.gg metrics")
 
 
-def setup(bot: discord.Bot, config: dict[Any, Any]) -> None:
+def setup(bot: custom.Bot, config: dict[Any, Any]) -> None:
     if not config.get("topgg_token") and not config.get("discordscom_token"):
         logger.error("Top.gg or Discords.com token not found")
         return

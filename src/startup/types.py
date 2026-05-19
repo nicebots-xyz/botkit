@@ -7,7 +7,7 @@ from collections.abc import Awaitable
 from typing import Protocol, TypedDict, overload, runtime_checkable
 
 import discord
-from quart import Quart
+from fastapi import FastAPI
 
 from src import custom
 
@@ -48,12 +48,12 @@ class SetupFunction(Protocol):
 class SetupWebserverFunction(Protocol):
     """Protocol for extension setup functions that configure the backend server.
 
-    Extensions can define setup_webserver functions with different signatures.
+    Extensions can define FastAPI setup_webserver functions with different signatures.
     setup_func introspects the signature and passes only the required parameters.
     """
 
     @overload
-    def __call__(self, *, app: Quart) -> None: ...
+    def __call__(self, *, app: FastAPI) -> None: ...
 
     @overload
     def __call__(self, *, bot: discord.Bot) -> None: ...
@@ -62,19 +62,19 @@ class SetupWebserverFunction(Protocol):
     def __call__(self, *, config: ExtensionConfig) -> None: ...
 
     @overload
-    def __call__(self, *, app: Quart, bot: discord.Bot) -> None: ...
+    def __call__(self, *, app: FastAPI, bot: discord.Bot) -> None: ...
 
     @overload
-    def __call__(self, *, app: Quart, config: ExtensionConfig) -> None: ...
+    def __call__(self, *, app: FastAPI, config: ExtensionConfig) -> None: ...
 
     @overload
     def __call__(self, *, bot: discord.Bot, config: ExtensionConfig) -> None: ...
 
     @overload
-    def __call__(self, *, app: Quart, bot: discord.Bot, config: ExtensionConfig) -> None: ...
+    def __call__(self, *, app: FastAPI, bot: discord.Bot, config: ExtensionConfig) -> None: ...
 
     def __call__(
-        self, *, app: Quart | None = None, bot: discord.Bot | None = None, config: ExtensionConfig | None = None
+        self, *, app: FastAPI | None = None, bot: discord.Bot | None = None, config: ExtensionConfig | None = None
     ) -> None: ...
 
 
@@ -82,12 +82,12 @@ class SetupWebserverFunction(Protocol):
 class StartupFunction(Protocol):
     """Protocol for extension startup functions that run during initialization.
 
-    Extensions can define on_startup functions with different signatures.
+    Extensions can define FastAPI-aware on_startup functions with different signatures.
     setup_func introspects the signature and passes only the required parameters.
     """
 
     @overload
-    def __call__(self, *, app: Quart) -> Awaitable[None]: ...
+    def __call__(self, *, app: FastAPI) -> Awaitable[None]: ...
 
     @overload
     def __call__(self, *, bot: discord.Bot) -> Awaitable[None]: ...
@@ -96,19 +96,19 @@ class StartupFunction(Protocol):
     def __call__(self, *, config: ExtensionConfig) -> Awaitable[None]: ...
 
     @overload
-    def __call__(self, *, app: Quart, bot: discord.Bot) -> Awaitable[None]: ...
+    def __call__(self, *, app: FastAPI, bot: discord.Bot) -> Awaitable[None]: ...
 
     @overload
-    def __call__(self, *, app: Quart, config: ExtensionConfig) -> Awaitable[None]: ...
+    def __call__(self, *, app: FastAPI, config: ExtensionConfig) -> Awaitable[None]: ...
 
     @overload
     def __call__(self, *, bot: discord.Bot, config: ExtensionConfig) -> Awaitable[None]: ...
 
     @overload
-    def __call__(self, *, app: Quart, bot: discord.Bot, config: ExtensionConfig) -> Awaitable[None]: ...
+    def __call__(self, *, app: FastAPI, bot: discord.Bot, config: ExtensionConfig) -> Awaitable[None]: ...
 
     def __call__(
-        self, *, app: Quart | None = None, bot: discord.Bot | None = None, config: ExtensionConfig | None = None
+        self, *, app: FastAPI | None = None, bot: discord.Bot | None = None, config: ExtensionConfig | None = None
     ) -> Awaitable[None]: ...
 
 

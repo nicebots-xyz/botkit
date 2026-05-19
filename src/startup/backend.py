@@ -4,13 +4,15 @@
 """Backend server initialization and startup logic."""
 
 import asyncio
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import discord
-from quart import Quart
+import uvicorn
+from fastapi import FastAPI
 
 from src.config import config
-from src.log import logger, patch
+from src.config.models import BackendConfig
+from src.log import logger
 from src.startup.types import StartupFunctionList, WebserverFunctionList
 from src.utils import setup_func
 
@@ -18,14 +20,14 @@ if TYPE_CHECKING:
     from collections.abc import Awaitable
 
 
-def create_backend_app() -> Quart:
-    """Create a Quart application for the backend server.
+def create_backend_app() -> FastAPI:
+    """Create a FastAPI application for the backend server.
 
     Returns:
-        A configured Quart application instance
+        A configured FastAPI application instance
 
     """
-    return Quart("backend")
+    return FastAPI(title="Botkit Backend")
 
 
 def create_backend_bot() -> discord.Bot:
@@ -42,14 +44,14 @@ def create_backend_bot() -> discord.Bot:
 
 
 def setup_backend_extensions(
-    app: Quart,
+    app: FastAPI,
     bot: discord.Bot,
     back_functions: WebserverFunctionList,
 ) -> None:
     """Set up all backend extensions.
 
     Args:
-        app: The Quart application to configure
+        app: The FastAPI application to configure
         bot: The Discord bot instance
         back_functions: List of (setup_webserver_function, config) tuples to execute
 
@@ -60,14 +62,14 @@ def setup_backend_extensions(
 
 async def run_startup_functions(
     startup_functions: StartupFunctionList,
-    app: Quart | None = None,
+    app: FastAPI | None = None,
     bot: discord.Bot | None = None,
 ) -> None:
     """Run all registered startup functions concurrently.
 
     Args:
         startup_functions: List of (on_startup_function, config) tuples to execute
-        app: Optional Quart application instance
+        app: Optional FastAPI application instance
         bot: Optional Discord bot instance
 
     """
@@ -78,37 +80,28 @@ async def run_startup_functions(
     await asyncio.gather(*startup_coros)
 
 
-async def start_backend(app: Quart, bot: discord.Bot, token: str) -> None:
-    """Start the backend server with Hypercorn.
+async def start_backend(app: FastAPI, bot: discord.Bot, token: str, backend_config: BackendConfig) -> None:
+    """Start the backend server with Uvicorn.
 
     Args:
-        app: The Quart application to serve
+        app: The FastAPI application to serve
         bot: The Discord bot instance (for login)
         token: Discord bot token
+        backend_config: Backend server settings
 
     """
-    from hypercorn.asyncio import serve  # pyright: ignore[reportUnknownVariableType]  # noqa: PLC0415
-    from hypercorn.config import Config  # noqa: PLC0415
-    from hypercorn.logging import Logger as HypercornLogger  # noqa: PLC0415
-
-    class CustomLogger(HypercornLogger):
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            super().__init__(*args, **kwargs)
-            if self.error_logger:
-                patch(self.error_logger)
-            if self.access_logger:
-                patch(self.access_logger)
-
-    app_config = Config()
-    app_config.accesslog = "-"
-    app_config.logger_class = CustomLogger
-    app_config.include_server_header = False  # security
-    app_config.bind = ["0.0.0.0:5000"]
-
     try:
         await bot.login(token)
-        await serve(app, app_config)
-        patch("hypercorn.error")
+        uvicorn_config = uvicorn.Config(
+            app=app,
+            host=backend_config.host,
+            port=backend_config.port,
+            access_log=backend_config.access_log,
+            server_header=backend_config.server_header,
+            log_config=None,
+        )
+
+        await uvicorn.Server(uvicorn_config).serve()
     except Exception as e:  # noqa: BLE001
         logger.critical("An error occurred while starting the backend server.")
         logger.debug("", exc_info=e)
@@ -129,7 +122,7 @@ async def setup_and_start_backend(
     app = create_backend_app()
     bot = create_backend_bot()
     setup_backend_extensions(app, bot, back_functions)
-    await start_backend(app, bot, config.bot.token)
+    await start_backend(app, bot, config.bot.token, config.backend)
 
 
 __all__ = [

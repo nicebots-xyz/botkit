@@ -48,7 +48,7 @@ to leverage its powerful features to create truly unique and capable bots.
   is managed through a `config.yml` file.
 - **Easy Setup**: Botkit simplifies the setup process by providing a well-structured
   project template and configuration management.
-- **Integrated Backend**: Botkit provides an easy way of having a Quart (flask-like)
+- **Integrated Backend**: Botkit provides an easy way of having a FastAPI
   webserver running alongside your bot, with the ability to add routes and endpoints.
 - **Useful Scripts**: Botkit includes useful scripts for managing your bot's listing on
   top.gg and other bot lists, such as discord's app directory.
@@ -102,8 +102,16 @@ extensions:
     enabled: true
 bot:
   token: "your_bot_token"
+backend:
+  host: "0.0.0.0"
+  port: 5000
+  access_log: true
+  server_header: false
 logging:
   level: INFO
+  console: true
+  file: true
+  directory: logs
 ```
 
 ### Environment Variables
@@ -118,7 +126,14 @@ BOTKIT__bot__token=your_bot_token
 BOTKIT__extensions__listings__enabled=false
 BOTKIT__extensions__listings__topgg_token=your_top.gg_token
 BOTKIT__extensions__ping__enabled=true
+BOTKIT__backend__host=0.0.0.0
+BOTKIT__backend__port=5000
+BOTKIT__backend__access_log=true
+BOTKIT__backend__server_header=false
 BOTKIT__logging__level=INFO
+BOTKIT__logging__console=true
+BOTKIT__logging__file=true
+BOTKIT__logging__directory=logs
 BOTKIT__cache__type=redis
 BOTKIT__cache__redis__host=redis.example.com
 BOTKIT__cache__redis__port=6379
@@ -189,7 +204,7 @@ properly. These are:
 - `setup_webserver`: A function for adding webserver routes. It CAN accept any of the
   following arguments, in the order you prefer, and you can safely omit any of them if
   you don't need them:
-  - `app`: The Quart app instance.
+  - `app`: The FastAPI app instance.
   - `bot`: The Discord bot instance.
   - `config`: The configuration dictionary for the extension.
 
@@ -202,7 +217,7 @@ properly. These are:
   It CAN accept any of the following arguments, in the order you prefer, and you can
   safely omit any of them if you don't need them:
 
-  - `app`: The Quart app instance.
+  - `app`: The FastAPI app instance.
   - `bot`: The Discord bot instance. :warning: The bot is not yet logged in, so you
     won't be able to send messages or interact with the Discord API.
   - `config`: The configuration dictionary for the extension.
@@ -492,11 +507,12 @@ We welcome contributions to this project! Please follow the
 [gitmoji.dev](https://gitmoji.dev) convention for commit messages and submit pull
 requests with descriptive commit messages.
 
-## Built With
+## Made With
 
 - Love :yellow_heart:
 - [py-cord](https://github.com/Pycord-Development/pycord)
-- [Quart](https://github.com/pallets/quart/)
+- [FastAPI](https://github.com/fastapi/fastapi)
+- [Uvicorn](https://github.com/encode/uvicorn)
 - [pdm](https://pdm-project.org/en/latest/)
 
 ## Code Style and Linting

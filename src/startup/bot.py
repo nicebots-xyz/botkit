@@ -104,9 +104,11 @@ async def start_bot(bot: custom.Bot, token: str, rest_config: RestConfig, public
                     "port": rest_config.port,
                 },
             }
-            await bot.start(**start_kwargs)
+            async with bot:  # https://github.com/Pycord-Development/pycord/issues/2958
+                await bot.start(**start_kwargs)
         else:
-            await bot.start(token)
+            async with bot:
+                await bot.start(token)
     except discord.LoginFailure as e:
         logger.critical("Failed to log in, is the bot token valid?")
         logger.debug("", exc_info=e)

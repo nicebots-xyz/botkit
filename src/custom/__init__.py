@@ -9,7 +9,7 @@ import aiocache
 import discord
 
 try:
-    from pycord_rest import Bot as PycordRestBot  # pyright: ignore[reportAssignmentType]
+    from pycord_rest import Bot as PycordRestBot  # pyright: ignore[reportAssignmentType, reportMissingImports]
 except ImportError:
     # Fallback when pycord-rest is not installed
     class PycordRestBot:  # pyright: ignore[reportRedeclaration]
@@ -212,7 +212,7 @@ class CustomUvicornConfig(BaseUvicornConfig):
         log.patch("uvicorn.access")
 
 
-class CustomRestBot(PycordRestBot, CustomBot):  # pyright: ignore[reportIncompatibleMethodOverride]
+class CustomRestBot(PycordRestBot, CustomBot):  # pyright: ignore[reportIncompatibleMethodOverride, reportGeneralTypeIssues]
     __rest__: bool = True
 
     _UvicornConfig: type[BaseUvicornConfig] = CustomUvicornConfig

@@ -11,7 +11,7 @@ for better organization and maintainability.
 import asyncio
 
 from src.config import config
-from src.log import logger
+from src.log import configure_logging, logger
 from src.startup import (
     load_extensions,
     run_startup_functions,
@@ -30,6 +30,8 @@ async def start(run_bot: bool | None = None, run_backend: bool | None = None) ->
         run_backend: Whether to start the backend server (defaults to config.use.backend)
 
     """
+    configure_logging(config.logging)
+
     if not config.bot.token:
         logger.critical("No bot token provided in config, exiting...")
         return
