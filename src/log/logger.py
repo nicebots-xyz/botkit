@@ -106,5 +106,3 @@ logger: CustomLogger = _logger_instance
 
 # Prevent application logger from propagating to root logger
 logger.propagate = False
-
-logger: CustomLogger
