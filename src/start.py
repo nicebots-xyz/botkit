@@ -103,11 +103,13 @@ async def start(run_bot: bool | None = None, run_backend: bool | None = None) ->
                 "Disable bot.rest or use.backend."
             )
             return
-        assert bot is not None and app is not None
+        if app is None:
+            logger.error("Backend app was not initialized, exiting...")
+            return
         await run_bot_and_backend(bot, app, config.bot)
     elif start_bot_extensions:
-        assert bot is not None
         await start_bot(bot, config.bot.token, config.bot.rest, config.bot.public_key)
+    elif app is None:
+        logger.error("Backend app was not initialized, exiting...")
     else:
-        assert bot is not None and app is not None
         await run_backend_only(app, bot, config.bot.token, config.backend)
