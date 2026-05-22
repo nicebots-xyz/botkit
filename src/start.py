@@ -9,17 +9,48 @@ for better organization and maintainability.
 """
 
 import asyncio
+import contextlib
 
+from fastapi import FastAPI
+
+from src import custom
 from src.config import config
+from src.config.models import BotConfig
 from src.log import logger
-from src.startup import (
-    load_extensions,
-    run_startup_functions,
-    setup_and_start_backend,
-    setup_and_start_bot,
+from src.startup import load_extensions, run_startup_functions
+from src.startup.backend import (
+    create_backend_app,
+    run_backend_only,
+    serve_backend,
+    setup_backend_extensions,
 )
-from src.startup.backend import create_backend_app, create_backend_bot
+from src.startup.bot import create_bot, run_bot_connection, setup_bot, start_bot
 from src.utils import unzip_extensions
+
+
+async def run_bot_and_backend(
+    bot: custom.Bot,
+    app: FastAPI,
+    bot_config: BotConfig,
+) -> None:
+    """Run the Discord gateway and backend API on one shared bot instance."""
+    try:
+        async with bot:  # https://github.com/Pycord-Development/pycord/issues/2958
+            serve_task = asyncio.create_task(serve_backend(app, config.backend))
+            try:
+                await run_bot_connection(
+                    bot,
+                    bot_config.token,
+                    bot_config.rest,
+                    bot_config.public_key,
+                )
+            finally:
+                serve_task.cancel()
+                with contextlib.suppress(asyncio.CancelledError):
+                    await serve_task
+    except Exception as e:  # noqa: BLE001
+        logger.critical("An error occurred while running the bot and backend together.")
+        logger.debug("", exc_info=e)
 
 
 async def start(run_bot: bool | None = None, run_backend: bool | None = None) -> None:
@@ -47,21 +78,36 @@ async def start(run_bot: bool | None = None, run_backend: bool | None = None) ->
 
     bot_functions, back_functions, startup_functions, translations = load_extensions()
 
-    coros: list[asyncio.Task[None]] = []
+    start_bot_extensions = bool(bot_functions and run_bot)
+    start_backend_server = bool(back_functions and run_backend)
 
-    if bot_functions and run_bot:
-        coros.append(asyncio.create_task(setup_and_start_bot(bot_functions, translations, config.bot)))
-
-    if back_functions and run_backend:
-        coros.append(asyncio.create_task(setup_and_start_backend(back_functions)))
-
-    if not coros:
+    if not start_bot_extensions and not start_backend_server:
         logger.error("Nothing to start, exiting...")
         return
 
+    app = None
+    bot = create_bot(config.bot)
+    if start_bot_extensions:
+        setup_bot(bot, bot_functions, translations, config.bot)
+    if start_backend_server:
+        app = create_backend_app()
+        setup_backend_extensions(app, bot, back_functions)
+
     if startup_functions:
-        app = create_backend_app() if (back_functions and run_backend) else None
-        bot = create_backend_bot() if (back_functions and run_backend) else None
         await run_startup_functions(startup_functions, app, bot)
 
-    await asyncio.gather(*coros)
+    if start_bot_extensions and start_backend_server:
+        if config.bot.rest:
+            logger.critical(
+                "REST bot mode and the Botkit backend cannot run together in one process. "
+                "Disable bot.rest or use.backend."
+            )
+            return
+        assert bot is not None and app is not None
+        await run_bot_and_backend(bot, app, config.bot)
+    elif start_bot_extensions:
+        assert bot is not None
+        await start_bot(bot, config.bot.token, config.bot.rest, config.bot.public_key)
+    else:
+        assert bot is not None and app is not None
+        await run_backend_only(app, bot, config.bot.token, config.backend)

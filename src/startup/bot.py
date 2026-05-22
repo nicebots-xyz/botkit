@@ -78,6 +78,45 @@ def configure_bot_features(bot: custom.Bot, config: BotConfig) -> None:
         bot._pending_application_commands = []  # noqa: SLF001  # pyright: ignore[reportPrivateUsage]
 
 
+def setup_bot(
+    bot: custom.Bot,
+    bot_functions: SetupFunctionList,
+    translations: list[ExtensionTranslation],
+    config: BotConfig,
+) -> None:
+    """Configure extensions and feature flags on an existing bot instance."""
+    setup_bot_extensions(bot, bot_functions, translations)
+    configure_bot_features(bot, config)
+
+
+async def run_bot_connection(
+    bot: custom.Bot,
+    token: str,
+    rest_config: RestConfig,
+    public_key: str | None = None,
+) -> None:
+    """Connect the bot to Discord without managing the client context manager.
+
+    The caller must enter ``async with bot`` when connection lifecycle is shared
+    (for example when running the backend in the same process).
+    """
+    if isinstance(bot, custom.CustomRestBot):
+        if not public_key:
+            raise TypeError("CustomRestBot requires a public key to start.")
+        start_kwargs: dict[str, Any] = {
+            "token": token,
+            "public_key": public_key,
+            "health": rest_config.health,
+            "uvicorn_options": {
+                "host": rest_config.host,
+                "port": rest_config.port,
+            },
+        }
+        await bot.start(**start_kwargs)
+    else:
+        await bot.start(token)
+
+
 async def start_bot(bot: custom.Bot, token: str, rest_config: RestConfig, public_key: str | None = None) -> None:
     """Start the bot with appropriate configuration.
 
@@ -92,23 +131,8 @@ async def start_bot(bot: custom.Bot, token: str, rest_config: RestConfig, public
 
     """
     try:
-        if isinstance(bot, custom.CustomRestBot):
-            if not public_key:
-                raise TypeError("CustomRestBot requires a public key to start.")  # noqa: TRY301
-            start_kwargs: dict[str, Any] = {
-                "token": token,
-                "public_key": public_key,
-                "health": rest_config.health,
-                "uvicorn_options": {
-                    "host": rest_config.host,
-                    "port": rest_config.port,
-                },
-            }
-            async with bot:  # https://github.com/Pycord-Development/pycord/issues/2958
-                await bot.start(**start_kwargs)
-        else:
-            async with bot:
-                await bot.start(token)
+        async with bot:  # https://github.com/Pycord-Development/pycord/issues/2958
+            await run_bot_connection(bot, token, rest_config, public_key)
     except discord.LoginFailure as e:
         logger.critical("Failed to log in, is the bot token valid?")
         logger.debug("", exc_info=e)
@@ -134,15 +158,16 @@ async def setup_and_start_bot(
 
     """
     bot = create_bot(config)
-    setup_bot_extensions(bot, bot_functions, translations)
-    configure_bot_features(bot, config)
+    setup_bot(bot, bot_functions, translations, config)
     await start_bot(bot, config.token, config.rest, config.public_key)
 
 
 __all__ = [
     "configure_bot_features",
     "create_bot",
+    "run_bot_connection",
     "setup_and_start_bot",
+    "setup_bot",
     "setup_bot_extensions",
     "start_bot",
 ]

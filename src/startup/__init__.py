@@ -8,7 +8,9 @@ and starting the bot and/or backend server.
 """
 
 from src.startup.backend import (
+    run_backend_only,
     run_startup_functions,
+    serve_backend,
     setup_and_start_backend,
 )
 from src.startup.bot import setup_and_start_bot
@@ -16,7 +18,9 @@ from src.startup.loader import load_extensions
 
 __all__ = [
     "load_extensions",
+    "run_backend_only",
     "run_startup_functions",
+    "serve_backend",
     "setup_and_start_backend",
     "setup_and_start_bot",
 ]

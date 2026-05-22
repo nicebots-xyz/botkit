@@ -179,6 +179,11 @@ bot:
 If Redis cache is requested but no configuration is provided, Botkit will fall back to
 memory cache with a warning.
 
+When the bot and backend run in the same process (`use.bot` and `use.backend` both
+enabled), Botkit uses a single `CustomBot` instance so in-memory cache and Discord
+state are shared. Use Redis if you run multiple processes or containers and need a
+shared cache across them.
+
 ## Creating Extensions
 
 Extensions are in truth just python located in the `src/extensions` directory. When
