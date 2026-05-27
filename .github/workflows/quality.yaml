@@ -25,10 +25,10 @@ jobs:
     name: ${{ matrix.name }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - name: Setup PDM
-        uses: pdm-project/setup-pdm@v4
+        uses: pdm-project/setup-pdm@94a823180e06fcde4ad29308721954a521c96ed0 # v4
         with:
           cache: true
 
@@ -43,9 +43,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: Setup Licensor
-        uses: nicebots-xyz/licensor/.github/actions/setup-licensor@v0.1.0
+        uses: nicebots-xyz/licensor/.github/actions/setup-licensor@20ff71ae4c0ca9874893c11c7c2cbdb9d22e179e # v0.1.0
         with:
           version: v0.1.0
       - name: Check Header Compliance
