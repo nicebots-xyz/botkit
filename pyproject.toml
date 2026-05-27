@@ -27,7 +27,7 @@ dependencies = [
     "cachetools>=7.0.1",
 ]
 requires-python = "==3.12.*"
-readme = "README.md"
+readme = "readme.md"
 license = {text = "MIT"}
 
 
@@ -39,6 +39,9 @@ typecheck = "basedpyright ."
 start = "python src"
 check-listings = {call = "scripts:check_listings.main"}
 convert-config = { call = "scripts.convert_config:main" }
+"docs:build" = "zensical build --clean"
+"docs:dev" = "zensical serve"
+"docs:preview" = "python -m http.server 8000 -d site"
 
 [tool.pdm]
 distribution = false
@@ -52,6 +55,12 @@ dev = [
     "termcolor>=2.4.0",
     "basedpyright>=1.18.3",
     "ruff>=0.6.9",
+]
+
+[dependency-groups]
+docs = [
+    "mkdocstrings[python]>=1.0.3",
+    "zensical>=0.0.24",
 ]
 
 [tool.pyright]

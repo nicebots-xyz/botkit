@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        check: [format, lint, test]
+        check: [format, lint, test, docs]
         include:
           - check: format
             name: "Format Check"
@@ -21,6 +21,9 @@ jobs:
           - check: test
             name: "Tests Check"
             command: "pdm run tests"
+          - check: docs
+            name: "Docs build"
+            command: "pdm run docs:build"
 
     name: ${{ matrix.name }}
 
@@ -33,7 +36,7 @@ jobs:
           cache: true
 
       - name: Install dependencies
-        run: pdm install -d
+        run: pdm install -dG docs
 
       - name: ${{ matrix.name }}
         run: ${{ matrix.command }}

@@ -1,0 +1,69 @@
+# SPDX-License-Identifier: MIT
+# Copyright: 2024-2026 NiceBots.xyz
+[project]
+site_name = "Botkit"
+site_description = "Framework for production Discord bots with py-cord, FastAPI, and extensions"
+site_url = "https://docs.nicebots.xyz/botkit/"
+repo_url = "https://github.com/nicebots-xyz/botkit"
+repo_name = "nicebots-xyz/botkit"
+copyright = "MIT License"
+
+nav = [
+  { "Home" = "index.md" },
+  { "Getting started" = "getting-started.md" },
+  { "Configuration" = "configuration.md" },
+  { "Extensions" = "extensions.md" },
+  { "Runtime" = "runtime.md" },
+  { "Internationalization" = "i18n.md" },
+  { "Database" = "database.md" },
+  { "Scripts" = "scripts.md" },
+  { "Deployment" = "deployment.md" },
+  { "Development" = "development.md" },
+  { "Contributing" = "contributing.md" },
+  { "API reference" = "api.md" },
+]
+
+[project.theme]
+variant = "modern"
+features = [
+  "navigation.footer",
+]
+
+[project.theme.icon]
+logo = "lucide/bot"
+
+[[project.theme.palette]]
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+primary = "indigo"
+accent = "cyan"
+
+[[project.theme.palette]]
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+primary = "blue"
+accent = "deep-orange"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/nicebots-xyz/botkit"
+name = "Botkit on GitHub"
+
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.pymdownx.details]
+[project.markdown_extensions.pymdownx.superfences]
+
+[project.plugins.mkdocstrings.handlers.python]
+paths = ["."]
+
+[project.plugins.mkdocstrings.handlers.python.options]
+docstring_style = "google"
+show_docstring_examples = true
+show_source = true
+show_signature_annotations = true
+show_root_heading = true
+show_root_full_path = false
+heading_level = 3
+members_order = "source"
