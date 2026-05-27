@@ -76,7 +76,7 @@ pdm install -dG docs
 
 When you change startup behavior, config models, or extension contracts, update the matching page under **`docs/`** and confirm **`pdm run docs:build`** succeeds.
 
-Published URL (when deployed): [docs.nicebots.xyz/botkit](https://docs.nicebots.xyz/botkit/).
+Published URL: [docs.nicebots.xyz/botkit](https://docs.nicebots.xyz/botkit/). On **`nicebots-xyz/botkit`**, CI builds docs on every run and publishes to GitHub Pages on push to the repository default branch (`.github/workflows/docs.yaml`, invoked from `CI-CD.yaml`).
 
 ## Copyright headers
 
