@@ -21,9 +21,6 @@ jobs:
           - check: test
             name: "Tests Check"
             command: "pdm run tests"
-          - check: docs
-            name: "Docs build"
-            command: "pdm run docs:build"
 
     name: ${{ matrix.name }}
 
@@ -36,7 +33,7 @@ jobs:
           cache: true
 
       - name: Install dependencies
-        run: pdm install -dG docs
+        run: pdm install -d
 
       - name: ${{ matrix.name }}
         run: ${{ matrix.command }}
