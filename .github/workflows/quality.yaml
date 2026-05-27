@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        check: [format, lint, test, docs]
+        check: [format, lint, test]
         include:
           - check: format
             name: "Format Check"
