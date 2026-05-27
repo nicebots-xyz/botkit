@@ -33,7 +33,7 @@ jobs:
     uses: ./.github/workflows/docs.yaml
 
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
     needs: docker
     uses: ./.github/workflows/deploy.yaml
     secrets: inherit
