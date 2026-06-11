@@ -54,6 +54,14 @@ def create_ssl_context() -> ssl.SSLContext:
     return ssl_context
 
 
+INT_PARAMS = {
+    "statement_cache_size",
+    "max_cached_statement_lifetime",
+    "max_cacheable_statement_size",
+    "command_timeout",
+}
+
+
 def parse_postgres_url(url: str) -> dict[str, Any]:
     """Parse postgres URL into credentials dict.
 
@@ -75,7 +83,8 @@ def parse_postgres_url(url: str) -> dict[str, Any]:
     for key, value in query_params.items():
         if key not in ["ssl", "sslmode"]:  # Skip SSL params
             # Unwrap single-item lists for cleaner values
-            credentials[key] = value[0] if len(value) == 1 else value
+            raw = value[0] if len(value) == 1 else value
+            credentials[key] = int(raw) if key in INT_PARAMS and isinstance(raw, str) and raw.isdigit() else raw
 
     return credentials
 
@@ -84,7 +93,7 @@ def apply_params(uri: str, params: dict[str, Any] | None) -> str:
     if params is None:
         return uri
 
-    first: bool = True
+    first: bool = "?" not in uri
     for param, value in params.items():
         if param == "ssl":
             continue
