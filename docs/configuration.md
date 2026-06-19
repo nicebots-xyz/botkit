@@ -20,7 +20,7 @@ You can run with **env vars only** (no file), but you must still set **`bot.toke
 ## Precedence
 
 1. Values from **`config.yaml`** / **`config.yml`**
-2. Overridden by **`BOTKIT__…`** environment variables (and `.env` if present)
+2. Overridden by **`BOTKIT__…`** or **`BOTKIT_FILE__…`** environment variables (and `.env` if present)
 
 Nested settings merge: env can change one key without replacing an entire section.
 
@@ -43,6 +43,17 @@ BOTKIT__extensions__branding__status__playing=["with stuff","with things"]
 ```
 
 Convert YAML ↔ env with **`pdm run convert-config`** ([Scripts](scripts.md)).
+
+### File-backed values
+
+Use **`BOTKIT_FILE__`** instead of **`BOTKIT__`** to set a value from a file. The environment variable contains the file path, and the file contents become the configuration value. Nested paths use the same **`__`** separator:
+
+```env
+BOTKIT_FILE__bot__token=/run/secrets/discord_token
+BOTKIT_FILE__bot__cache__redis__password=/run/secrets/redis_password
+```
+
+This is useful with container secret mounts. Leading and trailing whitespace, including the terminal newline commonly added when creating a secret file, is removed. File-backed values are then parsed like direct environment values, so values such as `true` and JSON retain their normal types.
 
 ---
 

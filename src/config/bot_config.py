@@ -4,6 +4,7 @@
 import contextlib
 import os
 from collections import defaultdict
+from pathlib import Path
 from typing import Any, cast
 
 import orjson
@@ -13,19 +14,26 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SPLIT: str = "__"
+PREFIX: str = "BOTKIT__"
+FILE_PREFIX: str = "BOTKIT_FILE__"
 
 type ConfigDict = dict[str, Any]  # pyright: ignore[reportExplicitAny]
 
 
 def load_from_env() -> ConfigDict:
     _config: ConfigDict = {}
-    values = {k: v for k, v in os.environ.items() if k.startswith("BOTKIT__")}
+    values = {k: v for k, v in os.environ.items() if (k.startswith((PREFIX, FILE_PREFIX)))}
     for key, value in values.items():
-        parts = key[len("BOTKIT__") :].lower().split("__")
+        file = key.startswith(FILE_PREFIX)
+        parts = key.removeprefix(PREFIX).removeprefix(FILE_PREFIX).lower().split(SPLIT)
         current = _config
         for i, part in enumerate(parts):
             if i == len(parts) - 1:
-                current[part] = value
+                if file:
+                    with Path(value).absolute().open("r", encoding="utf-8") as f:
+                        current[part] = f.read().strip()
+                else:
+                    current[part] = value
             else:
                 if part not in current:
                     current[part] = {}
