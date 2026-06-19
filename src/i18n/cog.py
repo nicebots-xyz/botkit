@@ -7,12 +7,14 @@ from typing import TYPE_CHECKING, override
 import discord
 from cachetools import TTLCache
 
+from src.config import config
 from src.log import logger as main_logger
 
 from .classes import add_global_kv
 
 if TYPE_CHECKING:
     from src import custom
+
 logger = main_logger.getChild("i18n")
 
 
@@ -138,8 +140,11 @@ class TranslationCog(discord.Cog):
 
         """
         self.bot: custom.Bot = bot
+        if config.bot.rest.enabled:
+            self.bot.add_listener(self.on_ready, "on_connect")
+        else:
+            self.bot.add_listener(self.on_ready, "on_ready")
 
-    @discord.Cog.listener(once=True)
     async def on_ready(self) -> None:
         """Populate global translation mappings when the bot becomes ready."""
         add_global_kv("commands", AppCommandMapping(self.bot))
