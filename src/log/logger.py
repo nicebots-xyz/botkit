@@ -46,15 +46,29 @@ _configured_file_handler: logging.FileHandler | None = None
 _patched_loggers: set[str] = set()
 
 
+def _install_console_handler(logger_: logging.Logger) -> None:
+    coloredlogs.install(
+        level=_configured_level,
+        logger=logger_,
+        fmt=fmt,
+        datefmt=date_fmt,
+        level_styles=level_styles,
+    )
+
+
 def patch(logger_: str | logging.Logger) -> logging.Logger:
     if isinstance(logger_, str):
         logger_ = logging.getLogger(logger_)
+    use_console = logger_.name in _patched_loggers
     logger_.handlers = []  # Clear any existing handlers
     if _configured_file_handler:
         logger_.addHandler(_configured_file_handler)
     logger_.propagate = False
     logger_.setLevel(_configured_level)
-    _patched_loggers.discard(logger_.name)
+    if use_console:
+        _install_console_handler(logger_)
+    else:
+        _patched_loggers.discard(logger_.name)
     return logger_
 
 
@@ -80,13 +94,7 @@ def configure_logging(config: LoggingConfig) -> None:
     for logger_name in ("bot", "discord", "uvicorn", "uvicorn.error", "uvicorn.access", "uvicorn.asgi"):
         configured_logger = patch(logger_name)
         if config.console:
-            coloredlogs.install(
-                level=_configured_level,
-                logger=configured_logger,
-                fmt=fmt,
-                datefmt=date_fmt,
-                level_styles=level_styles,
-            )
+            _install_console_handler(configured_logger)
             _patched_loggers.add(logger_name)
 
 
