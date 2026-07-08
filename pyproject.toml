@@ -12,7 +12,6 @@ dependencies = [
     "pyyaml>=6.0.1",
     "python-dotenv>=1.0.1",
     "orjson>=3.10.7",
-    "pytz>=2024.1",
     "typing-extensions>=4.12.2",
     "fastapi>=0.111.0",
     "uvicorn[standard]>=0.30.0",

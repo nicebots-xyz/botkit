@@ -231,8 +231,10 @@ extensions:
     enabled: true
   branding:
     enabled: true
-    embed:
-      color: "#ffffff"
+    status:
+      watching: ["/help"]
+      custom: ["Shipping features"]
+      every: 300
 ```
 
 Each key matches a folder under **`src/extensions/<name>/`**. **`nice_errors`** and **`nice-errors`** are treated as the same extension.
