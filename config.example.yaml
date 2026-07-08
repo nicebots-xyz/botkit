@@ -10,14 +10,6 @@ extensions:
     enabled: true
   branding:
     enabled: true
-    embed:
-      footer:
-        value: "By nicebots.xyz"
-        time: true # Include the current time in the footer
-        tz: "Europe/Zurich"
-      author: "Cool Bot"
-      author_url: https://picsum.photos/512
-      color: "#ffffff"
     status:
       playing:
         - "with stuff"
@@ -33,6 +25,8 @@ extensions:
       streaming:
         - "on Twitch"
         - "on YouTube"
+      custom:
+        - "Shipping features"
       every: 300 # 300 seconds = 5 minutes
 bot:
   token: "bot token here" # Your bot token
