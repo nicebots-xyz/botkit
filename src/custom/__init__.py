@@ -223,8 +223,7 @@ class CustomBot(bridge.Bot):
         self._connection._intents.value = value.value  # noqa: SLF001  # pyright: ignore [reportPrivateUsage]
 
     def _sync_member_cache_with_intents(self) -> None:
-        """Re-derive the member cache settings from the current intents.
-        """
+        """Re-derive the member cache settings from the current intents."""
         state = self._connection
         intents = state._intents  # noqa: SLF001  # pyright: ignore [reportPrivateUsage]
         state._chunk_guilds = intents.members  # noqa: SLF001  # pyright: ignore [reportPrivateUsage]
