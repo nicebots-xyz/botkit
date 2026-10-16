@@ -2,6 +2,7 @@
 # Copyright: 2024-2026 NiceBots.xyz
 
 import contextlib
+from collections.abc import Callable
 from logging import getLogger
 from typing import TYPE_CHECKING, Any, TypeAlias, cast, override
 
@@ -103,6 +104,23 @@ class ExtContext(bridge.BridgeExtContext):
         return r
 
 
+class _WatchedIntents(discord.Intents):
+    """Intents that call back whenever a flag is modified in place (`bot.intents.members = True`)."""
+
+    __slots__ = ("_on_change",)
+
+    def __init__(self, on_change: Callable[[], None], value: int) -> None:
+        super().__init__()
+        self.value = value
+        self._on_change = on_change
+
+    @override
+    def __setattr__(self, key: str, value: Any) -> None:
+        super().__setattr__(key, value)
+        if key != "_on_change" and (on_change := getattr(self, "_on_change", None)) is not None:
+            on_change()
+
+
 class CustomBot(bridge.Bot):
     __rest__: bool = False
 
@@ -134,6 +152,9 @@ class CustomBot(bridge.Bot):
             self.botkit_cache = aiocache.SimpleMemoryCache(namespace="botkit")
 
         super().__init__(*args, **options)
+        state = self._connection
+        state._intents = _WatchedIntents(self._sync_member_cache_with_intents, state._intents.value)  # noqa: SLF001  # pyright: ignore [reportPrivateUsage]
+        self._sync_member_cache_with_intents()
 
         @self.listen(name="on_ready", once=True)
         async def on_ready() -> None:  # pyright: ignore[reportUnusedFunction]
@@ -143,7 +164,7 @@ class CustomBot(bridge.Bot):
     async def get_application_context(
         self,
         interaction: discord.Interaction,
-        cls: None | type[bridge.BridgeApplicationContext] = None,
+        cls: type[bridge.BridgeApplicationContext] | None = None,
     ) -> bridge.BridgeApplicationContext:
         cls = cls if cls is not None else ApplicationContext
         return await super().get_application_context(interaction, cls=cls)
@@ -152,7 +173,7 @@ class CustomBot(bridge.Bot):
     async def get_context(
         self,
         message: Message,
-        cls: None | type[bridge.BridgeExtContext] = None,
+        cls: type[bridge.BridgeExtContext] | None = None,
     ) -> BridgeExtContext:
         cls = cls if cls is not None else ExtContext
         ctx = await super().get_context(message, cls=cls)
@@ -200,6 +221,19 @@ class CustomBot(bridge.Bot):
         if self.ws is not None:  # pyright: ignore [reportUnnecessaryComparison]
             raise AttributeError("Cannot change intents after the connection is established.")
         self._connection._intents.value = value.value  # noqa: SLF001  # pyright: ignore [reportPrivateUsage]
+
+    def _sync_member_cache_with_intents(self) -> None:
+        """Re-derive the member cache settings from the current intents."""
+        state = self._connection
+        intents = state._intents  # noqa: SLF001  # pyright: ignore [reportPrivateUsage]
+        state._chunk_guilds = intents.members  # noqa: SLF001  # pyright: ignore [reportPrivateUsage]
+        state.member_cache_flags = discord.MemberCacheFlags.from_intents(intents)
+        if intents.members and not state.member_cache_flags._empty:  # noqa: SLF001  # pyright: ignore [reportPrivateUsage]
+            state.__dict__.pop("store_user", None)
+            state.__dict__.pop("deref_user", None)
+        else:
+            state.store_user = state.create_user  # type: ignore[method-assign]
+            state.deref_user = state.deref_user_no_intents  # type: ignore[method-assign]
 
     def get_app_emoji(self, key: int | str) -> discord.AppEmoji | None:
         if isinstance(key, int):
