@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.0.3
       - name: Setup Licensor
         uses: nicebots-xyz/licensor/.github/actions/setup-licensor@20ff71ae4c0ca9874893c11c7c2cbdb9d22e179e # v0.1.0
         with:
