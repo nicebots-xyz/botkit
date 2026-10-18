@@ -259,8 +259,8 @@ class Translation(BaseModel):
 
 Translatable = Translation | dict[str, RawTranslation]
 
-type WrappedInput[V: Translatable] = None | str | int | float | bool | RawTranslation | Sequence["WrappedInput[V]"] | V
-type WrappedValue[V: Translatable] = None | str | int | float | bool | list["WrappedValue[V]"] | "TranslationWrapper[V]"
+type WrappedInput[V: Translatable] = str | int | float | bool | RawTranslation | Sequence["WrappedInput[V]"] | V | None
+type WrappedValue[V: Translatable] = str | int | float | bool | list["WrappedValue[V]"] | "TranslationWrapper[V]" | None
 
 
 class TranslationWrapper[T: Translatable]:
@@ -285,7 +285,7 @@ class TranslationWrapper[T: Translatable]:
     def _wrap_value[V: Translatable](self, value: V) -> "TranslationWrapper[V]": ...
 
     def _wrap_value[V: Translatable](
-        self, value: None | str | float | bool | RawTranslation | Sequence[WrappedInput[V]] | V
+        self, value: str | float | bool | RawTranslation | Sequence[WrappedInput[V]] | V | None
     ) -> Any:
         """Consistently wrap values in TranslationWrapper if needed."""
         if value is None:

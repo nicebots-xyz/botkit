@@ -38,8 +38,8 @@ Drop **`something.zip`** into **`src/extensions/`**. Botkit extracts it on start
 Hook functions only receive arguments you declare:
 
 ```python
-def setup(bot, config): ...           # bot + config
-def setup(bot): ...                   # bot only
+def setup(bot, config): ...  # bot + config
+def setup(bot): ...  # bot only
 def setup_webserver(app, bot, config): ...
 async def on_startup(bot, config): ...
 ```
@@ -168,8 +168,7 @@ Without it, the extension still loads; you just won't get localized command name
 Optional **`patch.py`** with a **`patch()`** function, run **before** the rest of the bot starts, only when the extension is enabled. Use rarely — for global behavior that must run early (for example error handling hooks).
 
 ```python
-def patch() -> None:
-    ...
+def patch() -> None: ...
 ```
 
 Prefer normal extension code when you can.
@@ -196,6 +195,7 @@ Use Botkit's logger — not **`print()`**:
 from src.log import logger
 
 log = logger.getChild("hello")
+
 
 def setup(bot: custom.Bot) -> None:
     log.info("Loading hello extension")
