@@ -42,7 +42,7 @@ class NiceErrors(commands.Cog):
     ) -> None:
         if self.sentry_sdk:
             sentry_sdk.capture_exception(exc)
-        logger.exception("Captured exception", exc_info=exc)
+        logger.exception("Captured exception", exc_info=exc)  # noqa: LOG004, RUF100
 
     @discord.Cog.listener("on_application_command_error")
     async def on_application_command_error(
