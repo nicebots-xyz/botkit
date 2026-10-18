@@ -2,15 +2,10 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "local>nicebots-xyz/renovate-config",
-    ":semanticPrefixFixDepsChoreOthers",
-    ":dependencyDashboard"
+    "local>nicebots-xyz/renovate-config:automerge-python-lockfile"
   ],
   "forkProcessing": "enabled",
   "baseBranchPatterns": [
     "dev"
-  ],
-  "lockFileMaintenance": {
-    "enabled": true
-  },
-  "pinDigests": true
+  ]
 }
