@@ -134,3 +134,6 @@ extend-ignore = [
 tortoise_orm = "src.database.config.TORTOISE_ORM"
 location = "./src/database/migrations"
 src_folder = "./."
+
+[tool.pdm.resolution]
+exclude-newer = "7d"
