@@ -136,6 +136,4 @@ location = "./src/database/migrations"
 src_folder = "./."
 
 [tool.pdm.resolution]
-# Dependency cooldown: never resolve releases younger than 7 days, to leave time for
-# compromised or broken releases to be yanked before they reach the lock file.
 exclude-newer = "7d"
