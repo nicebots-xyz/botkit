@@ -24,6 +24,24 @@ pdm install -d
 
 You can drop these scripts entirely in a fork, swap Ruff for another formatter, or adopt your own commit conventions — Botkit does not enforce a workflow on downstream projects.
 
+## Dependency cooldown
+
+`pyproject.toml` sets a 7-day dependency cooldown:
+
+```toml
+[tool.pdm.resolution]
+exclude-newer = "7d"
+```
+
+PDM never resolves a release younger than 7 days, which leaves time for a compromised or broken release to be yanked before it reaches `pdm.lock`. With a cooldown set, `pdm lock` re-resolves every package, so prefer `pdm add <pkg>` / `pdm update <pkg>` for targeted changes and `pdm lock --refresh` to only refresh hashes.
+
+To take a release early (e.g. a security fix), exempt that package:
+
+```toml
+[tool.pdm.resolution.exclude-newer-override]
+some-package = false
+```
+
 ## Project layout for your code
 
 | Location | Put your… |

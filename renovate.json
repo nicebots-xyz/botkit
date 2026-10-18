@@ -12,5 +12,14 @@
   "lockFileMaintenance": {
     "enabled": true
   },
-  "pinDigests": true
+  "pinDigests": true,
+  "packageRules": [
+    {
+      "description": "Match the PDM dependency cooldown (exclude-newer in pyproject.toml), so Renovate never proposes a PyPI release PDM refuses to lock.",
+      "matchDatasources": [
+        "pypi"
+      ],
+      "minimumReleaseAge": "7 days"
+    }
+  ]
 }
