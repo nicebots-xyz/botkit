@@ -4,7 +4,7 @@
 
 services:
   redis:
-    image: redis:alpine@sha256:ad0a6eff0a40304ab1ab4f50f0dc192d82b071e1094eac961bcb6106092f8a4e
+    image: redis:alpine@sha256:3811787313eba226a2ef38658c6ccb91cd5e110edc89c37767de373120a0e5a0
     ports:
       - "6379:6379"
     command: --loglevel debug
