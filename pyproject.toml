@@ -137,3 +137,8 @@ src_folder = "./."
 
 [tool.pdm.resolution]
 exclude-newer = "7d"
+
+[tool.pdm.resolution.exclude-newer-override]
+# Bypass the cooldown for certifi 2026.10.19, which drops the compromised emSign roots
+# (GHSA-6q48-6c7w-9gw2). Remove once that release is older than the cutoff (after 2026-10-27).
+certifi = false
