@@ -48,6 +48,10 @@ Bundled extensions under `src/extensions/` may include their own short `readme.m
 - `pdm run convert-config` — convert between `config.yml` and `BOTKIT__` env files
 - `pdm run check-listings` — optional dev tool for bot listing pages (see docs)
 
+## Changelogs and releases
+
+Botkit and bots built on it share one changelog setup (entries in `.tegami/`, versions in `releases/`): [Changelogs and releases](https://docs.nicebots.xyz/botkit/releases/).
+
 ## Contributing to Botkit
 
 Pull requests to this repository: [Contributing](https://docs.nicebots.xyz/botkit/contributing/).
