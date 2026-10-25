@@ -54,7 +54,7 @@ The headings are the release notes. A pull request comment shows the pending bum
 
 | Event | Result |
 |-------|--------|
-| Pull request | Release preview comment |
+| Pull request | Release preview comment, except on pull requests opened by bots |
 | Push to the default branch with pending entries | A **Version Packages** pull request bumps `VERSION`, writes `CHANGELOG.md` and removes the consumed entries |
 | Version Packages pull request merged | Tags `<name>@<version>` and a GitHub release with the notes |
 
