@@ -19,6 +19,7 @@ nav = [
   { "Scripts" = "scripts.md" },
   { "Deployment" = "deployment.md" },
   { "Development" = "development.md" },
+  { "Releases" = "releases.md" },
   { "Contributing" = "contributing.md" },
   { "API reference" = "api.md" },
 ]

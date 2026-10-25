@@ -3,3 +3,5 @@
 holder: NiceBots.xyz
 spdx: MIT
 year: [2024, 2026]
+ignores:
+  - pnpm-lock.yaml

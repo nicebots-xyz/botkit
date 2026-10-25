@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "description": "Release tooling for Botkit (changelogs and versioning via Tegami). Not a Node project.",
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "tegami": "node scripts/tegami.mts"
+  },
+  "devDependencies": {
+    "tegami": "^1.5.0"
+  }
+}
