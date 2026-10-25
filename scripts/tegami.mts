@@ -11,10 +11,22 @@ import { releases } from "./tegami-releases.mts";
 // a merge ref, so there it is the PR base. Both variables are set but empty on the other kind of event.
 const base = process.env.GITHUB_BASE_REF || process.env.GITHUB_REF_NAME || "dev";
 
+const versionTitle = "chore(release): version packages";
+
 const paper = tegami({
   ignore: await foreignLines(),
   npm: { updateLockFile: false },
-  plugins: [releases(), github({ versionPr: { base } })],
+  plugins: [
+    releases(),
+    github({
+      versionPr: {
+        base,
+        // The repository requires semantic pull request titles.
+        create: () => ({ title: versionTitle }),
+        commit: ({ type }) => (type === "version-packages" ? { title: versionTitle } : undefined),
+      },
+    }),
+  ],
 });
 
 await runCli(paper);
