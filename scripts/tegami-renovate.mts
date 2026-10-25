@@ -2,7 +2,7 @@
 // Copyright: 2024-2026 NiceBots.xyz
 
 import { mkdir, writeFile } from "node:fs/promises";
-import { loadLocalConfig, ownedLines } from "./tegami-local.mts";
+import { ownedLines } from "./tegami-lines.mts";
 
 /**
  * Writes a changelog entry for a Renovate pull request.
@@ -20,8 +20,7 @@ if (!subject || /lock ?file/i.test(subject)) {
   process.exit(0);
 }
 
-const { ignore } = await loadLocalConfig();
-const lines = await ownedLines(ignore);
+const lines = await ownedLines();
 const [line] = lines;
 if (lines.length !== 1 || !line) {
   console.log(`Expected exactly one release line owned by this repository, found: ${lines.join(", ") || "none"}.`);

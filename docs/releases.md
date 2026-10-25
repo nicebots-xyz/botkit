@@ -68,6 +68,7 @@ Workflows: `release.yaml`, `tegami_pr.yaml`, `tegami_pr_comment.yaml`.
 
 This is for a bot repository that started from Botkit and keeps pulling Botkit changes into it.
 Botkit's setup comes along with those merges, so only your own release line needs adding.
+No file that Botkit ships has to be edited. As soon as `releases/` holds a line besides `botkit`, `botkit` becomes read only: it is never versioned in your repository and only changes through merges.
 
 ### One time setup
 
@@ -78,19 +79,10 @@ Botkit's setup comes along with those merges, so only your own release line need
     echo 0.1.0 > releases/mybot/VERSION
     ```
 
-2. Tell Tegami that `botkit` belongs to someone else. Create `scripts/tegami.local.mts`.
-   Only your repository has this file, so merging Botkit never conflicts on it.
-
-    ```ts
-    export default {
-      ignore: ["botkit"],
-    };
-    ```
-
-3. In the repository settings, open **Settings, Actions, General** and enable **Allow GitHub Actions to create and approve pull requests**.
+2. In the repository settings, open **Settings, Actions, General** and enable **Allow GitHub Actions to create and approve pull requests**.
    The Version Packages pull request cannot be opened without it.
 
-4. Install the tooling once.
+3. Install the tooling once.
 
     ```bash
     pnpm install
@@ -143,8 +135,7 @@ Do not edit these in a bot repository, they belong to Botkit and merges would co
 - `.github/workflows/release.yaml`
 - `.github/workflows/tegami_pr.yaml`
 - `.github/workflows/tegami_pr_comment.yaml`
-
-Put bot specific settings in `scripts/tegami.local.mts` instead.
+- `.github/workflows/tegami_renovate.yaml`
 
 ## Dependency updates
 
@@ -158,7 +149,7 @@ Lock file maintenance does not, it only changes transitive versions.
 
 Fixer refuses patches that touch `.github/`. That only concerns what the entry job changes, which is a single file in `.tegami/`, so Renovate pull requests that update workflows are not affected.
 
-The entry goes to the only release line your repository owns. With several lines, the script skips and you add entries by hand.
+The entry goes to the only release line your repository owns, that is every line except `botkit` once you have your own. With several lines of your own, the script skips and you add entries by hand.
 
 Setup is the one [fixer](https://github.com/nicebots-xyz/fixer#setup) needs: the GitHub App installed on the repository, and a `fixer` environment holding `FIXER_APP_CLIENT_ID` and `FIXER_APP_PRIVATE_KEY`.
 Without it, the `push` job fails on Renovate dependency update pull requests.
