@@ -1,0 +1,47 @@
+name: Tegami Renovate
+
+# Adds a changelog entry to Renovate pull requests that update a runtime dependency (`fix(deps): ...`).
+# The job that runs repository code is read only, `nicebots-xyz/fixer` pushes the entry with the fixer GitHub App
+# so that CI runs again on the new commit.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: ["main", "master", "dev"]
+
+permissions:
+  contents: read
+
+jobs:
+  entry:
+    if: >
+      startsWith(github.head_ref, 'renovate/') &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.fixer.outputs.changed }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Write changelog entry
+        run: node scripts/tegami-renovate.mts
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BRANCH: ${{ github.head_ref }}
+
+      - id: fixer
+        uses: nicebots-xyz/fixer@88ee2672a9ac070e4c4e4d49488c78805679ee79 # v1.0.1
+
+  push:
+    needs: entry
+    if: needs.entry.outputs.changed == 'true'
+    uses: nicebots-xyz/fixer/.github/workflows/push.yaml@88ee2672a9ac070e4c4e4d49488c78805679ee79 # v1.0.1
+    with:
+      commit-message: "chore(deps): Add changelog entry"
+    secrets:
+      FIXER_APP_CLIENT_ID: ${{ secrets.FIXER_APP_CLIENT_ID }}
+      FIXER_APP_PRIVATE_KEY: ${{ secrets.FIXER_APP_PRIVATE_KEY }}
