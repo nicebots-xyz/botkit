@@ -146,6 +146,23 @@ Do not edit these in a bot repository, they belong to Botkit and merges would co
 
 Put bot specific settings in `scripts/tegami.local.mts` instead.
 
+## Dependency updates
+
+Renovate pull requests that update a **runtime dependency** (title `fix(deps): ...`) get a changelog entry automatically.
+Dev tooling, GitHub Actions and lock file maintenance (`chore(deps): ...`) do not.
+
+| Step | Who |
+|------|-----|
+| `scripts/tegami-renovate.mts` writes `.tegami/renovate-<branch>.md`, a `patch` for your release line | `tegami_renovate.yaml`, in a read only job |
+| The entry is committed to the Renovate branch | [`nicebots-xyz/fixer`](https://github.com/nicebots-xyz/fixer), with its GitHub App, so CI runs again |
+
+Fixer refuses patches that touch `.github/`. That only concerns what the entry job changes, which is a single file in `.tegami/`, so Renovate pull requests that update workflows are not affected.
+
+The entry goes to the only release line your repository owns. With several lines, the script skips and you add entries by hand.
+
+Setup is the one [fixer](https://github.com/nicebots-xyz/fixer#setup) needs: the GitHub App installed on the repository, and a `fixer` environment holding `FIXER_APP_CLIENT_ID` and `FIXER_APP_PRIVATE_KEY`.
+Without it, the `push` job fails on Renovate pull requests that update a runtime dependency.
+
 ## Requirements
 
 Node.js 24 and pnpm, only for releases. Running a bot does not need either.
