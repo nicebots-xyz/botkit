@@ -43,6 +43,10 @@ fix(start): reject bot.rest and use.backend in the same process
 docs(configuration): document env coercion and cache defaults
 ```
 
+## Changelog entry
+
+Every pull request that changes behavior adds an entry in `.tegami/` (`pnpm tegami`). See [Changelogs and releases](releases.md).
+
 ## Quality gate
 
 Before opening a PR:
@@ -95,3 +99,4 @@ New files should include the MIT header block used elsewhere in the repo.
 - [ ] `docs/` updated for user-visible contract changes
 - [ ] `pdm run docs:build` passes
 - [ ] Conventional Commit message on the PR branch
+- [ ] Changelog entry in `.tegami/` for user-visible changes

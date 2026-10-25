@@ -167,3 +167,6 @@ config.yml
 .pdm-python
 listings.yaml
 description.md
+
+# Node tooling (Tegami release tooling only)
+node_modules/

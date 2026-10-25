@@ -1,0 +1,41 @@
+name: Tegami PR Comment
+
+# Posts the preview built by `tegami_pr.yaml`. It checks out the default branch, never the pull request head,
+# so pull requests from forks can be commented on without running their code with a writable token.
+
+on:
+  workflow_run:
+    workflows: ["Tegami PR"]
+    types: [completed]
+
+jobs:
+  comment:
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: pnpm/action-setup@d9184bf108216479bc5a137cc391f4d7b14c870b # v6.1.0
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: tegami-pr-preview
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+
+      - name: Post preview comment
+        run: pnpm tegami pr comment tegami-pr-preview.md
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

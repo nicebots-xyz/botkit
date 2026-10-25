@@ -24,6 +24,11 @@ pdm install -d
 
 You can drop these scripts entirely in a fork, swap Ruff for another formatter, or adopt your own commit conventions — Botkit does not enforce a workflow on downstream projects.
 
+## Changelogs and releases
+
+Botkit ships release tooling for your own bot too: entries in `.tegami/`, a version and changelog per release line, tags and GitHub releases.
+See [Changelogs and releases](releases.md#using-it-in-a-bot-built-on-botkit) for the setup.
+
 ## Project layout for your code
 
 | Location | Put your… |

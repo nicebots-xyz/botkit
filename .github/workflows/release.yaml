@@ -1,0 +1,39 @@
+name: Release
+
+# Turns the changelog entries in `.tegami/` into a "Version Packages" pull request,
+# and tags + publishes a GitHub release for every release line once that pull request is merged.
+# Safe to keep identical in forks: it only runs on the repository default branch.
+
+on:
+  push:
+    branches: ["main", "master", "dev"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@d9184bf108216479bc5a137cc391f4d7b14c870b # v6.1.0
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Version & release
+        run: pnpm tegami ci
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
