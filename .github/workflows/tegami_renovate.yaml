@@ -1,6 +1,6 @@
 name: Tegami Renovate
 
-# Adds a changelog entry to Renovate pull requests that update a runtime dependency (`fix(deps): ...`).
+# Adds a changelog entry to Renovate dependency update pull requests (lock file maintenance excepted).
 # The job that runs repository code is read only, `nicebots-xyz/fixer` pushes the entry with the fixer GitHub App
 # so that CI runs again on the new commit.
 

@@ -5,18 +5,18 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { loadLocalConfig, ownedLines } from "./tegami-local.mts";
 
 /**
- * Writes a changelog entry for a Renovate pull request that updates a runtime dependency.
+ * Writes a changelog entry for a Renovate pull request.
  *
- * Renovate titles runtime dependency updates `fix(deps): ...` and everything else (dev tooling, actions,
- * lock file maintenance) `chore(deps): ...`, only the former is worth a line in the changelog.
+ * Every dependency update gets one (runtime dependencies, dev tooling, GitHub Actions...), except lock file
+ * maintenance, which only churns transitive versions. Renovate titles them `<type>(deps): <subject>`.
  * Meant to run in CI with the pull request title and branch in `PR_TITLE` and `PR_BRANCH`.
  */
 const title = process.env.PR_TITLE?.trim() ?? "";
 const branch = process.env.PR_BRANCH?.trim() ?? "";
 
-const subject = /^fix\(deps\): (.+)$/.exec(title)?.[1];
-if (!subject) {
-  console.log(`"${title}" is not a runtime dependency update, no entry needed.`);
+const subject = /^\w+\(deps[\w-]*\)!?: (.+)$/.exec(title)?.[1];
+if (!subject || /lock ?file/i.test(subject)) {
+  console.log(`"${title}" is not a dependency update that needs an entry.`);
   process.exit(0);
 }
 

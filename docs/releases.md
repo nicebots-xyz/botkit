@@ -148,8 +148,8 @@ Put bot specific settings in `scripts/tegami.local.mts` instead.
 
 ## Dependency updates
 
-Renovate pull requests that update a **runtime dependency** (title `fix(deps): ...`) get a changelog entry automatically.
-Dev tooling, GitHub Actions and lock file maintenance (`chore(deps): ...`) do not.
+Renovate pull requests get a `patch` changelog entry automatically: runtime dependencies, dev tooling, GitHub Actions and Docker updates alike.
+Lock file maintenance does not, it only changes transitive versions.
 
 | Step | Who |
 |------|-----|
@@ -161,7 +161,7 @@ Fixer refuses patches that touch `.github/`. That only concerns what the entry j
 The entry goes to the only release line your repository owns. With several lines, the script skips and you add entries by hand.
 
 Setup is the one [fixer](https://github.com/nicebots-xyz/fixer#setup) needs: the GitHub App installed on the repository, and a `fixer` environment holding `FIXER_APP_CLIENT_ID` and `FIXER_APP_PRIVATE_KEY`.
-Without it, the `push` job fails on Renovate pull requests that update a runtime dependency.
+Without it, the `push` job fails on Renovate dependency update pull requests.
 
 ## Requirements
 
