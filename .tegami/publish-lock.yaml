@@ -1,0 +1,37 @@
+core:changelogs:
+  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Bots built on Botkit need no configuration\n\nBotkit's release line becomes read only as soon as a repository adds a release line of its own, so the optional `scripts/tegami.local.mts` file is gone. Merging Botkit into a bot no longer conflicts on release configuration.\n"
+    filename: 2026-10-25-automatic-release-lines.md
+    v: 0.0.0
+  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Changelog entries for every Renovate dependency update\n\nRenovate dependency update pull requests now get a `patch` changelog entry whatever they update, including dev tooling, GitHub Actions and Docker. Only lock file maintenance is skipped.\n"
+    filename: 2026-10-25-renovate-all-dependency-entries.md
+    v: 0.0.0
+  - content: "---\npackages:\n  botkit:\n    type: minor\n---\n\n## Changelog entries for Renovate dependency updates\n\nRenovate pull requests that update a runtime dependency (`fix(deps): ...`) now get a `patch` changelog entry automatically, committed by the fixer GitHub App. Dev tooling, GitHub Actions and lock file maintenance are skipped.\n\nSetup is described in the \"Dependency updates\" section of the releases documentation: install the fixer GitHub App on the repository and add a `fixer` environment with `FIXER_APP_CLIENT_ID` and `FIXER_APP_PRIVATE_KEY`.\n"
+    filename: 2026-10-25-renovate-changelog-entries.md
+    v: 0.0.0
+  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### No release preview comment on bot pull requests\n\nPull requests opened by bots, such as Renovate and the Version Packages pull request, no longer get the Tegami preview comment.\n"
+    filename: 2026-10-25-skip-bot-pr-comments.md
+    v: 0.0.0
+  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Version Packages pull request passes the repository checks\n\nThe pull request is titled `chore(release): version packages` to satisfy the semantic title check, and the generated `releases/*/CHANGELOG.md` files are exempt from the license header check.\n"
+    filename: 2026-10-25-version-pr-checks.md
+    v: 0.0.0
+  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Upgrade docker/login-action action to v4.7.0\n"
+    filename: renovate-docker-login-action-4.x.md
+    v: 0.0.0
+  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Upgrade pnpm to v12\n"
+    filename: renovate-pnpm-12.x.md
+    v: 0.0.0
+  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Upgrade pnpm/action-setup digest to ea17c68\n"
+    filename: renovate-pnpm-action-setup-digest.md
+    v: 0.0.0
+core:packages:
+  - changelogIds:
+      - 2026-10-25-automatic-release-lines.md
+      - 2026-10-25-renovate-all-dependency-entries.md
+      - 2026-10-25-renovate-changelog-entries.md
+      - 2026-10-25-skip-bot-pr-comments.md
+      - 2026-10-25-version-pr-checks.md
+      - renovate-docker-login-action-4.x.md
+      - renovate-pnpm-12.x.md
+      - renovate-pnpm-action-setup-digest.md
+    id: release:botkit
+    updated: true
