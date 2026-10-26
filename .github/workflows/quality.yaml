@@ -47,6 +47,6 @@ jobs:
       - name: Setup Licensor
         uses: nicebots-xyz/licensor/.github/actions/setup-licensor@37494a5725e20bb1130b43bff1a599daa1d759b0 # v0.1.1
         with:
-          version: v0.1.0
+          version: v0.1.1
       - name: Check Header Compliance
         run: licensor check * --ignore ".*"
