@@ -5,7 +5,7 @@
 groups = ["default", "dev", "docs"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.1"
-content_hash = "sha256:4237a7128267db3ea0b501b991fe885f3251625d0a41bce75e175c3b0b274e24"
+content_hash = "sha256:e2ea19921ee530e42305e95238c5e87204c481e047c97f1dc838696b4acbdac8"
 
 [[metadata.targets]]
 requires_python = "==3.12.*"
@@ -1051,16 +1051,6 @@ files = [
 ]
 
 [[package]]
-name = "pytz"
-version = "2026.5"
-summary = "World timezone definitions, modern and historical"
-groups = ["default"]
-files = [
-    {file = "pytz-2026.5-py2.py3-none-any.whl", hash = "sha256:e658af3757f9e26a9d25dd2aff38335acd92bc9104f890a894b2c1ba28311b03"},
-    {file = "pytz-2026.5.tar.gz", hash = "sha256:fa23724b9c486543b9ff54a327ee7569ac83ade54bb9afd0fc18676620401c86"},
-]
-
-[[package]]
 name = "pyyaml"
 version = "6.0.3"
 requires_python = ">=3.8"
@@ -1232,37 +1222,37 @@ files = [
 
 [[package]]
 name = "tortoise-orm"
-version = "0.25.4"
-requires_python = ">=3.9"
+version = "1.1.9"
+requires_python = ">=3.10"
 summary = "Easy async ORM for python, built with relations in mind"
 groups = ["default"]
 dependencies = [
     "aiosqlite<1.0.0,>=0.16.0",
     "anyio",
     "iso8601<3.0.0,>=2.1.0; python_version < \"4.0\"",
-    "pypika-tortoise<1.0.0,>=0.6.3",
-    "pytz",
+    "pypika-tortoise<1.0.0,>=0.6.5",
+    "tomlkit<1.0.0,>=0.11.4; python_version < \"3.11\"",
     "typing-extensions>=4.1.0; python_version < \"3.11\"",
 ]
 files = [
-    {file = "tortoise_orm-0.25.4-py3-none-any.whl", hash = "sha256:a699e629632abf760d14794e8afd3579a9c844623d50a58a6fbdcd6f52b5a37d"},
-    {file = "tortoise_orm-0.25.4.tar.gz", hash = "sha256:88c231ebe158f1287fc9c9497313f9a46cfb70b66c458ba39900921a4e52d01b"},
+    {file = "tortoise_orm-1.1.9-py3-none-any.whl", hash = "sha256:9304796aef7406cfd2b9d8e2c42598e56df015fb61a2718bb0df08901d2253ce"},
+    {file = "tortoise_orm-1.1.9.tar.gz", hash = "sha256:0399e1aa9518620f8b9c455598ac06ab890332c03e335cfca4b73b48d4e6abaa"},
 ]
 
 [[package]]
 name = "tortoise-orm"
-version = "0.25.4"
+version = "1.1.9"
 extras = ["asyncpg"]
-requires_python = ">=3.9"
+requires_python = ">=3.10"
 summary = "Easy async ORM for python, built with relations in mind"
 groups = ["default"]
 dependencies = [
     "asyncpg",
-    "tortoise-orm==0.25.4",
+    "tortoise-orm==1.1.9",
 ]
 files = [
-    {file = "tortoise_orm-0.25.4-py3-none-any.whl", hash = "sha256:a699e629632abf760d14794e8afd3579a9c844623d50a58a6fbdcd6f52b5a37d"},
-    {file = "tortoise_orm-0.25.4.tar.gz", hash = "sha256:88c231ebe158f1287fc9c9497313f9a46cfb70b66c458ba39900921a4e52d01b"},
+    {file = "tortoise_orm-1.1.9-py3-none-any.whl", hash = "sha256:9304796aef7406cfd2b9d8e2c42598e56df015fb61a2718bb0df08901d2253ce"},
+    {file = "tortoise_orm-1.1.9.tar.gz", hash = "sha256:0399e1aa9518620f8b9c455598ac06ab890332c03e335cfca4b73b48d4e6abaa"},
 ]
 
 [[package]]
