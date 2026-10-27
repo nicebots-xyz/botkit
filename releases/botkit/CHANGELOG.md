@@ -1,3 +1,7 @@
+## botkit@0.2.1
+
+### Upgrade nicebots-xyz/licensor action to v0.1.1
+
 ## botkit@0.2.0
 
 ### Bots built on Botkit need no configuration
