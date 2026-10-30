@@ -103,16 +103,36 @@ def apply_params(uri: str, params: dict[str, Any] | None) -> str:
     return uri
 
 
-def get_app_url_mapping() -> dict[str, str]:
+def use_ssl(params: dict[str, object] | None, default: bool = False) -> bool:
+    """Tell whether a connection should use verified TLS.
+
+    Args:
+        params: The connection params, possibly holding an `ssl` key.
+        default: The value used when `params` has no `ssl` key.
+
+    Returns:
+        Whether the connection should use the SSL context.
+
+    """
+    if params is None or "ssl" not in params:
+        return default
+    return bool(params["ssl"])
+
+
+def get_app_url_mapping() -> dict[str, tuple[str, bool]]:
+    default_ssl: bool = use_ssl(config.db.params)
     return {
-        app_name: apply_params(app_config.url or config.db.url, app_config.params)
+        app_name: (
+            apply_params(app_config.url or config.db.url, app_config.params),
+            use_ssl(app_config.params, default_ssl),
+        )
         for app_name, app_config in config.db.extra_apps.items()
     }
 
 
-def get_url_apps_mapping() -> dict[str, list[str]]:
-    app_url_mapping: dict[str, str] = get_app_url_mapping()
-    mapping: dict[str, list[str]] = defaultdict(list)
+def get_url_apps_mapping() -> dict[tuple[str, bool], list[str]]:
+    app_url_mapping: dict[str, tuple[str, bool]] = get_app_url_mapping()
+    mapping: dict[tuple[str, bool], list[str]] = defaultdict(list)
 
     for app_name, app_url in app_url_mapping.items():
         mapping[app_url].append(app_name)
@@ -120,17 +140,21 @@ def get_url_apps_mapping() -> dict[str, list[str]]:
     return mapping
 
 
-def parse_url_apps_mapping(url_apps_mapping: dict[str, list[str]]) -> tuple[dict[str, str], dict[str, dict[str, Any]]]:
+def parse_url_apps_mapping(
+    url_apps_mapping: dict[tuple[str, bool], list[str]],
+) -> tuple[dict[str, str], dict[str, dict[str, Any]]]:
     app_connection: dict[str, str] = {}
     connection_config: dict[str, dict[str, Any]] = {}
 
-    ssl_context = create_ssl_context() if config.db.params and config.db.params.get("ssl") else None
+    default_ssl: bool = use_ssl(config.db.params)
+    needs_ssl: bool = default_ssl or any(ssl_enabled for _, ssl_enabled in url_apps_mapping)
+    ssl_context = create_ssl_context() if needs_ssl else None
 
-    for i, (url, apps) in enumerate(url_apps_mapping.items()):
+    for i, ((url, ssl_enabled), apps) in enumerate(url_apps_mapping.items()):
         connection_name = f"connection_{i}"
 
         credentials = parse_postgres_url(url)
-        if ssl_context:
+        if ssl_enabled and ssl_context:
             credentials["ssl"] = ssl_context
 
         logger.debug(f"Connection {connection_name} credentials keys: {list(credentials.keys())}")
@@ -147,7 +171,7 @@ def parse_url_apps_mapping(url_apps_mapping: dict[str, list[str]]) -> tuple[dict
     logger.debug(f"Default URL (sanitized): {default_url.split('@')[1] if '@' in default_url else 'N/A'}")
 
     credentials = parse_postgres_url(default_url)
-    if ssl_context:
+    if default_ssl and ssl_context:
         credentials["ssl"] = ssl_context
 
     logger.debug(f"Default connection credentials keys: {list(credentials.keys())}")
