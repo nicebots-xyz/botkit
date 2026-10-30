@@ -35,6 +35,18 @@ For providers that require verified TLS, set **`ssl: true`** under **`params`** 
 
 (project root)
 
+Each entry in **`extra_apps`** can set its own **`params.ssl`** to override this per connection. When it is omitted, the connection follows the top-level **`params.ssl`**.
+
+```yaml
+db:
+  url: "postgres://user:pass@haproxy:5000/main"
+  extra_apps:
+    analytics:
+      url: "postgres://user:pass@other-host:5432/analytics"
+      params:
+        ssl: true
+```
+
 ## Models
 
 Define models in **`src/database/models/`** and extend the included stubs (`Guild`, `User`, etc.) as needed.
