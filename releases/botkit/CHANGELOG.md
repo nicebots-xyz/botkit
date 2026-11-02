@@ -1,3 +1,15 @@
+## botkit@0.3.0
+
+### Per connection database SSL
+
+Each `db.extra_apps` entry can set `params.ssl` to enable or disable verified TLS for its own connection. Entries without it keep following the top-level `db.params.ssl`.
+
+### Upgrade nicebots-xyz/licensor action to v0.1.1
+
+
+
+### Upgrade pnpm to v12.15.0
+
 ## botkit@0.2.0
 
 ### Bots built on Botkit need no configuration
