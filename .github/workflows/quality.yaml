@@ -45,7 +45,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Setup Licensor
-        uses: nicebots-xyz/licensor/.github/actions/setup-licensor@37494a5725e20bb1130b43bff1a599daa1d759b0 # v0.1.1
+        uses: nicebots-xyz/licensor/.github/actions/setup-licensor@a5893a8a480981ea21cb25cedcb0302616e8b859 # v0.1.2
         with:
           version: v0.1.1
       - name: Check Header Compliance
