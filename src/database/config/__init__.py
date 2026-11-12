@@ -236,26 +236,19 @@ def to_storage(cfg: StorageConfig) -> Storage:
 
 
 def get_s3_storages(db: DbConfig) -> dict[str, Storage]:
-    """Build the S3 storages used by `S3Field`, keyed by Tortoise app or storage name.
+    """Build the storages used by `S3Field`, keyed by Tortoise app name.
 
     The main app (`models`) uses `db.s3`. Each extra app uses its own `s3`, falling back to `db.s3`.
-    Entries of `db.s3_storages` are registered under their own names for `S3Field(storage=...)`.
 
     Args:
         db: The database configuration.
 
     Returns:
-        The storages to register, without entries that have no configuration.
-
-    Raises:
-        ValueError: If a named storage reuses a Tortoise app name.
+        The storages to register, without apps that have no configuration.
 
     """
     apps = {"models": db.s3} | {name: app.s3 or db.s3 for name, app in db.extra_apps.items()}
-    if clashes := apps.keys() & db.s3_storages.keys():
-        raise ValueError(f"db.s3_storages entries clash with Tortoise app names: {sorted(clashes)}")
-    configs = {name: cfg for name, cfg in apps.items() if cfg is not None} | db.s3_storages
-    return {name: to_storage(cfg) for name, cfg in configs.items()}
+    return {name: to_storage(cfg) for name, cfg in apps.items() if cfg is not None}
 
 
 async def init() -> None:

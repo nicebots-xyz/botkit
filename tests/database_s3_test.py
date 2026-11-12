@@ -48,25 +48,12 @@ def test_per_app_override_and_ssl() -> None:
     )
 
 
-def test_named_storages() -> None:
-    """Test that named storages are registered without a main storage."""
-    db = DbConfig(url="", s3_storages={"cdn": _s3("cdn.example.com")})
-    assert get_s3_storages(db).keys() == {"cdn"}
-
-
-def test_named_storage_clash() -> None:
-    """Test that named storages cannot reuse Tortoise app names."""
-    db = DbConfig(url="", s3_storages={"models": _s3("cdn.example.com")})
-    with pytest.raises(ValueError, match="models"):
-        get_s3_storages(db)
-
-
 def test_memory_and_local_storages() -> None:
     """Test that memory and local configurations map to their storages."""
     db = DbConfig(
         url="",
         s3=MemoryStorageConfig(type="memory"),
-        s3_storages={"files": LocalStorageConfig(type="local", path="objects")},
+        extra_apps={"files": DbExtraApp(s3=LocalStorageConfig(type="local", path="objects"))},
     )
     storages = get_s3_storages(db)
     assert storages["models"] == MemoryStorage()

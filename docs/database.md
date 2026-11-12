@@ -23,7 +23,6 @@ db:
 | `params` | optional | Extra query parameters (see SSL) |
 | `extra_apps` | `{}` | Additional databases / model packages |
 | `s3` | optional | S3 storage for the main app (see S3) |
-| `s3_storages` | `{}` | Extra named S3 storages |
 
 On each start, Botkit applies pending **migrations** automatically, then connects. If migration or connection fails, the bot does not start.
 
@@ -51,7 +50,7 @@ db:
 
 ## S3
 
-Columns declared with **`S3Field`** from [tortoise-extensions](https://docs.nicebots.xyz/tortoise-extensions/) store their content in S3-compatible storage. Each Tortoise app gets its own storage: the main app uses **`db.s3`**, and each entry in **`extra_apps`** uses its own **`s3`**, falling back to **`db.s3`**. Fields can target a named storage from **`s3_storages`** with `S3Field(storage="name")`.
+Columns declared with **`S3Field`** from [tortoise-extensions](https://docs.nicebots.xyz/tortoise-extensions/) store their content in S3-compatible storage. Each Tortoise app gets its own storage: the main app uses **`db.s3`**, and each entry in **`extra_apps`** uses its own **`s3`**, falling back to **`db.s3`**.
 
 ```yaml
 db:
@@ -68,12 +67,6 @@ db:
         access_key: "..."
         secret_key: "..."
         ssl: false
-  s3_storages:
-    cdn:
-      endpoint: "cdn.example.com"
-      bucket: "cdn"
-      access_key: "..."
-      secret_key: "..."
 ```
 
 | Key | Default | Role |

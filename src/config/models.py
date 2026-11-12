@@ -126,7 +126,6 @@ class DbConfig(BaseModel):
     params: dict[str, object] | None = None
     extra_apps: dict[str, DbExtraApp] = {}
     s3: StorageConfig | None = None
-    s3_storages: dict[str, StorageConfig] = {}
 
 
 class Config(BaseModel):
