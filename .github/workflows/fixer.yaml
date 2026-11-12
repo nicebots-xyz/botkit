@@ -1,0 +1,46 @@
+name: Fixer
+
+# Commits Ruff fixes back to pull requests. The job that runs repository code is read only, `nicebots-xyz/fixer`
+# pushes the fixes with the fixer GitHub App so that CI runs again on the new commit.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  fix:
+    name: Autofix Pull Request
+    if: github.base_ref == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.fixer.outputs.changed }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup PDM
+        uses: pdm-project/setup-pdm@544d7237314ee09c256785bd360f6b30add38b37 # v4.6
+        with:
+          cache: true
+
+      - name: Install dependencies
+        run: pdm install -d
+
+      - name: Lint
+        run: pdm run ruff check --fix --exit-zero .
+
+      - name: Format
+        run: pdm run ruff format .
+
+      - id: fixer
+        uses: nicebots-xyz/fixer@88ee2672a9ac070e4c4e4d49488c78805679ee79 # v1.0.1
+
+  push:
+    needs: fix
+    if: needs.fix.outputs.changed == 'true'
+    uses: nicebots-xyz/fixer/.github/workflows/push.yaml@88ee2672a9ac070e4c4e4d49488c78805679ee79 # v1.0.1
+    secrets:
+      FIXER_APP_CLIENT_ID: ${{ secrets.FIXER_APP_CLIENT_ID }}
+      FIXER_APP_PRIVATE_KEY: ${{ secrets.FIXER_APP_PRIVATE_KEY }}
