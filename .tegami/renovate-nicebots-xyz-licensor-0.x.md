@@ -3,4 +3,4 @@ packages:
   botkit: patch
 ---
 
-### Upgrade nicebots-xyz/licensor action to v0.1.1
+### Upgrade nicebots-xyz/licensor action to v0.1.2
