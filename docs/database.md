@@ -78,13 +78,15 @@ db:
 
 | Key | Default | Role |
 |-----|---------|------|
-| `endpoint` | required | Host and optional port, without scheme |
-| `bucket` | required | Bucket holding the objects |
-| `access_key` / `secret_key` | required | Credentials |
+| `type` | `s3` | `s3`, `memory` (in-process, for tests) or `local` (files on disk) |
+| `path` | required for `local` | Directory holding the objects |
+| `endpoint` | required for `s3` | Host and optional port, without scheme |
+| `bucket` | required for `s3` | Bucket holding the objects |
+| `access_key` / `secret_key` | required for `s3` | Credentials |
 | `region` | optional | Signing region |
 | `ssl` | `true` | `https` when `true`, plain `http` when `false` |
 
-Secrets can come from the environment, e.g. **`BOTKIT__DB__S3__SECRET_KEY`**.
+Secrets can come from the environment, e.g. **`BOTKIT__DB__S3__SECRET_KEY`**. Setting **`BOTKIT__DB__S3__TYPE=memory`** swaps a storage for an in-memory one, e.g. in tests.
 
 ## Models
 

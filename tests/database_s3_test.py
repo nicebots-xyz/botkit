@@ -4,9 +4,10 @@
 # ruff: noqa: S106
 
 import pytest
-from tortoise_extensions.s3 import S3Storage
+from pydantic import ValidationError
+from tortoise_extensions.s3 import LocalStorage, MemoryStorage, S3Storage
 
-from src.config.models import DbConfig, DbExtraApp, S3StorageConfig
+from src.config.models import DbConfig, DbExtraApp, LocalStorageConfig, MemoryStorageConfig, S3StorageConfig
 from src.database.config import get_s3_storages
 
 
@@ -39,9 +40,12 @@ def test_per_app_override_and_ssl() -> None:
         extra_apps={"local": DbExtraApp(s3=_s3("minio:9000", ssl=False))},
     )
     storages = get_s3_storages(db)
-    assert storages["models"].ssl
-    assert storages["local"].endpoint == "minio:9000"
-    assert not storages["local"].ssl
+    assert storages["models"] == S3Storage(
+        endpoint="s3.example.com", bucket="bucket", access_key="key", secret_key="secret", ssl=True
+    )
+    assert storages["local"] == S3Storage(
+        endpoint="minio:9000", bucket="bucket", access_key="key", secret_key="secret", ssl=False
+    )
 
 
 def test_named_storages() -> None:
@@ -55,3 +59,35 @@ def test_named_storage_clash() -> None:
     db = DbConfig(url="", s3_storages={"models": _s3("cdn.example.com")})
     with pytest.raises(ValueError, match="models"):
         get_s3_storages(db)
+
+
+def test_memory_and_local_storages() -> None:
+    """Test that memory and local configurations map to their storages."""
+    db = DbConfig(
+        url="",
+        s3=MemoryStorageConfig(type="memory"),
+        s3_storages={"files": LocalStorageConfig(type="local", path="objects")},
+    )
+    storages = get_s3_storages(db)
+    assert storages["models"] == MemoryStorage()
+    assert storages["files"] == LocalStorage(path="objects")
+
+
+def test_type_defaults_to_s3() -> None:
+    """Test that a storage without `type` is parsed as S3."""
+    db = DbConfig.model_validate(
+        {"url": "", "s3": {"endpoint": "s3.example.com", "bucket": "b", "access_key": "k", "secret_key": "s"}}
+    )
+    assert isinstance(db.s3, S3StorageConfig)
+
+
+def test_type_override_ignores_s3_keys() -> None:
+    """Test that overriding `type` (e.g. `BOTKIT__DB__S3__TYPE=memory`) ignores leftover S3 keys."""
+    db = DbConfig.model_validate({"url": "", "s3": {"type": "memory", "endpoint": "s3.example.com", "bucket": "b"}})
+    assert get_s3_storages(db) == {"models": MemoryStorage()}
+
+
+def test_unknown_type() -> None:
+    """Test that an unknown storage type is rejected."""
+    with pytest.raises(ValidationError):
+        DbConfig.model_validate({"url": "", "s3": {"type": "ftp"}})

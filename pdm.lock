@@ -5,7 +5,7 @@
 groups = ["default", "dev", "docs"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.1"
-content_hash = "sha256:9c3e84d32b3b388fa003eb5b2952457e87728950196c22422f3d6c617f753dc2"
+content_hash = "sha256:4029dac5848dfa7a58f5568ff36f768cbf453cecf2798dbe567c2d4478ee9a89"
 
 [[metadata.targets]]
 requires_python = "==3.12.*"
@@ -1257,7 +1257,7 @@ files = [
 
 [[package]]
 name = "tortoise-extensions"
-version = "0.0.1"
+version = "0.0.2"
 requires_python = "<3.15,>=3.12"
 summary = "Extension field types for Tortoise ORM"
 groups = ["default"]
@@ -1265,25 +1265,25 @@ dependencies = [
     "tortoise-orm<1.0.0,>=0.25.4",
 ]
 files = [
-    {file = "tortoise_extensions-0.0.1-py3-none-any.whl", hash = "sha256:736d87f02a60f465200ebb3cc8b9096a3c1234bfd74faa5d8b174a5622506f9c"},
-    {file = "tortoise_extensions-0.0.1.tar.gz", hash = "sha256:d98d18b508760d88908bd10cf453007f89bed32349b3d3cc26b32e12001149d6"},
+    {file = "tortoise_extensions-0.0.2-py3-none-any.whl", hash = "sha256:c6ffd6605c7ffb3d240c3aea2314b8e2dab0c97d83ad0026bb42fc0f97196b3a"},
+    {file = "tortoise_extensions-0.0.2.tar.gz", hash = "sha256:d2440da9970174da9a6fe51e565bf8c07386e695fcf40d0fb0b140fdf90af6f2"},
 ]
 
 [[package]]
 name = "tortoise-extensions"
-version = "0.0.1"
+version = "0.0.2"
 extras = ["s3"]
 requires_python = "<3.15,>=3.12"
 summary = "Extension field types for Tortoise ORM"
 groups = ["default"]
 dependencies = [
     "obstore~=0.12.1",
-    "tortoise-extensions==0.0.1",
+    "tortoise-extensions==0.0.2",
     "uuid6>=2024.0.0; python_version < \"3.14\"",
 ]
 files = [
-    {file = "tortoise_extensions-0.0.1-py3-none-any.whl", hash = "sha256:736d87f02a60f465200ebb3cc8b9096a3c1234bfd74faa5d8b174a5622506f9c"},
-    {file = "tortoise_extensions-0.0.1.tar.gz", hash = "sha256:d98d18b508760d88908bd10cf453007f89bed32349b3d3cc26b32e12001149d6"},
+    {file = "tortoise_extensions-0.0.2-py3-none-any.whl", hash = "sha256:c6ffd6605c7ffb3d240c3aea2314b8e2dab0c97d83ad0026bb42fc0f97196b3a"},
+    {file = "tortoise_extensions-0.0.2.tar.gz", hash = "sha256:d2440da9970174da9a6fe51e565bf8c07386e695fcf40d0fb0b140fdf90af6f2"},
 ]
 
 [[package]]

@@ -11,10 +11,10 @@ from urllib.parse import parse_qs, urlparse
 
 import aerich
 from tortoise import Tortoise
-from tortoise_extensions.s3 import S3Storage, init_storages
+from tortoise_extensions.s3 import LocalStorage, MemoryStorage, S3Storage, Storage, init_storages
 
 from src.config import config
-from src.config.models import DbConfig
+from src.config.models import DbConfig, LocalStorageConfig, MemoryStorageConfig, S3StorageConfig, StorageConfig
 
 logger = getLogger("bot").getChild("database")
 
@@ -216,7 +216,26 @@ TORTOISE_ORM = {
 }
 
 
-def get_s3_storages(db: DbConfig) -> dict[str, S3Storage]:
+def to_storage(cfg: StorageConfig) -> Storage:
+    """Convert a storage configuration to its `tortoise_extensions` counterpart.
+
+    Args:
+        cfg: The storage configuration.
+
+    Returns:
+        The matching S3, memory or local storage.
+
+    """
+    match cfg:
+        case S3StorageConfig():
+            return S3Storage(**cfg.model_dump(exclude={"type"}))
+        case MemoryStorageConfig():
+            return MemoryStorage()
+        case LocalStorageConfig(path=path):
+            return LocalStorage(path=path)
+
+
+def get_s3_storages(db: DbConfig) -> dict[str, Storage]:
     """Build the S3 storages used by `S3Field`, keyed by Tortoise app or storage name.
 
     The main app (`models`) uses `db.s3`. Each extra app uses its own `s3`, falling back to `db.s3`.
@@ -236,7 +255,7 @@ def get_s3_storages(db: DbConfig) -> dict[str, S3Storage]:
     if clashes := apps.keys() & db.s3_storages.keys():
         raise ValueError(f"db.s3_storages entries clash with Tortoise app names: {sorted(clashes)}")
     configs = {name: cfg for name, cfg in apps.items() if cfg is not None} | db.s3_storages
-    return {name: S3Storage(**cfg.model_dump()) for name, cfg in configs.items()}
+    return {name: to_storage(cfg) for name, cfg in configs.items()}
 
 
 async def init() -> None:
