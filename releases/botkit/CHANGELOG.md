@@ -1,3 +1,43 @@
+## botkit@0.3.0
+
+### Per connection database SSL
+
+Each `db.extra_apps` entry can set `params.ssl` to enable or disable verified TLS for its own connection. Entries without it keep following the top-level `db.params.ssl`.
+
+### Replace autofix.ci with NiceBots Autofixer
+
+
+
+### Weekly cleanup of old container images
+
+
+
+### Remove certifi cooldown bypass
+
+
+
+### S3 storages for database models
+
+`db.s3` and `db.extra_apps.<app>.s3` configure S3-compatible storages for `S3Field` columns from `tortoise-extensions`, with SSL toggled per storage. Setting `type: memory` or `type: local` swaps a storage for an in-memory or on-disk one for tests and local development. Extra apps without `s3` follow the top-level `db.s3`.
+
+### Upgrade amannn/action-semantic-pull-request action to v6.1.2
+
+
+
+### Upgrade docker/login-action action to v4.8.0
+
+
+
+### Upgrade nicebots-xyz/licensor action to v0.1.2
+
+
+
+### Upgrade pnpm to v12.18.0
+
+
+
+### Upgrade pnpm/action-setup action to v6.1.1
+
 ## botkit@0.2.0
 
 ### Bots built on Botkit need no configuration
