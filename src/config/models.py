@@ -80,10 +80,20 @@ class BackendConfig(BaseModel):
     server_header: bool = False
 
 
+class S3StorageConfig(BaseModel):
+    endpoint: str
+    bucket: str
+    access_key: str
+    secret_key: str
+    region: str | None = None
+    ssl: bool = True
+
+
 class DbExtraApp(BaseModel):
     url: str | None = None
     params: dict[str, object] | None = None
     models: list[str] = []
+    s3: S3StorageConfig | None = None
 
 
 class DbConfig(BaseModel):
@@ -91,6 +101,8 @@ class DbConfig(BaseModel):
     enabled: bool = True
     params: dict[str, object] | None = None
     extra_apps: dict[str, DbExtraApp] = {}
+    s3: S3StorageConfig | None = None
+    s3_storages: dict[str, S3StorageConfig] = {}
 
 
 class Config(BaseModel):

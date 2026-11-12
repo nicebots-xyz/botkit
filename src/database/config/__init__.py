@@ -11,8 +11,10 @@ from urllib.parse import parse_qs, urlparse
 
 import aerich
 from tortoise import Tortoise
+from tortoise_extensions.s3 import S3Storage, init_storages
 
 from src.config import config
+from src.config.models import DbConfig
 
 logger = getLogger("bot").getChild("database")
 
@@ -214,6 +216,29 @@ TORTOISE_ORM = {
 }
 
 
+def get_s3_storages(db: DbConfig) -> dict[str, S3Storage]:
+    """Build the S3 storages used by `S3Field`, keyed by Tortoise app or storage name.
+
+    The main app (`models`) uses `db.s3`. Each extra app uses its own `s3`, falling back to `db.s3`.
+    Entries of `db.s3_storages` are registered under their own names for `S3Field(storage=...)`.
+
+    Args:
+        db: The database configuration.
+
+    Returns:
+        The storages to register, without entries that have no configuration.
+
+    Raises:
+        ValueError: If a named storage reuses a Tortoise app name.
+
+    """
+    apps = {"models": db.s3} | {name: app.s3 or db.s3 for name, app in db.extra_apps.items()}
+    if clashes := apps.keys() & db.s3_storages.keys():
+        raise ValueError(f"db.s3_storages entries clash with Tortoise app names: {sorted(clashes)}")
+    configs = {name: cfg for name, cfg in apps.items() if cfg is not None} | db.s3_storages
+    return {name: S3Storage(**cfg.model_dump()) for name, cfg in configs.items()}
+
+
 async def init() -> None:
     command = aerich.Command(
         TORTOISE_ORM,
@@ -224,6 +249,9 @@ async def init() -> None:
     migrated = await command.upgrade(run_in_transaction=True)
     logger.success(f"Successfully migrated {migrated} migrations")  # pyright: ignore[reportAttributeAccessIssue]
     await Tortoise.init(config=TORTOISE_ORM)
+    if storages := get_s3_storages(config.db):
+        init_storages(storages)
+        logger.info(f"Initialized S3 storages: {', '.join(storages)}")
 
 
 async def shutdown() -> None:

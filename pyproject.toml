@@ -24,6 +24,7 @@ dependencies = [
     "aerich[toml]>=0.8.1",
     "py-cord>=2.7.0rc2",
     "cachetools>=7.0.1",
+    "tortoise-extensions[s3]>=0.0.1",
 ]
 requires-python = "==3.12.*"
 readme = "readme.md"
@@ -142,3 +143,5 @@ exclude-newer = "7d"
 # Bypass the cooldown for certifi 2026.10.19, which drops the compromised emSign roots
 # (GHSA-6q48-6c7w-9gw2). Remove once that release is older than the cutoff (after 2026-10-27).
 certifi = false
+# First-party package, released alongside botkit changes.
+tortoise-extensions = false
