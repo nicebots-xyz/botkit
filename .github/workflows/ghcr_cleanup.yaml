@@ -1,0 +1,28 @@
+name: GHCR cleanup
+
+# Deletes container image versions older than 30 days from ghcr.io, except the long-lived branch tags.
+
+on:
+  schedule:
+    - cron: "23 8 * * 1"
+      timezone: "Europe/Paris"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    name: Clean up old images
+    if: github.repository == 'nicebots-xyz/botkit'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
+        with:
+          package: botkit
+          older-than: 30 days
+          delete-tags: "*"
+          delete-untagged: true
+          exclude-tags: dev,main,master

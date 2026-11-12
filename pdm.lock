@@ -5,7 +5,7 @@
 groups = ["default", "dev", "docs"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.1"
-content_hash = "sha256:6acaab5e80743864b3cc1e0ce7148c77eb18d055cceaeafd0c9b216186e1a689"
+content_hash = "sha256:675ec8a25d733cdd16412d9af8e5ec373dc9755b69cc9715715f5961b75ea9d1"
 
 [[metadata.targets]]
 requires_python = "==3.12.*"
@@ -774,6 +774,33 @@ files = [
 ]
 
 [[package]]
+name = "obstore"
+version = "0.12.1"
+requires_python = ">=3.11"
+summary = ""
+groups = ["default"]
+dependencies = [
+    "typing-extensions; python_full_version < \"3.13\"",
+]
+files = [
+    {file = "obstore-0.12.1-cp311-abi3-macosx_10_12_x86_64.whl", hash = "sha256:8c97afecce59224b82fcb4588a3d6fbef479bd6cc2616b8f4d3d3ddba43fa6b7"},
+    {file = "obstore-0.12.1-cp311-abi3-macosx_11_0_arm64.whl", hash = "sha256:60af5d92da9332014bba8d34f985b9dc692e73d1141d1775dd3a328db476f219"},
+    {file = "obstore-0.12.1-cp311-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:cf96279d243efd65d005c992e20476b3f343a54f71416d04af5d29d9998e739b"},
+    {file = "obstore-0.12.1-cp311-abi3-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:5b22ca0d66af4c3dd130ed492f966eb7d775529ea129bf379d002dd2c4093971"},
+    {file = "obstore-0.12.1-cp311-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:b9ad04de828d3726da251b95ac7cf5bf4397c026243bb88b2d087e4ca1d7506c"},
+    {file = "obstore-0.12.1-cp311-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:437831889a617deb632b54be8e978b59db5c34e57f7329dd5ced1f2ee2895473"},
+    {file = "obstore-0.12.1-cp311-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d31b255aec88d37636d374a651f5efc684c89716ab64dea6ac89d75801933af2"},
+    {file = "obstore-0.12.1-cp311-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:d7ee9cde74dbe11a4630c90d7245543993f3cebc38a70aceaedcd3b3d6192807"},
+    {file = "obstore-0.12.1-cp311-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:4240e5cb60d091e4a612499630eebede5164c821196322bc8a5ecb4861dc7b1f"},
+    {file = "obstore-0.12.1-cp311-abi3-musllinux_1_2_armv7l.whl", hash = "sha256:7b8e376fb425cd3963bbc2d51c0e0f19bebdaf3f824ffdac9bfc8dc13a782b5b"},
+    {file = "obstore-0.12.1-cp311-abi3-musllinux_1_2_i686.whl", hash = "sha256:2fcec4ccfeac0c5ad43c184692f60d15b79e8db594b075c45a40c5f7eeab9276"},
+    {file = "obstore-0.12.1-cp311-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:656547972c57aee8054fedd2585f4280d50bc8fee192269367547c4a01759d2f"},
+    {file = "obstore-0.12.1-cp311-abi3-win_amd64.whl", hash = "sha256:d84cdaeeb5f45bfa685fef3ec87265b48af13f8d006ca7c5ed1424c91e448dd5"},
+    {file = "obstore-0.12.1-cp311-abi3-win_arm64.whl", hash = "sha256:6eaf07332b1121dcb3b401da9220b22f94d8e3823f2cdc69e4d8b13c4adba0a6"},
+    {file = "obstore-0.12.1.tar.gz", hash = "sha256:80549c9ea5478fd5d5bd75a3c9178841c7108a76d8139db05407a25a55a6a476"},
+]
+
+[[package]]
 name = "opentelemetry-api"
 version = "1.45.2"
 requires_python = ">=3.10"
@@ -1203,6 +1230,37 @@ files = [
 ]
 
 [[package]]
+name = "tortoise-extensions"
+version = "0.0.2"
+requires_python = "<3.15,>=3.12"
+summary = "Extension field types for Tortoise ORM"
+groups = ["default"]
+dependencies = [
+    "tortoise-orm<1.0.0,>=0.25.4",
+]
+files = [
+    {file = "tortoise_extensions-0.0.2-py3-none-any.whl", hash = "sha256:c6ffd6605c7ffb3d240c3aea2314b8e2dab0c97d83ad0026bb42fc0f97196b3a"},
+    {file = "tortoise_extensions-0.0.2.tar.gz", hash = "sha256:d2440da9970174da9a6fe51e565bf8c07386e695fcf40d0fb0b140fdf90af6f2"},
+]
+
+[[package]]
+name = "tortoise-extensions"
+version = "0.0.2"
+extras = ["s3"]
+requires_python = "<3.15,>=3.12"
+summary = "Extension field types for Tortoise ORM"
+groups = ["default"]
+dependencies = [
+    "obstore~=0.12.1",
+    "tortoise-extensions==0.0.2",
+    "uuid6>=2024.0.0; python_version < \"3.14\"",
+]
+files = [
+    {file = "tortoise_extensions-0.0.2-py3-none-any.whl", hash = "sha256:c6ffd6605c7ffb3d240c3aea2314b8e2dab0c97d83ad0026bb42fc0f97196b3a"},
+    {file = "tortoise_extensions-0.0.2.tar.gz", hash = "sha256:d2440da9970174da9a6fe51e565bf8c07386e695fcf40d0fb0b140fdf90af6f2"},
+]
+
+[[package]]
 name = "tortoise-orm"
 version = "0.25.4"
 requires_python = ">=3.9"
@@ -1282,6 +1340,18 @@ groups = ["default"]
 files = [
     {file = "urllib3-2.8.0-py3-none-any.whl", hash = "sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3"},
     {file = "urllib3-2.8.0.tar.gz", hash = "sha256:63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63"},
+]
+
+[[package]]
+name = "uuid6"
+version = "2025.0.1"
+requires_python = ">=3.9"
+summary = "New time-based UUID formats which are suited for use as a database key"
+groups = ["default"]
+marker = "python_version < \"3.14\""
+files = [
+    {file = "uuid6-2025.0.1-py3-none-any.whl", hash = "sha256:80530ce4d02a93cdf82e7122ca0da3ebbbc269790ec1cb902481fa3e9cc9ff99"},
+    {file = "uuid6-2025.0.1.tar.gz", hash = "sha256:cd0af94fa428675a44e32c5319ec5a3485225ba2179eefcf4c3f205ae30a81bd"},
 ]
 
 [[package]]

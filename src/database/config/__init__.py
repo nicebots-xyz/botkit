@@ -11,8 +11,10 @@ from urllib.parse import parse_qs, urlparse
 
 import aerich
 from tortoise import Tortoise
+from tortoise_extensions.s3 import LocalStorage, MemoryStorage, S3Storage, Storage, init_storages
 
 from src.config import config
+from src.config.models import DbConfig, LocalStorageConfig, MemoryStorageConfig, S3StorageConfig, StorageConfig
 
 logger = getLogger("bot").getChild("database")
 
@@ -214,6 +216,41 @@ TORTOISE_ORM = {
 }
 
 
+def to_storage(cfg: StorageConfig) -> Storage:
+    """Convert a storage configuration to its `tortoise_extensions` counterpart.
+
+    Args:
+        cfg: The storage configuration.
+
+    Returns:
+        The matching S3, memory or local storage.
+
+    """
+    match cfg:
+        case S3StorageConfig():
+            return S3Storage(**cfg.model_dump(exclude={"type"}))
+        case MemoryStorageConfig():
+            return MemoryStorage()
+        case LocalStorageConfig(path=path):
+            return LocalStorage(path=path)
+
+
+def get_s3_storages(db: DbConfig) -> dict[str, Storage]:
+    """Build the storages used by `S3Field`, keyed by Tortoise app name.
+
+    The main app (`models`) uses `db.s3`. Each extra app uses its own `s3`, falling back to `db.s3`.
+
+    Args:
+        db: The database configuration.
+
+    Returns:
+        The storages to register, without apps that have no configuration.
+
+    """
+    apps = {"models": db.s3} | {name: app.s3 or db.s3 for name, app in db.extra_apps.items()}
+    return {name: to_storage(cfg) for name, cfg in apps.items() if cfg is not None}
+
+
 async def init() -> None:
     command = aerich.Command(
         TORTOISE_ORM,
@@ -224,6 +261,9 @@ async def init() -> None:
     migrated = await command.upgrade(run_in_transaction=True)
     logger.success(f"Successfully migrated {migrated} migrations")  # pyright: ignore[reportAttributeAccessIssue]
     await Tortoise.init(config=TORTOISE_ORM)
+    if storages := get_s3_storages(config.db):
+        init_storages(storages)
+        logger.info(f"Initialized S3 storages: {', '.join(storages)}")
 
 
 async def shutdown() -> None:

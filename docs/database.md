@@ -22,6 +22,7 @@ db:
 | `url` | `""` | PostgreSQL connection URL |
 | `params` | optional | Extra query parameters (see SSL) |
 | `extra_apps` | `{}` | Additional databases / model packages |
+| `s3` | optional | S3 storage for the main app (see S3) |
 
 On each start, Botkit applies pending **migrations** automatically, then connects. If migration or connection fails, the bot does not start.
 
@@ -47,6 +48,39 @@ db:
         ssl: true
 ```
 
+## S3
+
+Columns declared with **`S3Field`** from [tortoise-extensions](https://docs.nicebots.xyz/tortoise-extensions/) store their content in S3-compatible storage. Each Tortoise app gets its own storage: the main app uses **`db.s3`**, and each entry in **`extra_apps`** uses its own **`s3`**, falling back to **`db.s3`**.
+
+```yaml
+db:
+  s3:
+    endpoint: "s3.example.com"
+    bucket: "main"
+    access_key: "..."
+    secret_key: "..."
+  extra_apps:
+    analytics:
+      s3:
+        endpoint: "minio:9000"
+        bucket: "analytics"
+        access_key: "..."
+        secret_key: "..."
+        ssl: false
+```
+
+| Key | Default | Role |
+|-----|---------|------|
+| `type` | `s3` | `s3`, `memory` (in-process, for tests) or `local` (files on disk) |
+| `path` | required for `local` | Directory holding the objects |
+| `endpoint` | required for `s3` | Host and optional port, without scheme |
+| `bucket` | required for `s3` | Bucket holding the objects |
+| `access_key` / `secret_key` | required for `s3` | Credentials |
+| `region` | optional | Signing region |
+| `ssl` | `true` | `https` when `true`, plain `http` when `false` |
+
+Secrets can come from the environment, e.g. **`BOTKIT__DB__S3__SECRET_KEY`**. Setting **`BOTKIT__DB__S3__TYPE=memory`** swaps a storage for an in-memory one, e.g. in tests.
+
 ## Models
 
 Define models in **`src/database/models/`** and extend the included stubs (`Guild`, `User`, etc.) as needed.
@@ -70,4 +104,4 @@ db:
 
 ## Optional field types
 
-For typed JSON columns or UUID v6+ primary keys, see **[tortoise-extensions](https://docs.nicebots.xyz/tortoise-extensions/)** — add it as a dependency and use its fields in your models like any other library.
+For typed JSON columns, UUID v6+ primary keys or S3 columns, see **[tortoise-extensions](https://docs.nicebots.xyz/tortoise-extensions/)** — add it as a dependency and use its fields in your models like any other library.
