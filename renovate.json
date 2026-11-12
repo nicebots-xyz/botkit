@@ -15,6 +15,13 @@
         "pypi"
       ],
       "minimumReleaseAge": "7 days"
+    },
+    {
+      "description": "Ignore the root compose file, which only holds throwaway services for local testing.",
+      "matchFileNames": [
+        "compose.yaml"
+      ],
+      "enabled": false
     }
   ]
 }
