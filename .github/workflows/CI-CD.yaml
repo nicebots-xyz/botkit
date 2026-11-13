@@ -19,6 +19,7 @@ jobs:
     needs: quality
     permissions:
       contents: read
+      pull-requests: read
       packages: write
       id-token: write
     uses: ./.github/workflows/docker.yaml
