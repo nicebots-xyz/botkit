@@ -34,20 +34,6 @@ jobs:
       - name: Checkout repository
         if: github.event_name != 'pull_request' || steps.changes.outputs.image == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      # Bots built on Botkit keep private extensions in submodules, which the PAT secret gives access to. The
-      # repository itself is always checked out with the job token, so a PAT is only needed where submodules exist.
-      - name: Check out submodules
-        if: hashFiles('.gitmodules') != '' && (github.event_name != 'pull_request' || steps.changes.outputs.image == 'true')
-        env:
-          PAT: ${{ secrets.PAT }}
-        run: |
-          auth="$(printf 'x-access-token:%s' "$PAT" | base64 -w0)"
-          git -c url."https://github.com/".insteadOf="git@github.com:" \
-            -c http.https://github.com/.extraheader="AUTHORIZATION: basic $auth" \
-            submodule update --init --recursive --depth 1
 
       - name: Set up Docker Buildx
         if: github.event_name != 'pull_request' || steps.changes.outputs.image == 'true'
