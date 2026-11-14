@@ -9,3 +9,5 @@ import os
 # that imports an extension submodule fails collection entirely. Set a harmless default before any
 # test module is imported; `setdefault` keeps a real token if one is already set in the environment.
 os.environ.setdefault("BOTKIT__BOT__TOKEN", "test-token-for-pytest")
+os.environ.setdefault("BOTKIT__DB__ENABLED", "false")
+os.environ.setdefault("BOTKIT__DB__URL", "postgres://test:test@localhost:5432/test")

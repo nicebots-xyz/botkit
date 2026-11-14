@@ -149,7 +149,8 @@ def parse_url_apps_mapping(
     connection_config: dict[str, dict[str, Any]] = {}
 
     default_ssl: bool = use_ssl(config.db.params)
-    needs_ssl: bool = default_ssl or any(ssl_enabled for _, ssl_enabled in url_apps_mapping)
+    # A disabled database never connects, so it needs no certificate (tests, local runs without a database).
+    needs_ssl: bool = config.db.enabled and (default_ssl or any(ssl_enabled for _, ssl_enabled in url_apps_mapping))
     ssl_context = create_ssl_context() if needs_ssl else None
 
     for i, ((url, ssl_enabled), apps) in enumerate(url_apps_mapping.items()):
