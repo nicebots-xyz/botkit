@@ -8,6 +8,7 @@
   "baseBranchPatterns": [
     "dev"
   ],
+  "rebaseWhen": "conflicted",
   "packageRules": [
     {
       "description": "Match the PDM dependency cooldown (exclude-newer in pyproject.toml), so Renovate never proposes a PyPI release PDM refuses to lock.",
@@ -22,6 +23,34 @@
         "compose.yaml"
       ],
       "enabled": false
+    },
+    {
+      "description": "Repositories built on botkit sync their workflows from it, so GitHub Actions updates only land in botkit.",
+      "matchRepositories": [
+        "!nicebots-xyz/botkit"
+      ],
+      "matchManagers": [
+        "github-actions"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "Outside botkit, gather non-major updates into a single weekly pull request to save CI minutes.",
+      "matchRepositories": [
+        "!nicebots-xyz/botkit"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "pinDigest",
+        "digest"
+      ],
+      "groupName": "non-major dependencies",
+      "groupSlug": "non-major",
+      "schedule": [
+        "* 0-5 * * 1"
+      ]
     }
   ]
 }

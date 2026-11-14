@@ -1,5 +1,8 @@
 name: Build and Push Docker Image
 
+# Pushes to a branch always build. Pull requests only build when the image inputs change: the job still runs so
+# that it reports a status, but skips the build otherwise.
+
 on: workflow_call
 
 env:
@@ -11,16 +14,33 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: read
       packages: write
       id-token: write
     steps:
+      - name: Check for image changes
+        id: changes
+        if: github.event_name == 'pull_request'
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        with:
+          filters: |
+            image:
+              - Dockerfile
+              - .dockerignore
+              - pyproject.toml
+              - pdm.lock
+              - .github/workflows/docker.yaml
+
       - name: Checkout repository
+        if: github.event_name != 'pull_request' || steps.changes.outputs.image == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Docker Buildx
+        if: github.event_name != 'pull_request' || steps.changes.outputs.image == 'true'
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
       - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request' || steps.changes.outputs.image == 'true'
         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
         with:
           registry: ${{ env.REGISTRY }}
@@ -29,6 +49,7 @@ jobs:
 
       - name: Extract Docker metadata
         id: meta
+        if: github.event_name != 'pull_request' || steps.changes.outputs.image == 'true'
         uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
@@ -39,6 +60,7 @@ jobs:
             type=sha
 
       - name: Build and push Docker image
+        if: github.event_name != 'pull_request' || steps.changes.outputs.image == 'true'
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
