@@ -1,45 +1,9 @@
 core:changelogs:
-  - content: "---\npackages:\n  botkit:\n    type: minor\n---\n\n### Per connection database SSL\n\nEach `db.extra_apps` entry can set `params.ssl` to enable or disable verified TLS for its own connection. Entries without it keep following the top-level `db.params.ssl`.\n"
-    filename: 2026-10-30-per-connection-ssl.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Replace autofix.ci with NiceBots Autofixer\n"
-    filename: 2026-11-12-drop-autofix-ci.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Weekly cleanup of old container images\n"
-    filename: 2026-11-12-ghcr-cleanup.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Remove certifi cooldown bypass\n"
-    filename: 2026-11-12-remove-certifi-cooldown-bypass.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: minor\n---\n\n### S3 storages for database models\n\n`db.s3` and `db.extra_apps.<app>.s3` configure S3-compatible storages for `S3Field` columns from `tortoise-extensions`, with SSL toggled per storage. Setting `type: memory` or `type: local` swaps a storage for an in-memory or on-disk one for tests and local development. Extra apps without `s3` follow the top-level `db.s3`.\n"
-    filename: 2026-11-12-s3-storages.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Upgrade amannn/action-semantic-pull-request action to v6.1.2\n"
-    filename: renovate-amannn-action-semantic-pull-request-6.x.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Upgrade docker/login-action action to v4.8.0\n"
-    filename: renovate-docker-login-action-4.x.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Upgrade nicebots-xyz/licensor action to v0.1.2\n"
-    filename: renovate-nicebots-xyz-licensor-0.x.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Upgrade pnpm to v12.18.0\n"
-    filename: renovate-pnpm-12.x.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Upgrade pnpm/action-setup action to v6.1.1\n"
-    filename: renovate-pnpm-action-setup-6.x.md
+  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Spend fewer CI minutes on pull requests\n"
+    filename: 2026-11-13-cheaper-ci.md
     v: 0.0.0
 core:packages:
   - changelogIds:
-      - 2026-10-30-per-connection-ssl.md
-      - 2026-11-12-drop-autofix-ci.md
-      - 2026-11-12-ghcr-cleanup.md
-      - 2026-11-12-remove-certifi-cooldown-bypass.md
-      - 2026-11-12-s3-storages.md
-      - renovate-amannn-action-semantic-pull-request-6.x.md
-      - renovate-docker-login-action-4.x.md
-      - renovate-nicebots-xyz-licensor-0.x.md
-      - renovate-pnpm-12.x.md
-      - renovate-pnpm-action-setup-6.x.md
+      - 2026-11-13-cheaper-ci.md
     id: release:botkit
     updated: true

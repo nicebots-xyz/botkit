@@ -1,3 +1,7 @@
+## botkit@0.3.1
+
+### Spend fewer CI minutes on pull requests
+
 ## botkit@0.3.0
 
 ### Per connection database SSL
