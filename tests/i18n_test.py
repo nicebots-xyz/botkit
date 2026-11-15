@@ -4,6 +4,7 @@
 import asyncio
 from collections.abc import Iterator
 from pathlib import Path
+from typing import Protocol
 
 import discord
 import pytest
@@ -11,6 +12,7 @@ import yaml
 from pydantic import ValidationError
 
 from scripts.i18n_stubs.__main__ import render
+from src import custom
 from src.i18n import classes
 from src.i18n.classes import (
     ExtensionTranslation,
@@ -123,3 +125,33 @@ def test_render_stubs() -> None:
     assert "class MyGroupSubCmdCommandStrings(Protocol):\n    @property\n    def done(self) -> str: ..." in stub
     assert "Plain" not in stub
     assert render(ExtensionTranslation()) is None
+
+
+@pytest.mark.parametrize("key", ["my-key", "class", "2fast"])
+def test_render_rejects_invalid_identifiers(key: str) -> None:
+    translation = ExtensionTranslation.model_validate({"strings": {key: {"en-US": "Text"}}})
+    with pytest.raises(ValueError, match="not a valid Python identifier"):
+        render(translation)
+
+
+class _GreetStrings(Protocol):
+    @property
+    def hello(self) -> str: ...
+
+
+class _Greet(discord.Cog):
+    @discord.slash_command()
+    async def greet(self, ctx: custom.ApplicationContext[_GreetStrings], name: str) -> None:
+        await ctx.respond(ctx.translations.hello + name)
+
+
+async def _bot_with_greet() -> discord.Bot:
+    bot = discord.Bot()
+    bot.add_cog(_Greet())
+    return bot
+
+
+def test_typed_context_is_a_plain_class_at_runtime() -> None:
+    assert custom.ApplicationContext[_GreetStrings] is custom.ApplicationContext
+    (command,) = asyncio.run(_bot_with_greet()).pending_application_commands  # pyright: ignore[reportUnknownVariableType]
+    assert [option.name for option in command.options] == ["name"]  # pyright: ignore[reportUnknownVariableType]

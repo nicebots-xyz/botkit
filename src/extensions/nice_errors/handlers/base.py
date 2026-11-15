@@ -9,9 +9,9 @@ from typing import Any, final, overload
 import discord
 import sentry_sdk
 
-from src import custom
-from src.extensions.nice_errors.i18n import ExtensionStrings
-from src.i18n.classes import RawTranslation, apply_locale, typed
+from src import custom, i18n
+from src.extensions.nice_errors.translation_types import ExtensionStrings
+from src.i18n.classes import RawTranslation
 
 logger = logging.getLogger("bot").getChild("nice_errors").getChild("handlers")
 
@@ -83,7 +83,7 @@ class ErrorHandlerManager:
             "ephemeral": True,
         }
         message: str = ""
-        translations = typed(apply_locale(raw_translations, _get_locale(ctx)), ExtensionStrings)
+        translations = i18n.typed(i18n.apply_locale(raw_translations, _get_locale(ctx)), ExtensionStrings)
         if isinstance(error, discord.ApplicationCommandInvokeError):
             original_error = error.original
 

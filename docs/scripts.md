@@ -28,7 +28,7 @@ Default behavior (no args) looks for `config.yaml` / `config.yml` and writes `.e
 
 ## `pdm run i18n-stubs`
 
-**`scripts.i18n_stubs`** generates an **`i18n.py`** module in every extension that has translation strings, with one typed `Protocol` per group of strings (see [Internationalization](i18n.md#typed-strings)).
+**`scripts.i18n_stubs`** generates a **`translation_types.py`** module in every extension that has translation strings, with one typed `Protocol` per group of strings (see [Internationalization](i18n.md#typed-strings)).
 
 | Flag | Meaning |
 |------|---------|

@@ -6,12 +6,11 @@ import discord
 from discord.ext import bridge, commands
 from fastapi import FastAPI
 
-from src import custom
-from src.i18n import typed
+from src import custom, i18n
 from src.log import logger
 from src.utils.cooldown import BucketType, cooldown
 
-from .i18n import PingCommandStrings
+from .translation_types import PingCommandStrings
 
 default = {
     "enabled": True,
@@ -39,7 +38,7 @@ class BridgePing(commands.Cog):
         use_embed: bool = False,
     ) -> None:
         await ctx.defer(ephemeral=ephemeral)
-        translations = typed(ctx.translations, PingCommandStrings)
+        translations = i18n.typed(ctx.translations, PingCommandStrings)
         if use_embed:
             embed = discord.Embed(
                 title="Pong!",

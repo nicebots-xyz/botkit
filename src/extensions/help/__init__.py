@@ -9,11 +9,11 @@ import discord
 from discord.ext import commands
 from discord.ui import ActionRow, Button, Container, DesignerView, Select, TextDisplay
 
-from src import custom
-from src.i18n.classes import RawTranslation, Strings, apply_locale, typed
+from src import custom, i18n
+from src.i18n.classes import RawTranslation, Strings
 
-from .i18n import ExtensionStrings
 from .pages import help_translation
+from .translation_types import ExtensionStrings
 
 
 def get_gradient_color(shade_index: int, color_index: int, max_shade: int = 50, max_color: int = 10) -> int:
@@ -295,7 +295,7 @@ class Help(commands.Cog):
         data: defaultdict[str, dict[str, list[dict]]] = defaultdict(dict)  # pyright: ignore[reportMissingTypeArgument]
         for locale in self.locales:
             t = help_translation.get_for_locale(locale)
-            ui = typed(apply_locale(self.ui_translations, locale), ExtensionStrings)
+            ui = i18n.typed(i18n.apply_locale(self.ui_translations, locale), ExtensionStrings)
             data[locale] = get_categories_data(ui, t.categories, self.bot)
         return dict(data)
 
@@ -312,7 +312,7 @@ class Help(commands.Cog):
         """Display help information using the new UI components."""
         help_view = HelpView(
             categories_data=self.categories_data.get(ctx.locale or "") or self.categories_data["en-US"],
-            ui_translations=typed(apply_locale(self.ui_translations, ctx.locale), ExtensionStrings),
+            ui_translations=i18n.typed(i18n.apply_locale(self.ui_translations, ctx.locale), ExtensionStrings),
             bot=self.bot,
         )
         await ctx.respond(view=help_view, ephemeral=True)

@@ -3,10 +3,11 @@
 
 from collections.abc import Iterable, Iterator, Mapping
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, override
+from typing import Any, override
 
 import discord
 import yaml
+from discord.ext import bridge
 from discord.ext import commands as prefixed
 
 from src.log import logger as main_logger
@@ -18,8 +19,6 @@ from .classes import (
     add_global_kv,
 )
 
-if TYPE_CHECKING:
-    from src import custom
 logger = main_logger.getChild("i18n")
 
 type AppCommand = discord.ApplicationCommand[Any, ..., Any]
@@ -33,14 +32,14 @@ def _walk(commands: Iterable[AppCommand]) -> Iterator[AppCommand]:
 
 
 class CommandMapping(Mapping[str, str]):
-    def __init__(self, bot: "custom.Bot") -> None:
+    def __init__(self, bot: bridge.Bot) -> None:
         """Map ``{commands.x}`` placeholders to the bot's application commands.
 
         Args:
             bot: Bot whose pending application commands are mapped.
 
         """
-        self.bot: custom.Bot = bot
+        self.bot: bridge.Bot = bot
 
     def _commands(self) -> dict[str, AppCommand]:
         pending: list[AppCommand] = self.bot.pending_application_commands  # pyright: ignore[reportUnknownVariableType]
@@ -82,14 +81,14 @@ class CommandMapping(Mapping[str, str]):
 
 
 class EmojiMapping(Mapping[str, str]):
-    def __init__(self, bot: "custom.Bot") -> None:
+    def __init__(self, bot: bridge.Bot) -> None:
         """Map ``{emojis.x}`` placeholders to the bot's application emojis.
 
         Args:
             bot: Bot whose cached application emojis are mapped.
 
         """
-        self.bot: custom.Bot = bot
+        self.bot: bridge.Bot = bot
 
     def _emojis(self) -> dict[str, str]:
         return {emoji.name: emoji.mention for emoji in self.bot.app_emojis}
@@ -293,7 +292,7 @@ def load_translation(path: str | Path) -> ExtensionTranslation:
 
 
 def apply(
-    bot: "custom.Bot",
+    bot: bridge.Bot,
     translations: list[ExtensionTranslation],
     default_locale: str = "en-US",
 ) -> None:
