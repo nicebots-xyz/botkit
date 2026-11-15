@@ -26,6 +26,14 @@ Common flags:
 
 Default behavior (no args) looks for `config.yaml` / `config.yml` and writes `.env` when safe; see `scripts/convert_config/` for interactive overwrite prompts.
 
+## `pdm run i18n-stubs`
+
+**`scripts.i18n_stubs`** generates an **`i18n.py`** module in every extension that has translation strings, with one typed `Protocol` per group of strings (see [Internationalization](i18n.md#typed-strings)).
+
+| Flag | Meaning |
+|------|---------|
+| `--check` | Only report outdated stubs and exit with an error, as CI does |
+
 ## `pdm run check-listings`
 
 Dev-only helper to scrape selected bot listing sites and compare descriptions to `description.md`. Requires **dev dependencies**, **Chrome**, and a root **`listings.yml`**. See `scripts/check_listings/` and inline comments in `readme.md` for the expected file shapes.

@@ -34,6 +34,10 @@ jobs:
         if: ${{ !cancelled() && steps.install.outcome != 'failure' }}
         run: pdm run tests
 
+      - name: Translation Stubs Check
+        if: ${{ !cancelled() && steps.install.outcome != 'failure' }}
+        run: pdm run i18n-stubs --check
+
       - name: Setup Licensor
         if: ${{ !cancelled() }}
         uses: nicebots-xyz/licensor/.github/actions/setup-licensor@a5893a8a480981ea21cb25cedcb0302616e8b859 # v0.1.2

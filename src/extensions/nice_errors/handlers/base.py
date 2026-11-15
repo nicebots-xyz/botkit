@@ -10,7 +10,8 @@ import discord
 import sentry_sdk
 
 from src import custom
-from src.i18n.classes import RawTranslation, apply_locale
+from src.extensions.nice_errors.i18n import ExtensionStrings
+from src.i18n.classes import RawTranslation, apply_locale, typed
 
 logger = logging.getLogger("bot").getChild("nice_errors").getChild("handlers")
 
@@ -82,7 +83,7 @@ class ErrorHandlerManager:
             "ephemeral": True,
         }
         message: str = ""
-        translations = apply_locale(raw_translations, _get_locale(ctx))
+        translations = typed(apply_locale(raw_translations, _get_locale(ctx)), ExtensionStrings)
         if isinstance(error, discord.ApplicationCommandInvokeError):
             original_error = error.original
 

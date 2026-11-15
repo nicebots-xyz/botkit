@@ -35,7 +35,7 @@ from discord.ext.bridge import (
 
 from src import log
 from src.config.models import RedisConfig
-from src.i18n.classes import ExtensionTranslation, RawTranslation, TranslationWrapper, apply_locale
+from src.i18n.classes import ExtensionTranslation, Strings, apply_locale, check_placeholders, clear_cache
 
 if TYPE_CHECKING:
     from src.database.models import Guild, User
@@ -45,9 +45,7 @@ logger = getLogger("bot")
 
 class ApplicationContext(bridge.BridgeApplicationContext):
     def __init__(self, bot: "Bot", interaction: discord.Interaction) -> None:
-        self.translations: TranslationWrapper[dict[str, RawTranslation]] = TranslationWrapper(
-            {}, "en-US"
-        )  # empty placeholder
+        self.translations: Strings = Strings({})
         super().__init__(bot=bot, interaction=interaction)
         self.bot: Bot
         self.user_obj: User | None = None
@@ -72,7 +70,7 @@ async def remove_reaction(
 
 class ExtContext(bridge.BridgeExtContext):
     def __init__(self, **kwargs: Any) -> None:
-        self.translations: TranslationWrapper[dict[str, RawTranslation]] = TranslationWrapper({}, "en-US")
+        self.translations: Strings = Strings({})
         super().__init__(**kwargs)
         self.bot: Bot
         self.user_obj: User | None = None
@@ -234,6 +232,31 @@ class CustomBot(bridge.Bot):
         else:
             state.store_user = state.create_user  # type: ignore[method-assign]
             state.deref_user = state.deref_user_no_intents  # type: ignore[method-assign]
+
+    @override
+    async def login(self, token: str) -> None:
+        """Log in, then cache app emojis and check translation placeholders before connecting.
+
+        Args:
+            token: The bot token.
+
+        """
+        await super().login(token)
+        self._connection.application_id = (await self.application_info()).id
+        await self.fetch_emojis()
+        check_placeholders()
+
+    @override
+    async def sync_commands(self, *args: Any, **kwargs: Any) -> None:
+        """Sync application commands, then resolve translations again with the synced command ids.
+
+        Args:
+            *args: Positional arguments of ``discord.Bot.sync_commands``.
+            **kwargs: Keyword arguments of ``discord.Bot.sync_commands``.
+
+        """
+        await super().sync_commands(*args, **kwargs)
+        clear_cache()
 
     def get_app_emoji(self, key: int | str) -> discord.AppEmoji | None:
         if isinstance(key, int):
