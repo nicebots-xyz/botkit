@@ -3,10 +3,10 @@
 
 import aiohttp
 import discord
-from discord.ext import bridge, commands
+from discord.ext import commands
 from fastapi import FastAPI
 
-from src import custom, i18n
+from src import custom
 from src.log import logger
 from src.utils.cooldown import BucketType, cooldown
 
@@ -17,12 +17,12 @@ default = {
 }
 
 
-class BridgePing(commands.Cog):
+class Ping(commands.Cog):
     def __init__(self, bot: custom.Bot) -> None:
         self.bot: custom.Bot = bot
         super().__init__()
 
-    @bridge.bridge_command()
+    @discord.slash_command()
     @cooldown(
         key="ping",
         limit=1,
@@ -32,17 +32,15 @@ class BridgePing(commands.Cog):
     )
     async def ping(
         self,
-        ctx: custom.Context,
-        *,
+        ctx: custom.ApplicationContext[PingCommandStrings],
         ephemeral: bool = False,
         use_embed: bool = False,
     ) -> None:
         await ctx.defer(ephemeral=ephemeral)
-        translations = i18n.typed(ctx.translations, PingCommandStrings)
         if use_embed:
             embed = discord.Embed(
                 title="Pong!",
-                description=translations.response.format(latency=round(self.bot.latency * 1000)),
+                description=ctx.translations.response.format(latency=round(self.bot.latency * 1000)),
                 color=discord.Colour.blurple(),
             )
             await ctx.respond(embed=embed, ephemeral=ephemeral)
@@ -51,7 +49,7 @@ class BridgePing(commands.Cog):
 
 
 def setup(bot: custom.Bot) -> None:
-    bot.add_cog(BridgePing(bot))
+    bot.add_cog(Ping(bot))
 
 
 def setup_webserver(app: FastAPI, bot: discord.Bot) -> None:
