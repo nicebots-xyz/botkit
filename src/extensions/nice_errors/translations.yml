@@ -3,14 +3,6 @@
 
 
 strings:
-  error_command_not_found:
-    en-US: Whoops! That command doesn't exist. Did you mean `{similar_command}`?
-    de: Hoppla! Dieses Kommando existiert nicht. Meintest du `{similar_command}`?
-    nl: Oeps! Die opdracht bestaat niet. Bedoelde je `{similar_command}`?
-    fr: Oups ! Cette commande n'existe pas. Vouliez-vous dire `{similar_command}` ?
-    it: Ops! Quel comando non esiste. Intendevi `{similar_command}`?
-    es-ES: ¡Ups! Ese comando no existe. ¿Quisiste decir `{similar_command}`?
-    ru: Упс! Такой команды не существует. Возможно, вы имели в виду `{similar_command}`?
   error_missing_permissions:
     en-US: Whoops! I don't have the required permission to do that.
     de: Hoppla! Ich habe nicht die erforderliche Berechtigung dafür.
