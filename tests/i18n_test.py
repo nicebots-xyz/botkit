@@ -129,6 +129,16 @@ def test_render_stubs() -> None:
     assert render(ExtensionTranslation()) is None
 
 
+def test_render_stubs_for_context_menu_commands() -> None:
+    translation = ExtensionTranslation.model_validate(
+        {"commands": {"Extract text (OCR)": {"strings": {"done": {"en-US": "Done in {seconds}s"}}}}},
+    )
+    stub = render(translation)
+    assert stub is not None
+    assert "class ExtractTextOCRCommandDone(str):" in stub
+    assert "class ExtractTextOCRCommandStrings(Protocol):" in stub
+
+
 @pytest.mark.parametrize(
     ("text", "expected"),
     [

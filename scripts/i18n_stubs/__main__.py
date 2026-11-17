@@ -43,7 +43,8 @@ def _identifier(name: str) -> str:
 
 
 def _pascal(name: str) -> str:
-    return "".join(part[:1].upper() + part[1:] for part in re.split(r"[-_]", name))
+    # Context menu commands can be named with spaces and punctuation, e.g. ``Extract text (OCR)``.
+    return "".join(part[:1].upper() + part[1:] for part in re.split(r"[\W_]+", name))
 
 
 def _arguments(*, positional: int = 0, named: Sequence[str] = ()) -> ast.arguments:
