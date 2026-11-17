@@ -18,6 +18,9 @@ jobs:
       startsWith(github.head_ref, 'renovate/') &&
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     outputs:
       changed: ${{ steps.fixer.outputs.changed }}
     steps:
@@ -27,10 +30,15 @@ jobs:
         with:
           node-version: 24
 
+      # The title and body are read when the job runs, not from the event: Renovate edits both after it pushes, and
+      # a grouped update names every package it gathers.
       - name: Write changelog entry
-        run: node scripts/tegami-renovate.mts
+        run: |
+          pr="$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER")"
+          PR_TITLE="$(jq -r .title <<<"$pr")" PR_BODY="$(jq -r '.body // ""' <<<"$pr")" node scripts/tegami-renovate.mts
         env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_BRANCH: ${{ github.head_ref }}
 
       - id: fixer

@@ -11,13 +11,6 @@
   "rebaseWhen": "conflicted",
   "packageRules": [
     {
-      "description": "Match the PDM dependency cooldown (exclude-newer in pyproject.toml), so Renovate never proposes a PyPI release PDM refuses to lock.",
-      "matchDatasources": [
-        "pypi"
-      ],
-      "minimumReleaseAge": "7 days"
-    },
-    {
       "description": "Ignore the root compose file, which only holds throwaway services for local testing.",
       "matchFileNames": [
         "compose.yaml"
@@ -25,19 +18,22 @@
       "enabled": false
     },
     {
-      "description": "Repositories built on botkit sync their workflows from it, so GitHub Actions updates only land in botkit.",
+      "description": "Repositories built on botkit sync their workflows from it, so updates under .github only land in botkit.",
       "matchRepositories": [
         "!nicebots-xyz/botkit"
       ],
-      "matchManagers": [
-        "github-actions"
+      "matchFileNames": [
+        ".github/**"
       ],
       "enabled": false
     },
     {
-      "description": "Outside botkit, gather non-major updates into a single weekly pull request to save CI minutes.",
+      "description": "Outside botkit, gather non-major PyPI dependency updates into one weekly pull request to save CI minutes. The Python interpreter is not a PyPI package and keeps its own pull request.",
       "matchRepositories": [
         "!nicebots-xyz/botkit"
+      ],
+      "matchDatasources": [
+        "pypi"
       ],
       "matchUpdateTypes": [
         "minor",
@@ -46,8 +42,29 @@
         "pinDigest",
         "digest"
       ],
-      "groupName": "non-major dependencies",
-      "groupSlug": "non-major",
+      "groupName": "Python dependencies",
+      "groupSlug": "python-non-major",
+      "schedule": [
+        "* 0-5 * * 1"
+      ]
+    },
+    {
+      "description": "Outside botkit, gather non-major npm dependency updates into one weekly pull request to save CI minutes.",
+      "matchRepositories": [
+        "!nicebots-xyz/botkit"
+      ],
+      "matchDatasources": [
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "pinDigest",
+        "digest"
+      ],
+      "groupName": "JavaScript dependencies",
+      "groupSlug": "javascript-non-major",
       "schedule": [
         "* 0-5 * * 1"
       ]
