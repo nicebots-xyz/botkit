@@ -140,7 +140,21 @@ Do not edit these in a bot repository, they belong to Botkit and merges would co
 ## Dependency updates
 
 Renovate pull requests get a `patch` changelog entry automatically: runtime dependencies, dev tooling, GitHub Actions and Docker updates alike.
-Lock file maintenance does not, it only changes transitive versions.
+The entry lists each package it upgrades with both versions, read from the table of updates of the pull request.
+Lock file maintenance does not get one, it only changes transitive versions.
+
+Outside Botkit, Renovate gathers non-major updates into weekly pull requests to save CI minutes:
+
+| Pull request | Holds |
+|--------------|-------|
+| `upgrade python dependencies (…)` | Non-major PyPI updates |
+| `upgrade javascript dependencies (…)` | Non-major npm updates, pnpm included |
+| `update python lock file` | Lock file maintenance of PDM, merged once checks pass |
+| `update javascript lock file` | Lock file maintenance of pnpm |
+
+Python interpreter upgrades wait on the dependency dashboard until someone ticks them.
+Updates under `.github/` only land in Botkit, since bots sync their workflows from it.
+Cooldowns, titles and lock file maintenance come from the shared [`nicebots-xyz/renovate-config`](https://github.com/nicebots-xyz/renovate-config) preset.
 
 | Step | Who |
 |------|-----|
