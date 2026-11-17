@@ -37,9 +37,6 @@ jobs:
       - name: Setup Licensor
         if: ${{ !cancelled() }}
         uses: nicebots-xyz/licensor/.github/actions/setup-licensor@a5893a8a480981ea21cb25cedcb0302616e8b859 # v0.1.2
-        with:
-          # renovate: datasource=github-releases depName=nicebots-xyz/licensor
-          version: v0.1.2
 
       - name: License Header Check
         if: ${{ !cancelled() }}

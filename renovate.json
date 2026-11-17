@@ -18,7 +18,7 @@
       "enabled": false
     },
     {
-      "description": "Repositories built on botkit sync their workflows from it, so updates to anything under .github (actions, the tools they install) only land in botkit.",
+      "description": "Repositories built on botkit sync their workflows from it, so updates under .github only land in botkit.",
       "matchRepositories": [
         "!nicebots-xyz/botkit"
       ],
