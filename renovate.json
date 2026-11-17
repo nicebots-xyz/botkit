@@ -11,13 +11,6 @@
   "rebaseWhen": "conflicted",
   "packageRules": [
     {
-      "description": "Match the PDM dependency cooldown (exclude-newer in pyproject.toml), so Renovate never proposes a PyPI release PDM refuses to lock.",
-      "matchDatasources": [
-        "pypi"
-      ],
-      "minimumReleaseAge": "7 days"
-    },
-    {
       "description": "Ignore the root compose file, which only holds throwaway services for local testing.",
       "matchFileNames": [
         "compose.yaml"
@@ -25,17 +18,17 @@
       "enabled": false
     },
     {
-      "description": "Repositories built on botkit sync their workflows from it, so GitHub Actions updates only land in botkit.",
+      "description": "Repositories built on botkit sync their workflows from it, so updates to anything under .github (actions, the tools they install) only land in botkit.",
       "matchRepositories": [
         "!nicebots-xyz/botkit"
       ],
-      "matchManagers": [
-        "github-actions"
+      "matchFileNames": [
+        ".github/**"
       ],
       "enabled": false
     },
     {
-      "description": "Outside botkit, gather non-major PyPI dependency updates into one weekly pull request to save CI minutes. The title names the packages it upgrades. The Python interpreter is not a PyPI package: requires-python and the Docker image keep their own pull request.",
+      "description": "Outside botkit, gather non-major PyPI dependency updates into one weekly pull request to save CI minutes. The Python interpreter is not a PyPI package and keeps its own pull request.",
       "matchRepositories": [
         "!nicebots-xyz/botkit"
       ],
@@ -51,15 +44,12 @@
       ],
       "groupName": "Python dependencies",
       "groupSlug": "python-non-major",
-      "group": {
-        "commitMessageTopic": "{{{groupName}}} ({{#with (distinct (lookupArray upgrades \"depName\")) as |names|}}{{#each names}}{{#if (or (equals @index 0) (equals @index 1) (equals @index 2) (equals @index 3) (equals @index 4) (equals @index 5))}}{{#if @index}}, {{/if}}{{{this}}}{{/if}}{{/each}}{{#if names.[6]}} and {{add names.length -6}} more{{/if}}{{/with}})"
-      },
       "schedule": [
         "* 0-5 * * 1"
       ]
     },
     {
-      "description": "Outside botkit, gather non-major npm dependency updates into one weekly pull request to save CI minutes. The title names the packages it upgrades.",
+      "description": "Outside botkit, gather non-major npm dependency updates into one weekly pull request to save CI minutes.",
       "matchRepositories": [
         "!nicebots-xyz/botkit"
       ],
@@ -75,36 +65,9 @@
       ],
       "groupName": "JavaScript dependencies",
       "groupSlug": "javascript-non-major",
-      "group": {
-        "commitMessageTopic": "{{{groupName}}} ({{#with (distinct (lookupArray upgrades \"depName\")) as |names|}}{{#each names}}{{#if (or (equals @index 0) (equals @index 1) (equals @index 2) (equals @index 3) (equals @index 4) (equals @index 5))}}{{#if @index}}, {{/if}}{{{this}}}{{/if}}{{/each}}{{#if names.[6]}} and {{add names.length -6}} more{{/if}}{{/with}})"
-      },
       "schedule": [
         "* 0-5 * * 1"
       ]
-    },
-    {
-      "description": "Maintain pdm.lock in its own pull request, so one lock file failing to update never holds back the other.",
-      "matchUpdateTypes": [
-        "lockFileMaintenance"
-      ],
-      "matchManagers": [
-        "pep621"
-      ],
-      "branchTopic": "lock-file-maintenance-pdm",
-      "commitMessageAction": "Update",
-      "commitMessageTopic": "pdm.lock"
-    },
-    {
-      "description": "Maintain pnpm-lock.yaml in its own pull request, so one lock file failing to update never holds back the other.",
-      "matchUpdateTypes": [
-        "lockFileMaintenance"
-      ],
-      "matchManagers": [
-        "npm"
-      ],
-      "branchTopic": "lock-file-maintenance-pnpm",
-      "commitMessageAction": "Update",
-      "commitMessageTopic": "pnpm-lock.yaml"
     }
   ]
 }

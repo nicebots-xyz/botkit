@@ -149,11 +149,12 @@ Outside Botkit, Renovate gathers non-major updates into weekly pull requests to 
 |--------------|-------|
 | `upgrade python dependencies (…)` | Non-major PyPI updates |
 | `upgrade javascript dependencies (…)` | Non-major npm updates, pnpm included |
-| `upgrade python` | The interpreter, in `requires-python` and the Docker image |
-| `update pdm.lock` | Lock file maintenance of PDM, merged once checks pass |
-| `update pnpm-lock.yaml` | Lock file maintenance of pnpm |
+| `update python lock file` | Lock file maintenance of PDM, merged once checks pass |
+| `update javascript lock file` | Lock file maintenance of pnpm |
 
-Titles of grouped pull requests name up to six packages. A pull request that ends up with a single update gets the usual title of that update.
+Python interpreter upgrades wait on the dependency dashboard until someone ticks them.
+Updates under `.github/` only land in Botkit, since bots sync their workflows from it.
+Cooldowns, titles and lock file maintenance come from the shared [`nicebots-xyz/renovate-config`](https://github.com/nicebots-xyz/renovate-config) preset.
 
 | Step | Who |
 |------|-----|
