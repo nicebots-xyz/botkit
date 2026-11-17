@@ -3,6 +3,8 @@
 
 import re
 from collections.abc import Iterator, Mapping
+from dataclasses import dataclass
+from string import Formatter
 from typing import Any, ClassVar, Self, cast, overload, override
 
 from pydantic import BaseModel, RootModel, model_validator
@@ -49,8 +51,67 @@ logger = main_logger.getChild("i18n")
 # Matches `{namespace.key}` placeholders such as `{commands.help}` or `{emojis.check}`.
 PLACEHOLDER = re.compile(r"\{(\w+)\.([\w-]+)\}")
 
+# Namespaces that `i18n.apply()` registers, known before any bot exists so that stubs can be generated offline.
+BUILTIN_NAMESPACES = frozenset({"commands", "emojis"})
+# Separates the root of a replacement field from its attribute or index accesses, e.g. `{user.name}` or `{items[0]}`.
+FIELD_ACCESS = re.compile(r"[.\[]")
+
 GLOBAL_KV: dict[str, Mapping[str, str]] = {}
 _CACHE: dict[tuple[int, str], tuple[object, Any]] = {}
+
+
+@dataclass(frozen=True, slots=True)
+class FormatFields:
+    """The arguments a string expects from ``str.format``.
+
+    Attributes:
+        positional: Number of positional arguments, from ``{}`` or ``{0}`` fields.
+        named: Names of the keyword arguments.
+
+    """
+
+    positional: int = 0
+    named: tuple[str, ...] = ()
+
+    def __bool__(self) -> bool:
+        return bool(self.positional or self.named)
+
+
+def format_fields(text: str, namespaces: frozenset[str] | None = None) -> FormatFields | None:
+    """Find the ``str.format`` arguments of a string, ignoring ``{namespace.key}`` placeholders.
+
+    Args:
+        text: The string to inspect.
+        namespaces: Placeholder namespaces resolved by localization, the builtin and registered ones if None.
+
+    Returns:
+        The arguments, None if the string is not a valid format string.
+
+    """
+    if namespaces is None:
+        namespaces = BUILTIN_NAMESPACES | GLOBAL_KV.keys()
+    positional = 0
+    named: dict[str, None] = {}
+    pending = [text]
+    try:
+        while pending:
+            for _, field, spec, _ in Formatter().parse(pending.pop()):
+                if field is None:
+                    continue
+                root = FIELD_ACCESS.split(field, maxsplit=1)[0]
+                if root in namespaces and root != field:
+                    continue
+                if spec:  # specs can hold nested fields, e.g. `{value:{width}}`
+                    pending.append(spec)
+                if not root:
+                    positional += 1
+                elif root.isdigit():
+                    positional = max(positional, int(root) + 1)
+                else:
+                    named[root] = None
+    except ValueError:
+        return None
+    return FormatFields(positional, tuple(named))
 
 
 def add_global_kv(key: str, values: Mapping[str, str]) -> None:
@@ -123,7 +184,29 @@ class RawTranslation(RootModel[dict[str, str]]):
             raise ValueError(f"Unknown locales {sorted(unknown)}")
         if DEFAULT not in self.root:
             raise ValueError(f"Missing the {DEFAULT} translation")
+        self._check_fields()
         return self
+
+    def _check_fields(self) -> None:
+        """Ensure no locale expects ``str.format`` arguments that the default locale does not.
+
+        Code formats a string with the arguments of its default text, so any other one would fail at runtime.
+
+        Raises:
+            ValueError: If a locale uses a positional or keyword argument the default locale does not.
+
+        """
+        default = format_fields(self.root[DEFAULT])
+        if default is None:
+            return
+        for locale, text in self.root.items():
+            fields = format_fields(text)
+            if fields is None:
+                raise ValueError(f"The {locale} translation is not a valid format string: {text!r}")
+            if extra := [f"{{{name}}}" for name in fields.named if name not in default.named]:
+                raise ValueError(f"The {locale} translation uses {', '.join(extra)}, unknown in {DEFAULT}")
+            if (count := fields.positional) > default.positional:
+                raise ValueError(f"The {locale} translation uses {count} positional fields, more than {DEFAULT}")
 
     @override
     def model_post_init(self, context: Any, /) -> None:

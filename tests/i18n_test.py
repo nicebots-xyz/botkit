@@ -16,10 +16,12 @@ from src import custom
 from src.i18n import classes
 from src.i18n.classes import (
     ExtensionTranslation,
+    FormatFields,
     RawTranslation,
     add_global_kv,
     apply_locale,
     check_placeholders,
+    format_fields,
 )
 from src.i18n.utils import CommandMapping, load_translation
 
@@ -125,6 +127,61 @@ def test_render_stubs() -> None:
     assert "class MyGroupSubCmdCommandStrings(Protocol):\n    @property\n    def done(self) -> str: ..." in stub
     assert "Plain" not in stub
     assert render(ExtensionTranslation()) is None
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("Hello", FormatFields()),
+        ("{{literal}} braces", FormatFields()),
+        ("Pong! {latency}ms, see {commands.help} {emojis.check}", FormatFields(named=("latency",))),
+        ("{user.name} has {count:,} {user[0]}", FormatFields(named=("user", "count"))),
+        ("{} and {}", FormatFields(positional=2)),
+        ("{1} before {0}", FormatFields(positional=2)),
+        ("{value:>{width}}", FormatFields(named=("value", "width"))),
+        ("{commands}", FormatFields(named=("commands",))),
+        ("Unclosed {", None),
+    ],
+)
+def test_format_fields(text: str, expected: FormatFields | None) -> None:
+    assert format_fields(text) == expected
+
+
+def test_raw_translation_rejects_unknown_format_fields() -> None:
+    RawTranslation({"en-US": "Page {current} of {total}", "fr": "Page {current}", "de": "Seite"})
+    with pytest.raises(ValidationError, match=r"fr translation uses \{totl\}, unknown in en-US"):
+        RawTranslation({"en-US": "Page {current} of {total}", "fr": "Page {current} sur {totl}"})
+    with pytest.raises(ValidationError, match="fr translation uses 2 positional fields"):
+        RawTranslation({"en-US": "{} items", "fr": "{} sur {}"})
+    with pytest.raises(ValidationError, match="fr translation is not a valid format string"):
+        RawTranslation({"en-US": "Page {current}", "fr": "Page {current"})
+
+
+def test_render_types_format_arguments() -> None:
+    translation = ExtensionTranslation.model_validate(
+        {
+            "strings": {"page": {"en-US": "Page {current} of {total}, see {commands.help}"}},
+            "commands": {"ping": {"strings": {"pair": {"en-US": "{} and {}"}, "plain": {"en-US": "Pong"}}}},
+        }
+    )
+    stub = render(translation)
+    assert stub is not None
+    assert "# pyright: reportIncompatibleMethodOverride=false" in stub
+    assert "from typing import Protocol, final, override" in stub
+    assert "class ExtensionPage(str):" in stub
+    assert "def format(self, *, current: object, total: object) -> str: ..." in stub
+    assert "def page(self) -> ExtensionPage: ..." in stub
+    assert "def format(self, arg0: object, arg1: object, /) -> str: ..." in stub
+    assert "def pair(self) -> PingCommandPair: ..." in stub
+    assert "def plain(self) -> str: ..." in stub
+
+
+def test_render_rejects_colliding_class_names() -> None:
+    translation = ExtensionTranslation.model_validate(
+        {"strings": {"a_b": {"en-US": "{x}"}, "aB": {"en-US": "{y}"}}},
+    )
+    with pytest.raises(ValueError, match="ExtensionAB"):
+        render(translation)
 
 
 @pytest.mark.parametrize("key", ["my-key", "class", "2fast"])
