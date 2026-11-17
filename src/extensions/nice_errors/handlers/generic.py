@@ -6,8 +6,9 @@ from typing import Any, final, override
 
 import discord
 
-from src import custom
-from src.i18n.classes import RawTranslation, apply_locale
+from src import custom, i18n
+from src.extensions.nice_errors.translation_types import ExtensionStrings
+from src.i18n.classes import RawTranslation
 
 from .base import BaseErrorHandler, ErrorHandlerRType
 
@@ -27,7 +28,7 @@ class GenericErrorHandler(BaseErrorHandler[Exception]):
         message: str,
         report: bool,
     ) -> ErrorHandlerRType:
-        translations = apply_locale(self.translations, self._get_locale(ctx))
+        translations = i18n.typed(i18n.apply_locale(self.translations, self._get_locale(ctx)), ExtensionStrings)
 
         message = translations.error_generic
 

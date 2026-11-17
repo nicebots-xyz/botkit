@@ -24,37 +24,6 @@ if TYPE_CHECKING:
     from types import ModuleType
 
 
-def find_translation_file(extension_path: Path, extension_name: str) -> Path | None:
-    """Find translation file for an extension using centralized path resolution.
-
-    Searches in the following order:
-    1. extension_path/translations.yml
-    2. extension_path/translations.yaml
-    3. src/translations/{extension_name}.yml
-    4. src/translations/{extension_name}.yaml
-
-    Args:
-        extension_path: Path to the extension directory
-        extension_name: Name of the extension
-
-    Returns:
-        Path to the translation file if found, None otherwise
-
-    """
-    candidates = [
-        extension_path / "translations.yml",
-        extension_path / "translations.yaml",
-        Path(__file__).parent.parent / "translations" / f"{extension_name}.yml",
-        Path(__file__).parent.parent / "translations" / f"{extension_name}.yaml",
-    ]
-
-    for candidate in candidates:
-        if candidate.exists():
-            return candidate
-
-    return None
-
-
 def load_extensions() -> tuple[
     SetupFunctionList,
     WebserverFunctionList,
@@ -109,10 +78,10 @@ def load_extensions() -> tuple[
         logger.info(f"Loading extension {name}")
 
         # Load translations if available
-        translation_path = find_translation_file(extension_path, name)
+        translation_path = i18n.find_translation_file(extension_path, name)
         if translation_path is not None:
             try:
-                translation = i18n.load_translation(str(translation_path))
+                translation = i18n.load_translation(translation_path)
                 translations.append(translation)
 
                 # Store translation for later use
@@ -141,4 +110,4 @@ def load_extensions() -> tuple[
     return bot_functions, back_functions, startup_functions, translations
 
 
-__all__ = ["find_translation_file", "load_extensions"]
+__all__ = ["load_extensions"]

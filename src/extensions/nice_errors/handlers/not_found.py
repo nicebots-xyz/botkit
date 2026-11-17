@@ -9,8 +9,9 @@ from typing import Any, final, override
 import discord
 from discord.ext import bridge, commands
 
-from src import custom
-from src.i18n.classes import RawTranslation, apply_locale
+from src import custom, i18n
+from src.extensions.nice_errors.translation_types import ExtensionStrings
+from src.i18n.classes import RawTranslation
 
 from .base import BaseErrorHandler, ErrorHandlerRType
 
@@ -78,7 +79,7 @@ class NotFoundErrorHandler(BaseErrorHandler[commands.CommandNotFound]):
     ) -> ErrorHandlerRType:
         if not isinstance(ctx, custom.ExtContext):
             return False, report, message, sendargs
-        translations = apply_locale(self.translations, self._get_locale(ctx))
+        translations = i18n.typed(i18n.apply_locale(self.translations, self._get_locale(ctx)), ExtensionStrings)
         if similar_command := find_similar_command(ctx):
             message = translations.error_command_not_found.format(similar_command=similar_command.name)
             view = discord.ui.View(

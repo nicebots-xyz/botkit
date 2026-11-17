@@ -39,6 +39,7 @@ typecheck = "basedpyright ."
 start = "python src"
 check-listings = {call = "scripts:check_listings.main"}
 convert-config = { call = "scripts.convert_config:main" }
+i18n-stubs = { call = "scripts.i18n_stubs:main" }
 "docs:build" = "zensical build --clean"
 "docs:dev" = "zensical serve"
 "docs:preview" = "python -m http.server 8000 -d site"

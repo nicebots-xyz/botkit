@@ -9,13 +9,11 @@ import discord
 from discord.ext import commands
 from discord.ui import ActionRow, Button, Container, DesignerView, Select, TextDisplay
 
-from src import custom
-from src.extensions.help.pages.classes import (
-    HelpCategoryTranslation,
-)
-from src.i18n.classes import RawTranslation, TranslationWrapper, apply_locale
+from src import custom, i18n
+from src.i18n.classes import RawTranslation, Strings
 
 from .pages import help_translation
+from .translation_types import ExtensionStrings
 
 
 def get_gradient_color(shade_index: int, color_index: int, max_shade: int = 50, max_color: int = 10) -> int:
@@ -89,7 +87,7 @@ class HelpView(DesignerView):
     def __init__(
         self,
         categories_data: dict[str, list[dict]],  # pyright: ignore[reportMissingTypeArgument]
-        ui_translations: TranslationWrapper[dict[str, RawTranslation]],
+        ui_translations: ExtensionStrings,
         bot: custom.Bot,
     ) -> None:
         super().__init__(timeout=180)
@@ -250,8 +248,8 @@ class HelpView(DesignerView):
 
 
 def get_categories_data(
-    ui_translations: TranslationWrapper[dict[str, RawTranslation]],  # noqa: ARG001
-    categories: dict[str, TranslationWrapper[HelpCategoryTranslation]],
+    ui_translations: ExtensionStrings,  # noqa: ARG001
+    categories: list[Strings],
     bot: custom.Bot,  # noqa: ARG001
 ) -> dict[str, list[dict[str, Any]]]:
     """Generate category data for the help view.
@@ -297,7 +295,7 @@ class Help(commands.Cog):
         data: defaultdict[str, dict[str, list[dict]]] = defaultdict(dict)  # pyright: ignore[reportMissingTypeArgument]
         for locale in self.locales:
             t = help_translation.get_for_locale(locale)
-            ui = apply_locale(self.ui_translations, locale)
+            ui = i18n.typed(i18n.apply_locale(self.ui_translations, locale), ExtensionStrings)
             data[locale] = get_categories_data(ui, t.categories, self.bot)
         return dict(data)
 
@@ -314,7 +312,7 @@ class Help(commands.Cog):
         """Display help information using the new UI components."""
         help_view = HelpView(
             categories_data=self.categories_data.get(ctx.locale or "") or self.categories_data["en-US"],
-            ui_translations=apply_locale(self.ui_translations, ctx.locale),
+            ui_translations=i18n.typed(i18n.apply_locale(self.ui_translations, ctx.locale), ExtensionStrings),
             bot=self.bot,
         )
         await ctx.respond(view=help_view, ephemeral=True)
