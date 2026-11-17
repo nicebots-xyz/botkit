@@ -93,7 +93,6 @@ Discord command and health route (pattern from the bundled **ping** extension):
 
 ```python
 import discord
-from discord.ext import commands
 from fastapi import FastAPI
 
 from src import custom
