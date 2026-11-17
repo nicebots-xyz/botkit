@@ -102,7 +102,7 @@ from src.log import logger
 default = {"enabled": True}
 
 
-class Ping(commands.Cog):
+class Ping(discord.Cog):
     def __init__(self, bot: custom.Bot) -> None:
         self.bot = bot
 
