@@ -101,9 +101,6 @@ bot:
   public_key: null
   slash:
     enabled: true
-  prefix:
-    prefix: "!"
-    enabled: false
   cache:
     type: memory
     redis:
@@ -129,24 +126,6 @@ Required. From the [Discord Developer Portal](https://discord.com/developers/app
 | Key | Default | Effect |
 |-----|---------|--------|
 | `enabled` | `false` | Set `true` to register slash commands |
-
-Match **`config.example.yaml`** unless you intentionally want prefix-only commands.
-
-### `bot.prefix`
-
-Prefix / bridge commands. Shorthand or object:
-
-```yaml
-bot:
-  prefix: "!"
-# or
-bot:
-  prefix:
-    prefix: "!"
-    enabled: true
-```
-
-Default: prefix **`!`**, **disabled**. When disabled, prefix commands are off and the bot does not request **`message_content`** intent.
 
 ### `bot.cache`
 

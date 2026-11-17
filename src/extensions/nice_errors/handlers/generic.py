@@ -23,7 +23,7 @@ class GenericErrorHandler(BaseErrorHandler[Exception]):
     async def __call__(
         self,
         error: Exception,
-        ctx: custom.Context | discord.Interaction,
+        ctx: custom.ApplicationContext | discord.Interaction,
         sendargs: dict[str, Any],
         message: str,
         report: bool,

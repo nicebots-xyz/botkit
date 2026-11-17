@@ -11,7 +11,7 @@ from src import custom
 from src.database.models import Guild, User
 
 
-async def _preload_user(ctx: custom.Context, prefetch_related: Sequence[str]) -> Literal[True]:
+async def _preload_user(ctx: custom.ApplicationContext, prefetch_related: Sequence[str]) -> Literal[True]:
     """Preload the user object into the context object.
 
     Args:
@@ -24,16 +24,11 @@ async def _preload_user(ctx: custom.Context, prefetch_related: Sequence[str]) ->
         bool: (True) always.
 
     """
-    if isinstance(ctx, custom.ExtContext):
-        ctx.user_obj = (
-            await User.get_or_none(id=ctx.author.id).prefetch_related(*prefetch_related) if ctx.author else None
-        )
-    else:
-        ctx.user_obj = await User.get_or_none(id=ctx.user.id).prefetch_related(*prefetch_related) if ctx.user else None
+    ctx.user_obj = await User.get_or_none(id=ctx.user.id).prefetch_related(*prefetch_related) if ctx.user else None
     return True
 
 
-async def _preload_guild(ctx: custom.Context, prefetch_related: Sequence[str]) -> Literal[True]:
+async def _preload_guild(ctx: custom.ApplicationContext, prefetch_related: Sequence[str]) -> Literal[True]:
     """Preload the guild object into the context object.
 
     Args:
@@ -50,7 +45,7 @@ async def _preload_guild(ctx: custom.Context, prefetch_related: Sequence[str]) -
     return True
 
 
-async def _preload_or_create_user(ctx: custom.Context, prefetch_related: Sequence[str]) -> Literal[True]:
+async def _preload_or_create_user(ctx: custom.ApplicationContext, prefetch_related: Sequence[str]) -> Literal[True]:
     """Preload or create the user object into the context object. If the user object does not exist, create it.
 
     Args:
@@ -71,7 +66,7 @@ async def _preload_or_create_user(ctx: custom.Context, prefetch_related: Sequenc
     return True
 
 
-async def _preload_or_create_guild(ctx: custom.Context, prefetch_related: Sequence[str]) -> Literal[True]:
+async def _preload_or_create_guild(ctx: custom.ApplicationContext, prefetch_related: Sequence[str]) -> Literal[True]:
     """Preload or create the guild object into the context object. If the guild object does not exist, create it.
 
     Args:
@@ -93,7 +88,7 @@ async def _preload_or_create_guild(ctx: custom.Context, prefetch_related: Sequen
 
 
 class PreloadFunction(Protocol):
-    async def __call__(self, ctx: custom.Context, prefetch_related: Sequence[str]) -> Literal[True]: ...
+    async def __call__(self, ctx: custom.ApplicationContext, prefetch_related: Sequence[str]) -> Literal[True]: ...
 
 
 @overload

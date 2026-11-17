@@ -6,8 +6,8 @@ from types import SimpleNamespace
 from typing import Any, cast
 
 import aiocache
+import discord
 import pytest
-from discord.ext import commands
 
 from src import custom
 from src.utils.cooldown import BucketType, CooldownExceeded, cooldown
@@ -18,20 +18,20 @@ def _target_key(kwargs: dict[str, Any]) -> str | None:  # pyright: ignore[report
     return None if target is None else str(target)
 
 
-class _Cog(commands.Cog):
+class _Cog(discord.Cog):
     def __init__(self) -> None:
         self.calls: int = 0
         super().__init__()
 
     @cooldown("pair", limit=1, per=60, bucket_type=BucketType.USER, extra_key=_target_key)
-    async def pair(self, ctx: custom.Context, *, target: int | None = None) -> None:  # noqa: ARG002
+    async def pair(self, ctx: custom.ApplicationContext, *, target: int | None = None) -> None:  # noqa: ARG002
         self.calls += 1
 
 
-def _ctx(author_id: int) -> custom.Context:
+def _ctx(author_id: int) -> custom.ApplicationContext:
     bot = SimpleNamespace(botkit_cache=aiocache.SimpleMemoryCache())
     ctx = SimpleNamespace(bot=bot, author=SimpleNamespace(id=author_id), guild=None, channel=None)
-    return cast("custom.Context", cast("object", ctx))
+    return cast("custom.ApplicationContext", cast("object", ctx))
 
 
 def test_extra_key_scopes_cooldown_per_pair() -> None:

@@ -2,7 +2,7 @@
 # Copyright: 2024-2026 NiceBots.xyz
 
 
-from typing import Annotated, Literal, overload, override
+from typing import Annotated, Literal, overload
 
 from pydantic import BaseModel, Discriminator, Tag
 
@@ -20,18 +20,6 @@ class RedisConfig(BaseModel):
 class CacheConfig(BaseModel):
     type: Literal["memory", "redis"] = "memory"
     redis: RedisConfig | None = None
-
-
-class PrefixConfig(BaseModel):
-    prefix: str
-    enabled: bool = True
-
-    def __bool__(self) -> bool:
-        return self.enabled
-
-    @override
-    def __str__(self) -> str:
-        return self.prefix if self.enabled else ""
 
 
 class SlashConfig(BaseModel):
@@ -54,7 +42,6 @@ class RestConfig(BaseModel):
 class BotConfig(BaseModel):
     token: str
     public_key: str | None = None
-    prefix: PrefixConfig | str = PrefixConfig(prefix="!", enabled=False)
     slash: SlashConfig = SlashConfig(enabled=False)
     cache: CacheConfig = CacheConfig()
     rest: RestConfig = RestConfig()

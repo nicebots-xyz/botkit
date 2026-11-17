@@ -6,7 +6,7 @@ import random
 from typing import final, override
 
 import discord
-from discord.ext import commands, tasks
+from discord.ext import tasks
 from typing_extensions import TypedDict
 
 from src.log import logger
@@ -58,7 +58,7 @@ class Branding(discord.Cog):
 
             self.update_status_loop = update_status_loop
 
-    @commands.Cog.listener()  # pyright: ignore[reportUntypedFunctionDecorator]
+    @discord.Cog.listener()  # pyright: ignore[reportUntypedFunctionDecorator]
     async def on_ready(self) -> None:
         if self.config.get("status"):
             self.update_status_loop.start()

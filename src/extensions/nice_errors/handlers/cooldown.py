@@ -24,7 +24,7 @@ class CooldownErrorHandler(BaseErrorHandler[CooldownExceeded]):
     async def __call__(
         self,
         error: CooldownExceeded,
-        ctx: custom.Context | discord.Interaction,
+        ctx: custom.ApplicationContext | discord.Interaction,
         sendargs: dict[str, Any],
         message: str,
         report: bool,

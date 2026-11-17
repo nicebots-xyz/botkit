@@ -5,7 +5,6 @@ from typing import Any, Never, final
 
 import discord
 import sentry_sdk
-from discord.ext import commands
 
 from src import custom
 from src.log import logger as base_logger
@@ -24,7 +23,7 @@ logger = base_logger.getChild("nice_errors")
 
 
 @final
-class NiceErrors(commands.Cog):
+class NiceErrors(discord.Cog):
     def __init__(self, bot: custom.Bot, sentry_sdk: bool, config: dict[str, Any]) -> None:
         self.bot = bot
         self.sentry_sdk = sentry_sdk
@@ -49,15 +48,6 @@ class NiceErrors(commands.Cog):
         ctx: custom.ApplicationContext,
         error: discord.ApplicationCommandInvokeError,
     ) -> None:
-        await error_handler.handle_error(
-            error,
-            ctx,
-            raw_translations=self.config["translations"],
-            use_sentry_sdk=self.sentry_sdk,
-        )
-
-    @discord.Cog.listener("on_command_error")
-    async def on_command_error(self, ctx: custom.ExtContext, error: commands.CommandError) -> None:
         await error_handler.handle_error(
             error,
             ctx,

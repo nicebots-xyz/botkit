@@ -7,8 +7,6 @@ from typing import Any, override
 
 import discord
 import yaml
-from discord.ext import bridge
-from discord.ext import commands as prefixed
 
 from src.log import logger as main_logger
 
@@ -32,14 +30,14 @@ def _walk(commands: Iterable[AppCommand]) -> Iterator[AppCommand]:
 
 
 class CommandMapping(Mapping[str, str]):
-    def __init__(self, bot: bridge.Bot) -> None:
+    def __init__(self, bot: discord.Bot) -> None:
         """Map ``{commands.x}`` placeholders to the bot's application commands.
 
         Args:
             bot: Bot whose pending application commands are mapped.
 
         """
-        self.bot: bridge.Bot = bot
+        self.bot: discord.Bot = bot
 
     def _commands(self) -> dict[str, AppCommand]:
         pending: list[AppCommand] = self.bot.pending_application_commands  # pyright: ignore[reportUnknownVariableType]
@@ -81,14 +79,14 @@ class CommandMapping(Mapping[str, str]):
 
 
 class EmojiMapping(Mapping[str, str]):
-    def __init__(self, bot: bridge.Bot) -> None:
+    def __init__(self, bot: discord.Bot) -> None:
         """Map ``{emojis.x}`` placeholders to the bot's application emojis.
 
         Args:
             bot: Bot whose cached application emojis are mapped.
 
         """
-        self.bot: bridge.Bot = bot
+        self.bot: discord.Bot = bot
 
     def _emojis(self) -> dict[str, str]:
         return {emoji.name: emoji.mention for emoji in self.bot.app_emojis}
@@ -142,7 +140,6 @@ def localize_commands[  # noqa: PLR0912
         discord.ApplicationCommand,  # pyright: ignore[reportMissingTypeArgument]
         discord.SlashCommand,
         discord.SlashCommandGroup,
-        prefixed.Command,  # pyright: ignore[reportMissingTypeArgument]
         discord.MessageCommand,
         discord.UserCommand,
     )
@@ -173,11 +170,7 @@ def localize_commands[  # noqa: PLR0912
     for command in commands:
         if isinstance(
             command,
-            discord.SlashCommand
-            | discord.SlashCommandGroup
-            | prefixed.Command
-            | discord.MessageCommand
-            | discord.UserCommand,
+            discord.SlashCommand | discord.SlashCommandGroup | discord.MessageCommand | discord.UserCommand,
         ):
             tot += 1
             try:
@@ -196,13 +189,11 @@ def localize_commands[  # noqa: PLR0912
                 if translation.name:
                     name = translation.name.root
                     command.name = name.get(default_locale, command.name)
-                    if not isinstance(command, prefixed.Command):
-                        command.name_localizations = name
+                    command.name_localizations = name
                 if translation.description:
                     description = translation.description.root
                     command.description = description.get(default_locale, command.description)
-                    if not isinstance(command, prefixed.Command):
-                        command.description_localizations = description  # pyright: ignore [reportAttributeAccessIssue]
+                    command.description_localizations = description  # pyright: ignore [reportAttributeAccessIssue]
                 if translation.strings:
                     command.translations = translation.strings  # pyright: ignore[reportAttributeAccessIssue]
                 if isinstance(command, discord.SlashCommand) and translation.options:
@@ -292,7 +283,7 @@ def load_translation(path: str | Path) -> ExtensionTranslation:
 
 
 def apply(
-    bot: bridge.Bot,
+    bot: discord.Bot,
     translations: list[ExtensionTranslation],
     default_locale: str = "en-US",
 ) -> None:
@@ -318,7 +309,7 @@ def apply(
         return
 
     err, tot = localize_commands(
-        [*bot.pending_application_commands, *bot.commands],  # pyright: ignore[reportUnknownArgumentType]
+        bot.pending_application_commands,  # pyright: ignore[reportUnknownArgumentType]
         command_translations,
         default_locale,
     )

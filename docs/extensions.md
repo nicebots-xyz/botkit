@@ -64,12 +64,11 @@ __all__ = ["default", "setup"]
 ```python
 # main.py
 import discord
-from discord.ext import commands
 
 from src import custom
 
 
-class HelloCog(commands.Cog):
+class HelloCog(discord.Cog):
     def __init__(self, bot: custom.Bot) -> None:
         self.bot = bot
 

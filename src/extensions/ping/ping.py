@@ -3,7 +3,6 @@
 
 import aiohttp
 import discord
-from discord.ext import commands
 from fastapi import FastAPI
 
 from src import custom
@@ -17,7 +16,7 @@ default = {
 }
 
 
-class Ping(commands.Cog):
+class Ping(discord.Cog):
     def __init__(self, bot: custom.Bot) -> None:
         self.bot: custom.Bot = bot
         super().__init__()

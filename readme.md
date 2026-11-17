@@ -5,7 +5,7 @@ Copyright: 2024-2026 NiceBots.xyz
 
 # Botkit
 
-Botkit is a **Python 3.12** layout and runtime for **Discord** bots using **[py-cord](https://github.com/Pycord-Development/pycord)** (bridge bot, optional prefix commands), optional **FastAPI** + Uvicorn, YAML configuration with **`BOTKIT__`** environment overrides, per-extension **i18n**, optional **Tortoise ORM**, and a first-party **extension** model under `src/extensions/`.
+Botkit is a **Python 3.12** layout and runtime for **Discord** bots using **[py-cord](https://github.com/Pycord-Development/pycord)** (application commands), optional **FastAPI** + Uvicorn, YAML configuration with **`BOTKIT__`** environment overrides, per-extension **i18n**, optional **Tortoise ORM**, and a first-party **extension** model under `src/extensions/`.
 
 It is a **framework and template**, not a single finished bot product.
 

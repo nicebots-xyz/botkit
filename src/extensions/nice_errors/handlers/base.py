@@ -16,16 +16,8 @@ from src.i18n.classes import RawTranslation
 logger = logging.getLogger("bot").getChild("nice_errors").getChild("handlers")
 
 
-def _get_locale(ctx: custom.Context | discord.Interaction) -> str | None:
-    locale: str | None = None
-    if isinstance(ctx, custom.ApplicationContext):
-        locale = ctx.locale or ctx.guild_locale
-    elif isinstance(ctx, custom.ExtContext):
-        if ctx.guild:
-            locale = ctx.guild.preferred_locale
-    elif isinstance(ctx, discord.Interaction):  # pyright: ignore[reportUnnecessaryIsInstance]
-        locale = ctx.locale or ctx.guild_locale
-    return locale
+def _get_locale(ctx: custom.ApplicationContext | discord.Interaction) -> str | None:
+    return ctx.locale or ctx.guild_locale
 
 
 class BaseErrorHandler[E: Exception](ABC):
@@ -36,14 +28,14 @@ class BaseErrorHandler[E: Exception](ABC):
     async def __call__(
         self,
         error: E,
-        ctx: custom.Context | discord.Interaction,
+        ctx: custom.ApplicationContext | discord.Interaction,
         sendargs: dict[str, Any],
         message: str,
         report: bool,
     ) -> "ErrorHandlerRType": ...
 
     @staticmethod
-    def _get_locale(ctx: custom.Context | discord.Interaction) -> str | None:
+    def _get_locale(ctx: custom.ApplicationContext | discord.Interaction) -> str | None:
         return _get_locale(ctx)
 
 
@@ -72,7 +64,7 @@ class ErrorHandlerManager:
     async def handle_error(
         self,
         error: Exception | discord.ApplicationCommandInvokeError,
-        ctx: discord.Interaction | custom.Context,
+        ctx: discord.Interaction | custom.ApplicationContext,
         /,
         raw_translations: dict[str, RawTranslation],
         use_sentry_sdk: bool = False,
