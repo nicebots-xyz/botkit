@@ -35,9 +35,12 @@
       "enabled": false
     },
     {
-      "description": "Outside botkit, gather non-major updates into a single weekly pull request to save CI minutes.",
+      "description": "Outside botkit, gather non-major PyPI dependency updates into one weekly pull request to save CI minutes. The title names the packages it upgrades. The Python interpreter is not a PyPI package: requires-python and the Docker image keep their own pull request.",
       "matchRepositories": [
         "!nicebots-xyz/botkit"
+      ],
+      "matchDatasources": [
+        "pypi"
       ],
       "matchUpdateTypes": [
         "minor",
@@ -46,11 +49,62 @@
         "pinDigest",
         "digest"
       ],
-      "groupName": "non-major dependencies",
-      "groupSlug": "non-major",
+      "groupName": "Python dependencies",
+      "groupSlug": "python-non-major",
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} ({{#with (distinct (lookupArray upgrades \"depName\")) as |names|}}{{#each names}}{{#if (or (equals @index 0) (equals @index 1) (equals @index 2) (equals @index 3) (equals @index 4) (equals @index 5))}}{{#if @index}}, {{/if}}{{{this}}}{{/if}}{{/each}}{{#if names.[6]}} and {{add names.length -6}} more{{/if}}{{/with}})"
+      },
       "schedule": [
         "* 0-5 * * 1"
       ]
+    },
+    {
+      "description": "Outside botkit, gather non-major npm dependency updates into one weekly pull request to save CI minutes. The title names the packages it upgrades.",
+      "matchRepositories": [
+        "!nicebots-xyz/botkit"
+      ],
+      "matchDatasources": [
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "pinDigest",
+        "digest"
+      ],
+      "groupName": "JavaScript dependencies",
+      "groupSlug": "javascript-non-major",
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} ({{#with (distinct (lookupArray upgrades \"depName\")) as |names|}}{{#each names}}{{#if (or (equals @index 0) (equals @index 1) (equals @index 2) (equals @index 3) (equals @index 4) (equals @index 5))}}{{#if @index}}, {{/if}}{{{this}}}{{/if}}{{/each}}{{#if names.[6]}} and {{add names.length -6}} more{{/if}}{{/with}})"
+      },
+      "schedule": [
+        "* 0-5 * * 1"
+      ]
+    },
+    {
+      "description": "Maintain pdm.lock in its own pull request, so one lock file failing to update never holds back the other.",
+      "matchUpdateTypes": [
+        "lockFileMaintenance"
+      ],
+      "matchManagers": [
+        "pep621"
+      ],
+      "branchTopic": "lock-file-maintenance-pdm",
+      "commitMessageAction": "Update",
+      "commitMessageTopic": "pdm.lock"
+    },
+    {
+      "description": "Maintain pnpm-lock.yaml in its own pull request, so one lock file failing to update never holds back the other.",
+      "matchUpdateTypes": [
+        "lockFileMaintenance"
+      ],
+      "matchManagers": [
+        "npm"
+      ],
+      "branchTopic": "lock-file-maintenance-pnpm",
+      "commitMessageAction": "Update",
+      "commitMessageTopic": "pnpm-lock.yaml"
     }
   ]
 }
