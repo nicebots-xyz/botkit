@@ -11,14 +11,6 @@ strings:
     it: Ops! Quel comando non esiste. Intendevi `{similar_command}`?
     es-ES: ¡Ups! Ese comando no existe. ¿Quisiste decir `{similar_command}`?
     ru: Упс! Такой команды не существует. Возможно, вы имели в виду `{similar_command}`?
-  run_x_instead:
-    en-US: Run "{command}" instead.
-    de: Führe stattdessen "{command}" aus.
-    nl: Voer in plaats daarvan "{command}" uit.
-    fr: Exécutez "{command}" à la place.
-    it: Esegui "{command}" invece.
-    es-ES: Ejecuta "{command}" en su lugar.
-    ru: Выполните "{command}" вместо этого.
   error_missing_permissions:
     en-US: Whoops! I don't have the required permission to do that.
     de: Hoppla! Ich habe nicht die erforderliche Berechtigung dafür.

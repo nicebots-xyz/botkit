@@ -2,7 +2,6 @@
 # Copyright: 2024-2026 NiceBots.xyz
 
 
-import contextlib
 import difflib
 from typing import Any, final, override
 
@@ -38,30 +37,6 @@ def find_similar_command(
     return None
 
 
-class RunInsteadButton(discord.ui.Button[discord.ui.View]):
-    def __init__(
-        self,
-        label: str,
-        *,
-        ctx: custom.ExtContext,
-        instead: bridge.BridgeExtCommand | commands.Command[Any, Any, Any],
-    ) -> None:
-        self.ctx: custom.ExtContext = ctx
-        self.instead: bridge.BridgeExtCommand | commands.Command[Any, Any, Any] = instead
-        super().__init__(style=discord.ButtonStyle.green, label=label)
-
-    @override
-    async def callback(self, interaction: discord.Interaction) -> None:
-        if not interaction.user or not self.ctx.author or interaction.user.id != self.ctx.author.id:
-            await interaction.respond(":x: Nope", ephemeral=True)
-            return
-        await self.instead.invoke(self.ctx)
-        await interaction.response.defer()
-        if interaction.message:
-            with contextlib.suppress(discord.HTTPException):
-                await interaction.message.delete()
-
-
 @final
 class NotFoundErrorHandler(BaseErrorHandler[commands.CommandNotFound]):
     def __init__(self, translations: dict[str, RawTranslation]) -> None:
@@ -82,15 +57,5 @@ class NotFoundErrorHandler(BaseErrorHandler[commands.CommandNotFound]):
         translations = i18n.typed(i18n.apply_locale(self.translations, self._get_locale(ctx)), ExtensionStrings)
         if similar_command := find_similar_command(ctx):
             message = translations.error_command_not_found.format(similar_command=similar_command.name)
-            view = discord.ui.View(
-                RunInsteadButton(
-                    translations.run_x_instead.format(command=similar_command.name),
-                    ctx=ctx,
-                    instead=similar_command,
-                ),
-                disable_on_timeout=True,
-                timeout=60,  # 1 minute
-            )
-            sendargs["view"] = view
             return False, False, message, sendargs
         return True, False, message, sendargs

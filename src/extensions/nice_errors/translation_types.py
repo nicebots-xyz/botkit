@@ -15,20 +15,9 @@ class ExtensionErrorCommandNotFound(str):
     def format(self, *, similar_command: object) -> str: ...
 
 
-@final
-class ExtensionRunXInstead(str):
-    __slots__ = ()
-
-    @override
-    def format(self, *, command: object) -> str: ...
-
-
 class ExtensionStrings(Protocol):
     @property
     def error_command_not_found(self) -> ExtensionErrorCommandNotFound: ...
-
-    @property
-    def run_x_instead(self) -> ExtensionRunXInstead: ...
 
     @property
     def error_missing_permissions(self) -> str: ...
