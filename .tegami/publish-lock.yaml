@@ -1,45 +1,33 @@
 core:changelogs:
-  - content: "---\npackages:\n  botkit:\n    type: minor\n---\n\n### Per connection database SSL\n\nEach `db.extra_apps` entry can set `params.ssl` to enable or disable verified TLS for its own connection. Entries without it keep following the top-level `db.params.ssl`.\n"
-    filename: 2026-10-30-per-connection-ssl.md
+  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Spend fewer CI minutes on pull requests\n"
+    filename: 2026-11-13-cheaper-ci.md
     v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Replace autofix.ci with NiceBots Autofixer\n"
-    filename: 2026-11-12-drop-autofix-ci.md
+  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Tests run without a database\n\nTests turn the database off, and a disabled database no longer loads an SSL certificate.\n"
+    filename: 2026-11-14-ci-submodules-and-tests.md
     v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Weekly cleanup of old container images\n"
-    filename: 2026-11-12-ghcr-cleanup.md
+  - content: "---\npackages:\n  botkit:\n    type: minor\n---\n\n### Faster, validated and typed translations\n\nTranslations are localized once per locale and cached, with `{commands.x}` and `{emojis.x}` filled in at that point instead of on every access. The bot refuses to start when one of these placeholders references a command or app emoji that does not exist.\n\n`pdm run i18n-stubs` generates a `translation_types.py` protocol module per extension, and CI checks that it is up to date. Annotating a slash command with `custom.ApplicationContext[PingCommandStrings]` types `ctx.translations`, and `i18n.typed` types other localized views. Strings with format fields are typed with a `format` method that only accepts those fields, and a locale using a field its `en-US` text lacks fails to load.\n\nA translation can be a `translations/` folder whose files and subfolders become nested keys.\n\nEvery string must now include `en-US`, and locales Discord does not support fail to load. `TranslationWrapper` is replaced by `Strings`, and `/ping` in the example \"ping\" extension is now exclusive a slash command.\n"
+    filename: 2026-11-16-i18n-refactor.md
     v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Remove certifi cooldown bypass\n"
-    filename: 2026-11-12-remove-certifi-cooldown-bypass.md
+  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Translation stubs for context menu commands\n\n`pdm run i18n-stubs` no longer fails on commands whose names contain spaces or punctuation, such as the context menu command `Extract text (OCR)`, whose strings are typed by `ExtractTextOCRCommandStrings`.\n"
+    filename: 2026-11-17-i18n-stubs-context-menus.md
     v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: minor\n---\n\n### S3 storages for database models\n\n`db.s3` and `db.extra_apps.<app>.s3` configure S3-compatible storages for `S3Field` columns from `tortoise-extensions`, with SSL toggled per storage. Setting `type: memory` or `type: local` swaps a storage for an in-memory or on-disk one for tests and local development. Extra apps without `s3` follow the top-level `db.s3`.\n"
-    filename: 2026-11-12-s3-storages.md
+  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Remove the command not found handler\n\nThe `nice_errors` extension no longer handles `CommandNotFound` for prefix commands. The closest command suggestion and its \"Run x instead\" button are removed, along with the `error_command_not_found` and `run_x_instead` translations.\n"
+    filename: 2026-11-17-remove-command-not-found.md
     v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Upgrade amannn/action-semantic-pull-request action to v6.1.2\n"
-    filename: renovate-amannn-action-semantic-pull-request-6.x.md
+  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Separate Renovate pull requests per ecosystem\n\nNon-major updates are grouped per ecosystem, with Python and JavaScript dependencies in separate weekly pull requests, and Python interpreter upgrades leave the group, so a failing interpreter bump no longer blocks every other update. Changelog entries of dependency updates list every package with both versions. Cooldowns, titles and lock file maintenance now come from the shared Renovate preset, and the quality checks install the licensor release of the pinned setup-licensor action.\n"
+    filename: 2026-11-17-split-renovate-groups.md
     v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Upgrade docker/login-action action to v4.8.0\n"
-    filename: renovate-docker-login-action-4.x.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Upgrade nicebots-xyz/licensor action to v0.1.2\n"
-    filename: renovate-nicebots-xyz-licensor-0.x.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Upgrade pnpm to v12.18.0\n"
+  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Upgrade pnpm to v12.20.0\n"
     filename: renovate-pnpm-12.x.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Upgrade pnpm/action-setup action to v6.1.1\n"
-    filename: renovate-pnpm-action-setup-6.x.md
     v: 0.0.0
 core:packages:
   - changelogIds:
-      - 2026-10-30-per-connection-ssl.md
-      - 2026-11-12-drop-autofix-ci.md
-      - 2026-11-12-ghcr-cleanup.md
-      - 2026-11-12-remove-certifi-cooldown-bypass.md
-      - 2026-11-12-s3-storages.md
-      - renovate-amannn-action-semantic-pull-request-6.x.md
-      - renovate-docker-login-action-4.x.md
-      - renovate-nicebots-xyz-licensor-0.x.md
+      - 2026-11-13-cheaper-ci.md
+      - 2026-11-14-ci-submodules-and-tests.md
+      - 2026-11-16-i18n-refactor.md
+      - 2026-11-17-i18n-stubs-context-menus.md
+      - 2026-11-17-remove-command-not-found.md
+      - 2026-11-17-split-renovate-groups.md
       - renovate-pnpm-12.x.md
-      - renovate-pnpm-action-setup-6.x.md
     id: release:botkit
     updated: true

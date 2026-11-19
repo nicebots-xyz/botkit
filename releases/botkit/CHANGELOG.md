@@ -1,3 +1,37 @@
+## botkit@0.4.0
+
+### Spend fewer CI minutes on pull requests
+
+
+
+### Tests run without a database
+
+Tests turn the database off, and a disabled database no longer loads an SSL certificate.
+
+### Faster, validated and typed translations
+
+Translations are localized once per locale and cached, with `{commands.x}` and `{emojis.x}` filled in at that point instead of on every access. The bot refuses to start when one of these placeholders references a command or app emoji that does not exist.
+
+`pdm run i18n-stubs` generates a `translation_types.py` protocol module per extension, and CI checks that it is up to date. Annotating a slash command with `custom.ApplicationContext[PingCommandStrings]` types `ctx.translations`, and `i18n.typed` types other localized views. Strings with format fields are typed with a `format` method that only accepts those fields, and a locale using a field its `en-US` text lacks fails to load.
+
+A translation can be a `translations/` folder whose files and subfolders become nested keys.
+
+Every string must now include `en-US`, and locales Discord does not support fail to load. `TranslationWrapper` is replaced by `Strings`, and `/ping` in the example "ping" extension is now exclusive a slash command.
+
+### Translation stubs for context menu commands
+
+`pdm run i18n-stubs` no longer fails on commands whose names contain spaces or punctuation, such as the context menu command `Extract text (OCR)`, whose strings are typed by `ExtractTextOCRCommandStrings`.
+
+### Remove the command not found handler
+
+The `nice_errors` extension no longer handles `CommandNotFound` for prefix commands. The closest command suggestion and its "Run x instead" button are removed, along with the `error_command_not_found` and `run_x_instead` translations.
+
+### Separate Renovate pull requests per ecosystem
+
+Non-major updates are grouped per ecosystem, with Python and JavaScript dependencies in separate weekly pull requests, and Python interpreter upgrades leave the group, so a failing interpreter bump no longer blocks every other update. Changelog entries of dependency updates list every package with both versions. Cooldowns, titles and lock file maintenance now come from the shared Renovate preset, and the quality checks install the licensor release of the pinned setup-licensor action.
+
+### Upgrade pnpm to v12.20.0
+
 ## botkit@0.3.0
 
 ### Per connection database SSL
