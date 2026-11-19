@@ -3,4 +3,4 @@ packages:
   botkit: patch
 ---
 
-### Upgrade pnpm to v12.19.0
+### Upgrade pnpm to v12.20.0
