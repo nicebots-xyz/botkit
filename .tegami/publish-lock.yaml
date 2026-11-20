@@ -1,33 +1,9 @@
 core:changelogs:
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Spend fewer CI minutes on pull requests\n"
-    filename: 2026-11-13-cheaper-ci.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Tests run without a database\n\nTests turn the database off, and a disabled database no longer loads an SSL certificate.\n"
-    filename: 2026-11-14-ci-submodules-and-tests.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: minor\n---\n\n### Faster, validated and typed translations\n\nTranslations are localized once per locale and cached, with `{commands.x}` and `{emojis.x}` filled in at that point instead of on every access. The bot refuses to start when one of these placeholders references a command or app emoji that does not exist.\n\n`pdm run i18n-stubs` generates a `translation_types.py` protocol module per extension, and CI checks that it is up to date. Annotating a slash command with `custom.ApplicationContext[PingCommandStrings]` types `ctx.translations`, and `i18n.typed` types other localized views. Strings with format fields are typed with a `format` method that only accepts those fields, and a locale using a field its `en-US` text lacks fails to load.\n\nA translation can be a `translations/` folder whose files and subfolders become nested keys.\n\nEvery string must now include `en-US`, and locales Discord does not support fail to load. `TranslationWrapper` is replaced by `Strings`, and `/ping` in the example \"ping\" extension is now exclusive a slash command.\n"
-    filename: 2026-11-16-i18n-refactor.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Translation stubs for context menu commands\n\n`pdm run i18n-stubs` no longer fails on commands whose names contain spaces or punctuation, such as the context menu command `Extract text (OCR)`, whose strings are typed by `ExtractTextOCRCommandStrings`.\n"
-    filename: 2026-11-17-i18n-stubs-context-menus.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Remove the command not found handler\n\nThe `nice_errors` extension no longer handles `CommandNotFound` for prefix commands. The closest command suggestion and its \"Run x instead\" button are removed, along with the `error_command_not_found` and `run_x_instead` translations.\n"
-    filename: 2026-11-17-remove-command-not-found.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Separate Renovate pull requests per ecosystem\n\nNon-major updates are grouped per ecosystem, with Python and JavaScript dependencies in separate weekly pull requests, and Python interpreter upgrades leave the group, so a failing interpreter bump no longer blocks every other update. Changelog entries of dependency updates list every package with both versions. Cooldowns, titles and lock file maintenance now come from the shared Renovate preset, and the quality checks install the licensor release of the pinned setup-licensor action.\n"
-    filename: 2026-11-17-split-renovate-groups.md
-    v: 0.0.0
-  - content: "---\npackages:\n  botkit:\n    type: patch\n---\n\n### Upgrade pnpm to v12.20.0\n"
-    filename: renovate-pnpm-12.x.md
+  - content: "---\npackages:\n  botkit:\n    type: minor\n---\n\n## Remove prefix and bridge commands\n\nBotkit now runs on a plain `discord.Bot` and only supports application commands. The `bot.prefix` setting is gone and is ignored if still present, and the bot never requests the `message_content` intent.\n\nBreaking changes for extensions:\n\n- `custom.ExtContext` and the `custom.Context` alias are removed, use `custom.ApplicationContext`.\n- `custom.ApplicationContext` extends `discord.ApplicationContext` instead of `bridge.BridgeApplicationContext`.\n- `CooldownExceeded` extends `discord.CheckFailure` instead of `commands.CheckFailure`.\n- `nice_errors` no longer listens to `on_command_error`.\n- Cogs should extend `discord.Cog` instead of `commands.Cog`.\n"
+    filename: 2026-11-17-remove-prefix-commands.md
     v: 0.0.0
 core:packages:
   - changelogIds:
-      - 2026-11-13-cheaper-ci.md
-      - 2026-11-14-ci-submodules-and-tests.md
-      - 2026-11-16-i18n-refactor.md
-      - 2026-11-17-i18n-stubs-context-menus.md
-      - 2026-11-17-remove-command-not-found.md
-      - 2026-11-17-split-renovate-groups.md
-      - renovate-pnpm-12.x.md
+      - 2026-11-17-remove-prefix-commands.md
     id: release:botkit
     updated: true
