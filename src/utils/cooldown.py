@@ -8,12 +8,11 @@ from inspect import isawaitable
 from typing import Any, Concatenate, Never, cast
 
 import discord
-from discord.ext import commands
 
 from src import custom
 
-type ReactiveCooldownSetting[T] = T | Callable[[custom.Bot, custom.Context], T | Coroutine[Never, None, T]]
-type CogCommandFunction[T: commands.Cog, **P] = Callable[Concatenate[T, P], Awaitable[None]]
+type ReactiveCooldownSetting[T] = T | Callable[[custom.Bot, custom.ApplicationContext], T | Coroutine[Never, None, T]]
+type CogCommandFunction[T: discord.Cog, **P] = Callable[Concatenate[T, P], Awaitable[None]]
 
 
 class BucketType(Enum):
@@ -26,7 +25,9 @@ class BucketType(Enum):
     ROLE = "role"  # Per-role cooldown (uses highest role)
 
 
-async def parse_reactive_setting[T](value: ReactiveCooldownSetting[T], bot: custom.Bot, ctx: custom.Context) -> T:
+async def parse_reactive_setting[T](
+    value: ReactiveCooldownSetting[T], bot: custom.Bot, ctx: custom.ApplicationContext
+) -> T:
     if isinstance(value, type):
         return value  # pyright: ignore [reportReturnType]
     if callable(value):
@@ -36,14 +37,14 @@ async def parse_reactive_setting[T](value: ReactiveCooldownSetting[T], bot: cust
     return value  # pyright: ignore [reportReturnType]
 
 
-class CooldownExceeded(commands.CheckFailure):
+class CooldownExceeded(discord.CheckFailure):
     def __init__(self, retry_after: float, bucket_type: BucketType) -> None:
         self.retry_after: float = retry_after
         self.bucket_type: BucketType = bucket_type
         super().__init__(f"You are on {bucket_type.value} cooldown")
 
 
-def get_bucket_key(ctx: custom.Context, base_key: str, bucket_type: BucketType) -> str:  # noqa: PLR0911
+def get_bucket_key(ctx: custom.ApplicationContext, base_key: str, bucket_type: BucketType) -> str:  # noqa: PLR0911
     """Generate a cooldown key based on the bucket type."""
     match bucket_type:
         case BucketType.USER:
@@ -68,7 +69,7 @@ def get_bucket_key(ctx: custom.Context, base_key: str, bucket_type: BucketType) 
             return base_key
 
 
-def cooldown[C: commands.Cog, **P](
+def cooldown[C: discord.Cog, **P](
     key: ReactiveCooldownSetting[str],
     *,
     limit: ReactiveCooldownSetting[int],
@@ -100,7 +101,7 @@ def cooldown[C: commands.Cog, **P](
     def inner(func: CogCommandFunction[C, P]) -> CogCommandFunction[C, P]:
         @wraps(func)
         async def wrapper(self: C, *args: P.args, **kwargs: P.kwargs) -> None:
-            ctx: custom.Context = args[0]  # pyright: ignore [reportAssignmentType]
+            ctx: custom.ApplicationContext = args[0]  # pyright: ignore [reportAssignmentType]
             cache = ctx.bot.botkit_cache
             key_value: str = await parse_reactive_setting(key, ctx.bot, ctx)
             limit_value: int = await parse_reactive_setting(limit, ctx.bot, ctx)

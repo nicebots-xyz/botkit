@@ -48,16 +48,14 @@ If both are on, Botkit exits with an error. Use one mode or separate deployments
 
 ---
 
-## Slash vs prefix commands
+## Application commands
+
+Botkit runs a plain py-cord **`discord.Bot`**: slash, user and message commands only, without prefix commands or the **`message_content`** intent.
 
 | Config | Effect |
 |--------|--------|
-| **`bot.slash.enabled: true`** | Slash commands are registered |
-| **`bot.slash.enabled: false`** | Slash commands cleared at startup |
-| **`bot.prefix.enabled: true`** | Prefix / bridge commands work; **`message_content`** intent enabled |
-| **`bot.prefix.enabled: false`** (default) | Prefix commands disabled |
-
-Botkit uses py-cord's **bridge** bot — you can mix slash and prefix commands when both are enabled.
+| **`bot.slash.enabled: true`** | Application commands are registered |
+| **`bot.slash.enabled: false`** | Application commands cleared at startup |
 
 ---
 

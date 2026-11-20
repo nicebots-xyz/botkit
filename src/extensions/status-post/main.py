@@ -6,7 +6,7 @@ from typing import Any
 
 import aiohttp
 import discord
-from discord.ext import commands, tasks
+from discord.ext import tasks
 
 from src.log import logger
 
@@ -17,14 +17,14 @@ default = {
 }
 
 
-class Status(commands.Cog):
+class Status(discord.Cog):
     def __init__(self, bot: discord.Bot, config: dict[Any, Any]) -> None:
         self.bot: discord.Bot = bot
         self.config: dict[Any, Any] = config
         self.push_status_loop: tasks.Loop = tasks.loop(seconds=self.config["every"])(self.push_status_loop_meth)  # pyright: ignore [reportMissingTypeArgument]
         super().__init__()
 
-    @commands.Cog.listener(once=True)
+    @discord.Cog.listener(once=True)
     async def on_ready(self) -> None:
         self.push_status_loop.start()
 

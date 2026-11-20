@@ -54,10 +54,9 @@ Minimal example:
 ```python
 # src/extensions/hello/main.py
 import discord
-from discord.ext import commands
 
 
-class HelloCog(commands.Cog):
+class HelloCog(discord.Cog):
     def __init__(self, bot: discord.Bot) -> None:
         self.bot = bot
 

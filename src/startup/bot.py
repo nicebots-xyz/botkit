@@ -6,7 +6,6 @@
 from typing import Any
 
 import discord
-from discord.ext import commands
 
 from src import custom, i18n
 from src.config.models import BotConfig, RestConfig
@@ -20,22 +19,16 @@ def create_bot(config: BotConfig) -> custom.Bot:
     """Create a bot instance based on configuration.
 
     Args:
-        config: Bot configuration including intents, prefix, and rest mode settings
+        config: Bot configuration including cache and rest mode settings
 
     Returns:
         A configured CustomBot or CustomRestBot instance
 
     """
-    intents = discord.Intents.default()
-    if config.prefix:
-        intents.message_content = True
-
     bot_class = custom.CustomRestBot if config.rest else custom.CustomBot
 
     return bot_class(
-        intents=intents,
-        help_command=None,
-        command_prefix=(str(config.prefix) or commands.when_mentioned),
+        intents=discord.Intents.default(),
         cache_type=config.cache.type,
         cache_config=config.cache.redis,
         cache_app_emojis=config.cache_app_emojis,
@@ -64,16 +57,13 @@ def setup_bot_extensions(
 def configure_bot_features(bot: custom.Bot, config: BotConfig) -> None:
     """Configure bot features based on configuration.
 
-    Disables prefixed commands or slash commands as specified in config.
+    Disables slash commands if specified in config.
 
     Args:
         bot: The bot instance to configure
         config: Bot configuration with feature flags
 
     """
-    if not config.prefix:
-        bot.prefixed_commands = {}
-
     if not config.slash:
         bot._pending_application_commands = []  # noqa: SLF001  # pyright: ignore[reportPrivateUsage]
 

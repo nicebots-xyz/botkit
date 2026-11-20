@@ -23,7 +23,7 @@ class ForbiddenErrorHandler(BaseErrorHandler[discord.Forbidden]):
     async def __call__(
         self,
         error: discord.Forbidden,
-        ctx: custom.Context | discord.Interaction,
+        ctx: custom.ApplicationContext | discord.Interaction,
         sendargs: dict[str, Any],
         message: str,
         report: bool,

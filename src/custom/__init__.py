@@ -4,7 +4,7 @@
 import contextlib
 from collections.abc import Callable
 from logging import getLogger
-from typing import TYPE_CHECKING, Any, Generic, Self, TypeAlias, cast, override
+from typing import TYPE_CHECKING, Any, Generic, Self, cast, override
 
 import aiocache
 import discord
@@ -27,12 +27,6 @@ except ImportError:
 
         def configure_logging(self) -> None: ...
 
-
-from discord import Interaction, Message, WebhookMessage
-from discord.ext import bridge
-from discord.ext.bridge import (
-    BridgeExtContext,
-)
 
 from src import log
 from src.config.models import RedisConfig
@@ -73,7 +67,7 @@ class TranslatedContext(Generic[TranslationsT]):
             return cls
 
 
-class ApplicationContext(bridge.BridgeApplicationContext, TranslatedContext[TranslationsT]):
+class ApplicationContext(discord.ApplicationContext, TranslatedContext[TranslationsT]):
     def __init__(self, bot: "Bot", interaction: discord.Interaction) -> None:
         super().__init__(bot=bot, interaction=interaction)
         self.bot: Bot
@@ -86,45 +80,6 @@ class ApplicationContext(bridge.BridgeApplicationContext, TranslatedContext[Tran
         if key == "command" and hasattr(value, "translations"):
             self._translations = i18n.apply_locale(value.translations, self.locale)
         super().__setattr__(key, value)
-
-
-async def remove_reaction(
-    user: discord.User | discord.Member | discord.ClientUser, message: discord.Message, emoji: str
-) -> None:
-    await message.remove_reaction(emoji, user)
-
-
-class ExtContext(bridge.BridgeExtContext, TranslatedContext[TranslationsT]):
-    def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self.bot: Bot
-        self.user_obj: User | None = None
-        self.guild_obj: Guild | None = None
-        self.custom_attrs: dict[str, Any] = {}
-
-    def load_translations(self) -> None:
-        if hasattr(self.command, "translations") and self.command.translations:  # pyright: ignore[reportUnknownArgumentType,reportOptionalMemberAccess,reportAttributeAccessIssue]
-            locale: str | None = None
-            if guild := self.guild:
-                locale = guild.preferred_locale
-            self._translations = i18n.apply_locale(
-                self.command.translations,  # pyright: ignore [reportAttributeAccessIssue, reportOptionalMemberAccess, reportUnknownArgumentType]
-                locale,
-            )
-
-    @override
-    async def defer(self, *args: Any, **kwargs: Any) -> None:
-        await super().defer(*args, **kwargs)
-        with contextlib.suppress(Exception):
-            await self.message.add_reaction("🔄")
-
-    @override
-    async def respond(self, *args: Any, **kwargs: Any) -> "Interaction | WebhookMessage | Message":
-        r = await super().respond(*args, **kwargs)
-        with contextlib.suppress(Exception):
-            if self.me:
-                await remove_reaction(self.me, self.message, "🔄")
-        return r
 
 
 class _WatchedIntents(discord.Intents):
@@ -144,7 +99,7 @@ class _WatchedIntents(discord.Intents):
             on_change()
 
 
-class CustomBot(bridge.Bot):
+class CustomBot(discord.Bot):
     __rest__: bool = False
 
     def __init__(
@@ -187,22 +142,10 @@ class CustomBot(bridge.Bot):
     async def get_application_context(
         self,
         interaction: discord.Interaction,
-        cls: type[bridge.BridgeApplicationContext] | None = None,
-    ) -> bridge.BridgeApplicationContext:
+        cls: type[discord.ApplicationContext] | None = None,
+    ) -> discord.ApplicationContext:
         cls = cls if cls is not None else ApplicationContext
         return await super().get_application_context(interaction, cls=cls)
-
-    @override
-    async def get_context(
-        self,
-        message: Message,
-        cls: type[bridge.BridgeExtContext] | None = None,
-    ) -> BridgeExtContext:
-        cls = cls if cls is not None else ExtContext
-        ctx = await super().get_context(message, cls=cls)
-        if isinstance(ctx, ExtContext):
-            ctx.load_translations()
-        return ctx
 
     @property
     @override
@@ -321,6 +264,4 @@ class CustomRestBot(PycordRestBot, CustomBot):  # pyright: ignore[reportIncompat
 
 type Bot = CustomBot | CustomRestBot
 
-Context: TypeAlias = ExtContext | ApplicationContext  # noqa: UP040
-
-__all__ = ["ApplicationContext", "Bot", "Context", "CustomBot", "CustomRestBot", "ExtContext", "TranslatedContext"]
+__all__ = ["ApplicationContext", "Bot", "CustomBot", "CustomRestBot", "TranslatedContext"]

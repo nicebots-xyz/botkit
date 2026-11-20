@@ -4,7 +4,7 @@ Copyright: 2024-2026 NiceBots.xyz
 -->
 # Botkit
 
-Botkit is a **Python 3.12** application template and runtime for Discord bots built on **[py-cord](https://github.com/Pycord-Development/pycord)** (bridge-style bot with optional prefix commands). It wires together:
+Botkit is a **Python 3.12** application template and runtime for Discord bots built on **[py-cord](https://github.com/Pycord-Development/pycord)** (application commands). It wires together:
 
 - **Extensions** under `src/extensions/` — each folder is a feature module discovered at startup.
 - **YAML + environment configuration** merged at load time (`BOTKIT__` prefix for env vars).

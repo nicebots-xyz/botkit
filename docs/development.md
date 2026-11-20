@@ -50,7 +50,7 @@ pdm run tests
 
 ## Type checking
 
-Botkit uses **basedpyright** with project settings in `pyproject.toml`. Your extensions benefit from typing `bot: custom.Bot` and `ctx: custom.Context` for accurate checking.
+Botkit uses **basedpyright** with project settings in `pyproject.toml`. Your extensions benefit from typing `bot: custom.Bot` and `ctx: custom.ApplicationContext` for accurate checking.
 
 ## Config and deploy ergonomics
 

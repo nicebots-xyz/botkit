@@ -6,7 +6,6 @@ from functools import cached_property
 from typing import Any, Final, final
 
 import discord
-from discord.ext import commands
 from discord.ui import ActionRow, Button, Container, DesignerView, Select, TextDisplay
 
 from src import custom, i18n
@@ -282,7 +281,7 @@ def get_categories_data(
 
 
 @final
-class Help(commands.Cog):
+class Help(discord.Cog):
     def __init__(self, bot: custom.Bot, ui_translations: dict[str, RawTranslation], locales: set[str]) -> None:
         self.bot = bot
         self.ui_translations = ui_translations
