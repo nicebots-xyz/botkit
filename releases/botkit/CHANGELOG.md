@@ -1,3 +1,35 @@
+## botkit@0.5.0
+
+### Remove prefix and bridge commands
+
+Botkit now runs on a plain `discord.Bot` and only supports application commands. The `bot.prefix` setting is gone and is ignored if still present, and the bot never requests the `message_content` intent.
+
+Breaking changes for extensions:
+
+- `custom.ExtContext` and the `custom.Context` alias are removed, use `custom.ApplicationContext`.
+- `custom.ApplicationContext` extends `discord.ApplicationContext` instead of `bridge.BridgeApplicationContext`.
+- `CooldownExceeded` extends `discord.CheckFailure` instead of `commands.CheckFailure`.
+- `nice_errors` no longer listens to `on_command_error`.
+- Cogs should extend `discord.Cog` instead of `commands.Cog`.
+
+### Translation stubs sit next to their translations
+
+`pdm run i18n-stubs` writes each translation file's stub as the Python module at the same path, so `my_ext/translations.yml` is typed by `my_ext/translations.py`. In a `translations/` folder, every file gets its own module, such as `translations/commands/ping.py` for `translations/commands/ping.yml`, and the folders leading to them become packages. An extension without translations of its own gets its stubs next to the centralized file, as `src/translations/my_ext.py`. Stubs left without translations are removed, and `--check` reports them.
+
+Breaking changes:
+
+- `translation_types.py` is now `translations.py`, so `from .translation_types import PingCommandStrings` becomes `from .translations import PingCommandStrings`.
+- A translations folder no longer turns its subfolders without any YAML file into keys, so the `__pycache__` of its stubs is ignored.
+
+### Bots can override the translations of an extension
+
+An extension's own `translations.yml` now defines its strings and its stubs, and a bot adapts them for itself in `src/translations/<extension>.yml`. Both are merged, so an override only needs the strings and locales it changes, and shared extensions keep the same stubs in every bot. Overrides may not use format arguments that the extension's `en-US` text does not, so that its typed `format` stays correct.
+
+Breaking changes:
+
+- `src/translations/<extension>.yml` is merged over the extension's own translations, where it used to be ignored when both existed.
+- `i18n.find_translation_file` is replaced by `i18n.find_translation_files`, which returns every layer, and `i18n.load_translation` accepts several paths.
+
 ## botkit@0.4.0
 
 ### Spend fewer CI minutes on pull requests
