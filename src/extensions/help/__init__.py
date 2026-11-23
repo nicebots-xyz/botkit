@@ -12,7 +12,7 @@ from src import custom, i18n
 from src.i18n.classes import RawTranslation, Strings
 
 from .pages import help_translation
-from .translation_types import ExtensionStrings
+from .translations import ExtensionStrings
 
 
 def get_gradient_color(shade_index: int, color_index: int, max_shade: int = 50, max_color: int = 10) -> int:

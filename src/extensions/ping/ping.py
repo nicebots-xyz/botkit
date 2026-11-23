@@ -9,7 +9,7 @@ from src import custom
 from src.log import logger
 from src.utils.cooldown import BucketType, cooldown
 
-from .translation_types import PingCommandStrings
+from .translations import PingCommandStrings
 
 default = {
     "enabled": True,

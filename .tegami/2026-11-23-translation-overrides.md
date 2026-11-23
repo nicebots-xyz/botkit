@@ -5,7 +5,7 @@ packages:
 
 ## Bots can override the translations of an extension
 
-An extension's own `translations.yml` now defines its strings and its stubs, and a bot adapts them for itself in `src/translations/<extension>.yml`. Both are merged, so an override only needs the strings and locales it changes, and shared extensions keep the same `translation_types.py` in every bot. Overrides may not use format arguments that the extension's `en-US` text does not, so that its typed `format` stays correct.
+An extension's own `translations.yml` now defines its strings and its stubs, and a bot adapts them for itself in `src/translations/<extension>.yml`. Both are merged, so an override only needs the strings and locales it changes, and shared extensions keep the same stubs in every bot. Overrides may not use format arguments that the extension's `en-US` text does not, so that its typed `format` stays correct.
 
 Breaking changes:
 
