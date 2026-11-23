@@ -7,7 +7,7 @@ from typing import Any, final, override
 import discord
 
 from src import custom, i18n
-from src.extensions.nice_errors.translation_types import ExtensionStrings
+from src.extensions.nice_errors.translations import ExtensionStrings
 from src.i18n.classes import RawTranslation
 
 from .base import BaseErrorHandler, ErrorHandlerRType

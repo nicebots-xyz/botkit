@@ -25,6 +25,9 @@ logger = main_logger.getChild("i18n")
 
 type AppCommand = discord.ApplicationCommand[Any, ..., Any]
 
+# In order of precedence, when an extension has several translation files.
+YAML_SUFFIXES = (".yml", ".yaml")
+
 
 def _walk(commands: Iterable[AppCommand]) -> Iterator[AppCommand]:
     for command in commands:
@@ -237,10 +240,11 @@ def _find(base: Path) -> Path | None:
         base: Path of the translation, without extension.
 
     Returns:
-        The first existing candidate, None if there is none.
+        The first existing file, else the folder, None if there is neither.
 
     """
-    return next((c for c in (base.with_suffix(".yml"), base.with_suffix(".yaml"), base) if c.exists()), None)
+    files = (base.with_suffix(suffix) for suffix in YAML_SUFFIXES)
+    return next((file for file in files if file.is_file()), base if base.is_dir() else None)
 
 
 def find_translation_files(extension_path: Path, extension_name: str) -> list[Path]:
@@ -265,6 +269,8 @@ def find_translation_files(extension_path: Path, extension_name: str) -> list[Pa
 def _read_yaml_tree(path: Path) -> object:
     """Read a YAML file, or a folder whose files and subfolders become nested keys named after them.
 
+    Subfolders without any YAML file are skipped, such as the ``__pycache__`` of the typed stubs next to the files.
+
     Args:
         path: The YAML file or folder to read.
 
@@ -275,11 +281,8 @@ def _read_yaml_tree(path: Path) -> object:
     if path.is_file():
         with path.open(encoding="utf-8") as f:
             return cast("object", yaml.safe_load(f)) or {}
-    return {
-        child.stem: _read_yaml_tree(child)
-        for child in sorted(path.iterdir())
-        if child.is_dir() or child.suffix in {".yml", ".yaml"}
-    }
+    children = (child for child in sorted(path.iterdir()) if child.is_dir() or child.suffix in YAML_SUFFIXES)
+    return {child.stem: data for child in children if (data := _read_yaml_tree(child)) or child.is_file()}
 
 
 def _merge(base: object, override: object) -> object:

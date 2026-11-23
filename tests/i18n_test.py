@@ -11,7 +11,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from scripts.i18n_stubs.__main__ import render
+from scripts.i18n_stubs.__main__ import render, stubs
 from src import custom
 from src.i18n import classes, utils
 from src.i18n.classes import (
@@ -54,6 +54,7 @@ def test_folder_matches_single_file(tmp_path: Path) -> None:
 
 
 def _write(path: Path, data: object) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(yaml.safe_dump(data), encoding="utf-8")
     return path
 
@@ -154,6 +155,64 @@ def test_strings_added_by_overrides_check_their_own_fields(tmp_path: Path) -> No
 def test_load_translation_requires_a_path() -> None:
     with pytest.raises(ValueError, match="At least one"):
         load_translation()
+
+
+def test_folder_skips_folders_without_yaml(tmp_path: Path) -> None:
+    folder = tmp_path / "translations"
+    (folder / "__pycache__").mkdir(parents=True)
+    (folder / "__pycache__" / "strings.cpython-312.pyc").write_bytes(b"")
+    (folder / "strings.yml").write_text("hello:\n  en-US: Hello\n", encoding="utf-8")
+
+    assert load_translation(folder) == ExtensionTranslation.model_validate({"strings": {"hello": {"en-US": "Hello"}}})
+
+
+def test_find_translation_files_needs_a_folder_at_the_folder_path(tmp_path: Path) -> None:
+    """A file named like the translations folder, such as a stub package's module, is not a translation."""
+    (tmp_path / "translations").write_text("# not YAML", encoding="utf-8")
+
+    assert find_translation_files(tmp_path, "no_such_extension") == []
+
+
+def _classes_by_module(source: Path) -> dict[str, set[str]]:
+    root = source.parent.resolve()
+    return {
+        str(path.relative_to(root)): {
+            line.split("(")[0].removeprefix("class ") for line in code.splitlines() if line.startswith("class ")
+        }
+        for path, code in stubs(source).items()
+    }
+
+
+def test_stubs_of_a_file_sit_next_to_it(tmp_path: Path) -> None:
+    source = tmp_path / "translations.yml"
+    _write(
+        source,
+        {"commands": {"ping": {"strings": {"pong": {"en-US": "Pong"}}}}, "strings": {"hello": {"en-US": "Hello"}}},
+    )
+
+    assert _classes_by_module(source) == {"translations.py": {"ExtensionStrings", "PingCommandStrings"}}
+
+
+def test_stubs_of_a_folder_follow_its_files(tmp_path: Path) -> None:
+    """Each class goes to the module of the deepest file or folder holding its strings."""
+    source = tmp_path / "translations"
+    _write(source / "strings.yml", {"hello": {"en-US": "Hello"}})
+    _write(source / "commands" / "ping.yml", {"strings": {"pong": {"en-US": "Pong"}}})
+    _write(source / "commands" / "admin" / "commands" / "kick.yml", {"strings": {"done": {"en-US": "Kicked {user}"}}})
+    _write(source / "commands" / "meow" / "strings" / "purr.yml", {"en-US": "Purr"})
+    _write(source / "commands" / "meow" / "strings" / "hiss.yml", {"en-US": "Hiss"})
+
+    assert _classes_by_module(source) == {
+        "translations/__init__.py": set(),
+        "translations/commands/__init__.py": set(),
+        "translations/commands/admin/__init__.py": set(),
+        "translations/commands/admin/commands/__init__.py": set(),
+        "translations/commands/meow/__init__.py": set(),
+        "translations/strings.py": {"ExtensionStrings"},
+        "translations/commands/ping.py": {"PingCommandStrings"},
+        "translations/commands/admin/commands/kick.py": {"AdminKickCommandDone", "AdminKickCommandStrings"},
+        "translations/commands/meow/strings/__init__.py": {"MeowCommandStrings"},
+    }
 
 
 def test_raw_translation_requires_known_locales_and_default() -> None:
