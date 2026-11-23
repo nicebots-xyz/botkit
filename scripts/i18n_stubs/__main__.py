@@ -13,7 +13,7 @@ from collections.abc import Iterator, Mapping, Sequence
 from pathlib import Path
 
 from src.i18n.classes import DEFAULT, CommandTranslation, ExtensionTranslation, RawTranslation, format_fields
-from src.i18n.utils import find_translation_file, load_translation
+from src.i18n.utils import find_translation_files, load_translation
 
 EXTENSIONS = Path("src/extensions")
 STUB_NAME = "translation_types.py"
@@ -200,8 +200,9 @@ def main() -> None:
 
     outdated: list[Path] = []
     for extension in sorted(EXTENSIONS.iterdir()):
-        source = find_translation_file(extension, extension.name)
-        content = render(load_translation(source)) if source else None
+        # Only the first layer defines the strings, so that a bot overriding them does not change the stubs.
+        layers = find_translation_files(extension, extension.name)
+        content = render(load_translation(layers[0])) if layers else None
         target = extension / STUB_NAME
         if content is None or (target.exists() and target.read_text(encoding="utf-8") == content):
             continue

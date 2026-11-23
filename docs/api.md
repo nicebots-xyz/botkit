@@ -19,7 +19,7 @@ Reference for extension loading and startup entry points.
 ::: src.i18n.utils
     options:
       members:
-        - find_translation_file
+        - find_translation_files
         - load_translation
       show_submodules: false
 

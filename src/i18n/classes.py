@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from string import Formatter
 from typing import Any, ClassVar, Self, cast, overload, override
 
-from pydantic import BaseModel, RootModel, model_validator
+from pydantic import BaseModel, RootModel, ValidationInfo, model_validator
 
 from src.log import logger as main_logger
 
@@ -55,6 +55,10 @@ PLACEHOLDER = re.compile(r"\{(\w+)\.([\w-]+)\}")
 BUILTIN_NAMESPACES = frozenset({"commands", "emojis"})
 # Separates the root of a replacement field from its attribute or index accesses, e.g. `{user.name}` or `{items[0]}`.
 FIELD_ACCESS = re.compile(r"[.\[]")
+
+# Validation context key skipping the format fields check of each string, for callers checking them against
+# another reference text, such as `load_translation` with the base layer of a translation.
+DEFER_FIELD_CHECKS = "defer_field_checks"
 
 GLOBAL_KV: dict[str, Mapping[str, str]] = {}
 _CACHE: dict[tuple[int, str], tuple[object, Any]] = {}
@@ -179,34 +183,40 @@ class RawTranslation(RootModel[dict[str, str]]):
     REGISTRY: ClassVar[list["RawTranslation"]] = []
 
     @model_validator(mode="after")
-    def _check_locales(self) -> Self:
+    def _check_locales(self, info: ValidationInfo) -> Self:
         if unknown := self.root.keys() - set(LOCALES):
             raise ValueError(f"Unknown locales {sorted(unknown)}")
         if DEFAULT not in self.root:
             raise ValueError(f"Missing the {DEFAULT} translation")
-        self._check_fields()
+        context = cast("Mapping[str, object] | None", info.context)
+        if not context or context.get(DEFER_FIELD_CHECKS) is not True:
+            self.check_fields(self.root[DEFAULT])
         return self
 
-    def _check_fields(self) -> None:
-        """Ensure no locale expects ``str.format`` arguments that the default locale does not.
+    def check_fields(self, reference: str, origin: str = DEFAULT) -> None:
+        """Ensure no locale expects ``str.format`` arguments that a reference text does not.
 
-        Code formats a string with the arguments of its default text, so any other one would fail at runtime.
+        Code formats a string with the arguments of its reference text, so any other one would fail at runtime.
+
+        Args:
+            reference: The text whose arguments code formats the string with.
+            origin: Where the reference text comes from, for error messages.
 
         Raises:
-            ValueError: If a locale uses a positional or keyword argument the default locale does not.
+            ValueError: If a locale uses a positional or keyword argument the reference text does not.
 
         """
-        default = format_fields(self.root[DEFAULT])
-        if default is None:
+        expected = format_fields(reference)
+        if expected is None:
             return
         for locale, text in self.root.items():
             fields = format_fields(text)
             if fields is None:
                 raise ValueError(f"The {locale} translation is not a valid format string: {text!r}")
-            if extra := [f"{{{name}}}" for name in fields.named if name not in default.named]:
-                raise ValueError(f"The {locale} translation uses {', '.join(extra)}, unknown in {DEFAULT}")
-            if (count := fields.positional) > default.positional:
-                raise ValueError(f"The {locale} translation uses {count} positional fields, more than {DEFAULT}")
+            if extra := [f"{{{name}}}" for name in fields.named if name not in expected.named]:
+                raise ValueError(f"The {locale} translation uses {', '.join(extra)}, unknown in {origin}")
+            if (count := fields.positional) > expected.positional:
+                raise ValueError(f"The {locale} translation uses {count} positional fields, more than {origin}")
 
     @override
     def model_post_init(self, context: Any, /) -> None:

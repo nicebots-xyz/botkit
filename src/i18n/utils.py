@@ -3,17 +3,21 @@
 
 from collections.abc import Iterable, Iterator, Mapping
 from pathlib import Path
-from typing import Any, override
+from typing import Any, cast, override
 
 import discord
 import yaml
+from pydantic import BaseModel
 
 from src.log import logger as main_logger
 
 from .classes import (
+    DEFAULT,
+    DEFER_FIELD_CHECKS,
     Deg1CommandTranslation,
     Deg2CommandTranslation,
     ExtensionTranslation,
+    RawTranslation,
     add_global_kv,
 )
 
@@ -223,28 +227,42 @@ def localize_commands[  # noqa: PLR0912
     return err, tot
 
 
-def find_translation_file(extension_path: Path, extension_name: str) -> Path | None:
-    """Find the translation file or folder of an extension.
+TRANSLATIONS = Path(__file__).parent.parent / "translations"
 
-    Searches, in order, ``translations.yml``, ``translations.yaml`` and a ``translations`` folder, first in the
-    extension's directory and then as ``src/translations/{extension_name}``.
+
+def _find(base: Path) -> Path | None:
+    """Find a translation file or folder, trying ``.yml``, ``.yaml`` and then a folder.
+
+    Args:
+        base: Path of the translation, without extension.
+
+    Returns:
+        The first existing candidate, None if there is none.
+
+    """
+    return next((c for c in (base.with_suffix(".yml"), base.with_suffix(".yaml"), base) if c.exists()), None)
+
+
+def find_translation_files(extension_path: Path, extension_name: str) -> list[Path]:
+    """Find the translation layers of an extension, from the one defining its strings to the bot's overrides.
+
+    The extension's own ``translations`` file or folder comes first, followed by the bot's
+    ``src/translations/{extension_name}`` one. The first layer is the extension's contract: it defines the strings
+    and their format arguments, from which its stubs are generated. Later layers adapt them to the bot.
 
     Args:
         extension_path: Path to the extension directory.
         extension_name: Name of the extension.
 
     Returns:
-        Path to the translation file or folder if found, None otherwise.
+        The existing layers, in the order they apply.
 
     """
-    for base in (extension_path / "translations", Path(__file__).parent.parent / "translations" / extension_name):
-        for candidate in (base.with_suffix(".yml"), base.with_suffix(".yaml"), base):
-            if candidate.exists():
-                return candidate
-    return None
+    candidates = (_find(extension_path / "translations"), _find(TRANSLATIONS / extension_name))
+    return [path for path in candidates if path is not None]
 
 
-def _read_yaml_tree(path: Path) -> Any:
+def _read_yaml_tree(path: Path) -> object:
     """Read a YAML file, or a folder whose files and subfolders become nested keys named after them.
 
     Args:
@@ -256,7 +274,7 @@ def _read_yaml_tree(path: Path) -> Any:
     """
     if path.is_file():
         with path.open(encoding="utf-8") as f:
-            return yaml.safe_load(f) or {}
+            return cast("object", yaml.safe_load(f)) or {}
     return {
         child.stem: _read_yaml_tree(child)
         for child in sorted(path.iterdir())
@@ -264,22 +282,108 @@ def _read_yaml_tree(path: Path) -> Any:
     }
 
 
-def load_translation(path: str | Path) -> ExtensionTranslation:
-    """Load a translation from a file or a folder.
+def _merge(base: object, override: object) -> object:
+    """Deep merge two parsed translation trees.
+
+    Mappings are merged key by key, so an override can translate a single locale of a string.
+    Any other value of the override replaces the base one.
+
+    Args:
+        base: The tree to override.
+        override: The tree whose values take precedence.
+
+    Returns:
+        The merged tree.
+
+    """
+    if not isinstance(base, Mapping) or not isinstance(override, Mapping):
+        return override
+    merged = dict(cast("Mapping[str, object]", base))
+    for key, value in cast("Mapping[str, object]", override).items():
+        merged[key] = _merge(merged[key], value) if key in merged else value
+    return merged
+
+
+def _raw_translations(value: object, path: tuple[str, ...] = ()) -> Iterator[tuple[tuple[str, ...], RawTranslation]]:
+    """Walk a translation tree, yielding every raw translation with the keys leading to it.
+
+    Args:
+        value: A translation, a mapping of them, or any other value.
+        path: Keys leading to ``value``.
+
+    Yields:
+        The keys leading to each raw translation, and the raw translation.
+
+    """
+    if isinstance(value, RawTranslation):
+        yield path, value
+        return
+    if isinstance(value, BaseModel):
+        value = dict(value)
+    if isinstance(value, Mapping):
+        for key, item in cast("Mapping[str, object]", value).items():
+            yield from _raw_translations(item, (*path, key))
+
+
+def _reference_text(tree: object, path: tuple[str, ...]) -> str | None:
+    """Get the default text of a string in a parsed translation tree.
+
+    Args:
+        tree: The parsed tree.
+        path: Keys leading to the string.
+
+    Returns:
+        The string's default text, None if the tree does not define it.
+
+    """
+    for key in path:
+        if not isinstance(tree, Mapping):
+            return None
+        tree = cast("Mapping[str, object]", tree).get(key)
+    if isinstance(tree, Mapping) and isinstance(text := cast("Mapping[str, object]", tree).get(DEFAULT), str):
+        return text
+    return None
+
+
+def load_translation(*paths: str | Path) -> ExtensionTranslation:
+    """Load a translation from files or folders, each one overriding the previous ones.
 
     In a folder, ``commands/ping.yml`` is equivalent to a ``ping`` key under ``commands`` in a single file.
 
+    The first path defines the strings, which later ones may translate, reword or add to. Code and stubs format a
+    string with the arguments of its text in the first path, so an override may not use other ones.
+
     Args:
-        path: The path to the translation file or folder.
+        *paths: The paths to the translation files or folders, from the base one to the last override.
 
     Returns:
-        The loaded translation.
+        The merged translation.
 
     Raises:
         yaml.YAMLError: If a file is not a valid YAML file.
+        ValueError: If no path is given, or an override uses format arguments its base string does not.
 
     """
-    return ExtensionTranslation.model_validate(_read_yaml_tree(Path(path)))
+    if not paths:
+        raise ValueError("At least one translation path is required")
+    base, *overrides = (_read_yaml_tree(Path(path)) for path in paths)
+    merged = base
+    for layer in overrides:
+        merged = _merge(merged, layer)
+    if not overrides:
+        return ExtensionTranslation.model_validate(base)
+    translation = ExtensionTranslation.model_validate(merged, context={DEFER_FIELD_CHECKS: True})
+    for path, raw in _raw_translations(translation):
+        # Strings only defined by overrides are not part of the contract, and are formatted like their default text.
+        reference = _reference_text(base, path)
+        try:
+            if reference is None:
+                raw.check_fields(raw.root[DEFAULT])
+            else:
+                raw.check_fields(reference, f"the {DEFAULT} text of {Path(paths[0])}")
+        except ValueError as e:
+            raise ValueError(f"{'.'.join(path)}: {e}") from e
+    return translation
 
 
 def apply(
