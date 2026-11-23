@@ -13,7 +13,7 @@ from pydantic import ValidationError
 
 from scripts.i18n_stubs.__main__ import render
 from src import custom
-from src.i18n import classes
+from src.i18n import classes, utils
 from src.i18n.classes import (
     ExtensionTranslation,
     FormatFields,
@@ -23,7 +23,7 @@ from src.i18n.classes import (
     check_placeholders,
     format_fields,
 )
-from src.i18n.utils import CommandMapping, load_translation
+from src.i18n.utils import CommandMapping, find_translation_files, load_translation
 
 
 @pytest.fixture(autouse=True)
@@ -51,6 +51,109 @@ def test_folder_matches_single_file(tmp_path: Path) -> None:
     (folder / "notes.txt").write_text("ignored", encoding="utf-8")
 
     assert load_translation(folder) == load_translation(single)
+
+
+def _write(path: Path, data: object) -> Path:
+    path.write_text(yaml.safe_dump(data), encoding="utf-8")
+    return path
+
+
+def test_find_translation_files_puts_the_extension_first(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    extension = tmp_path / "extensions" / "premium"
+    extension.mkdir(parents=True)
+    central = tmp_path / "translations"
+    central.mkdir()
+    monkeypatch.setattr(utils, "TRANSLATIONS", central)
+
+    assert find_translation_files(extension, "premium") == []
+    override = _write(central / "premium.yml", {})
+    assert find_translation_files(extension, "premium") == [override]
+    own = _write(extension / "translations.yaml", {})
+    assert find_translation_files(extension, "premium") == [own, override]
+
+
+def test_overrides_are_merged_per_locale(tmp_path: Path) -> None:
+    base = _write(
+        tmp_path / "base.yml",
+        {
+            "commands": {
+                "subscribe": {
+                    "description": {"en-US": "Subscribe", "fr": "S'abonner"},
+                    "strings": {
+                        "name": {"en-US": "Premium", "fr": "Premium"},
+                        "pitch": {"en-US": "Unlock {feature}", "fr": "Débloquez {feature}"},
+                    },
+                }
+            },
+            "strings": {"cooldown": {"en-US": "Wait {time}s"}},
+        },
+    )
+    override = _write(
+        tmp_path / "override.yml",
+        {
+            "commands": {
+                "subscribe": {
+                    "strings": {
+                        "name": {"en-US": "ImageTools Pro", "de": "ImageTools Pro"},
+                        "pitch": {"en-US": "Unlock everything"},
+                        "level_1_name": {"en-US": "Basic"},
+                    },
+                }
+            },
+        },
+    )
+
+    translation = load_translation(base, override)
+    assert translation.commands
+    command = translation.commands["subscribe"]
+    assert command.description == RawTranslation({"en-US": "Subscribe", "fr": "S'abonner"})
+    assert command.strings
+    assert {key: raw.root for key, raw in command.strings.items()} == {
+        "name": {"en-US": "ImageTools Pro", "fr": "Premium", "de": "ImageTools Pro"},
+        "pitch": {"en-US": "Unlock everything", "fr": "Débloquez {feature}"},
+        "level_1_name": {"en-US": "Basic"},
+    }
+    assert translation.strings == {"cooldown": RawTranslation({"en-US": "Wait {time}s"})}
+
+
+def test_overrides_may_complete_a_base_locale(tmp_path: Path) -> None:
+    base = _write(tmp_path / "base.yml", {"strings": {"hello": {"en-US": "Hello {name}"}}})
+    override = _write(tmp_path / "override.yml", {"strings": {"hello": {"fr": "Bonjour {name}"}}})
+
+    assert load_translation(base, override).strings == {
+        "hello": RawTranslation({"en-US": "Hello {name}", "fr": "Bonjour {name}"})
+    }
+
+
+@pytest.mark.parametrize(
+    "override",
+    [
+        {"en-US": "Wait {time}s, {user}"},
+        {"fr": "Attendez {duration}s"},
+        {"en-US": "Wait {}s"},
+        {"de": "Warte {0}s"},
+    ],
+)
+def test_overrides_keep_the_base_format_fields(tmp_path: Path, override: dict[str, str]) -> None:
+    base = _write(tmp_path / "base.yml", {"strings": {"cooldown": {"en-US": "Wait {time}s"}}})
+    overrides = _write(tmp_path / "override.yml", {"strings": {"cooldown": override}})
+
+    pattern = r"^strings\.cooldown: The (en-US|fr|de) translation uses .+ the en-US text of .+base\.yml$"
+    with pytest.raises(ValueError, match=pattern):
+        load_translation(base, overrides)
+
+
+def test_strings_added_by_overrides_check_their_own_fields(tmp_path: Path) -> None:
+    base = _write(tmp_path / "base.yml", {"strings": {}})
+    override = _write(tmp_path / "override.yml", {"strings": {"extra": {"en-US": "{a}", "fr": "{b}"}}})
+
+    with pytest.raises(ValueError, match=r"^strings\.extra: The fr translation uses \{b\}, unknown in en-US$"):
+        load_translation(base, override)
+
+
+def test_load_translation_requires_a_path() -> None:
+    with pytest.raises(ValueError, match="At least one"):
+        load_translation()
 
 
 def test_raw_translation_requires_known_locales_and_default() -> None:

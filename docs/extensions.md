@@ -155,7 +155,7 @@ Config keys are lowercase. Strings from **`translations.yml`** appear as **`conf
 
 ## Translations
 
-Optional **`translations.yml`** next to the extension, or **`src/translations/<name>.yml`**.
+Optional **`translations.yml`** next to the extension, or **`src/translations/<name>.yml`**. With both, the second overrides the first, so a bot can adapt the strings of an extension it shares with other bots ([details](i18n.md#overriding-the-translations-of-an-extension)).
 
 Without it, the extension still loads; you just won't get localized command names or **`ctx.translations`**. See [Internationalization](i18n.md).
 

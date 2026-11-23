@@ -78,17 +78,17 @@ def load_extensions() -> tuple[
         logger.info(f"Loading extension {name}")
 
         # Load translations if available
-        translation_path = i18n.find_translation_file(extension_path, name)
-        if translation_path is not None:
+        translation_paths = i18n.find_translation_files(extension_path, name)
+        if translation_paths:
             try:
-                translation = i18n.load_translation(translation_path)
+                translation = i18n.load_translation(*translation_paths)
                 translations.append(translation)
 
                 # Store translation for later use
                 if translation.strings:
                     its_config["translations"] = translation.strings
             except yaml.YAMLError as e:
-                logger.error(f"Error loading translation {translation_path}: {e}")
+                logger.error(f"Error loading translations of extension {name}: {e}")
         else:
             logger.warning(f"No translation found for extension {name}")
 
